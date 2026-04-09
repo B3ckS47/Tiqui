@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tiqui – Login</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <meta name="theme-color" content="#e0e5ec">
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: var(--space-lg);
+    }
+
+    .login-wrapper {
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .logo-area {
+      text-align: center;
+      margin-bottom: var(--space-2xl);
+    }
+
+    .logo-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--neu-raised);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      margin: 0 auto var(--space-md);
+    }
+
+    .logo-title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.03em;
+    }
+
+    .logo-title span { color: var(--accent); }
+
+    .logo-subtitle {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      margin-top: var(--space-xs);
+    }
+
+    .login-card {
+      background: var(--bg);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--neu-raised);
+      padding: var(--space-xl);
+    }
+
+    .login-card h2 {
+      font-size: 1.1rem;
+      margin-bottom: var(--space-lg);
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .loader-spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: white;
+      border-radius: 50%;
+      display: inline-block;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .divider-text {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      margin: var(--space-lg) 0;
+      position: relative;
+    }
+    .divider-text::before,
+    .divider-text::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 38%;
+      height: 1px;
+      background: rgba(0,0,0,0.08);
+    }
+    .divider-text::before { left: 0; }
+    .divider-text::after  { right: 0; }
+
+    @media (prefers-color-scheme: dark) {
+      .divider-text::before,
+      .divider-text::after { background: rgba(255,255,255,0.08); }
+    }
+
+    .no-register-hint {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: var(--space-lg);
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-wrapper">
+
+    <!-- Logo -->
+    <div class="logo-area">
+      <div class="logo-icon">⚽</div>
+      <div class="logo-title">Ti<span>qui</span></div>
+      <p class="logo-subtitle">WM 2026 · Tippen & Quizzen</p>
+    </div>
+
+    <!-- Login-Formular -->
+    <div class="login-card">
+      <h2>Willkommen zurück</h2>
+
+      <form id="login-form" novalidate>
+        <div class="input-group">
+          <label class="input-label" for="email">E-Mail</label>
+          <input
+            class="input"
+            type="email"
+            id="email"
+            name="email"
+            autocomplete="email"
+            placeholder="deine@email.de"
+            required
+          >
+        </div>
+
+        <div class="input-group">
+          <label class="input-label" for="password">Passwort</label>
+          <input
+            class="input"
+            type="password"
+            id="password"
+            name="password"
+            autocomplete="current-password"
+            placeholder="••••••••"
+            required
+          >
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block btn-lg mt-md" id="login-btn">
+          Anmelden
+        </button>
+      </form>
+
+      <div class="divider-text">oder</div>
+
+      <p class="no-register-hint">
+        Noch kein Konto? Du brauchst eine<br>
+        <strong>Einladung</strong> von einem anderen Spieler.
+      </p>
+    </div>
+
+  </div>
+
+  <script type="module">
+    import { login, redirectIfLoggedIn } from '/js/auth.js';
+    import { showToast, setLoading }     from '/js/ui.js';
+
+    // Service Worker registrieren
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
+
+    // Bereits eingeloggt → weiterleiten
+    await redirectIfLoggedIn();
+
+    const form     = document.getElementById('login-form');
+    const loginBtn = document.getElementById('login-btn');
+    const emailEl  = document.getElementById('email');
+    const passEl   = document.getElementById('password');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email    = emailEl.value.trim();
+      const password = passEl.value;
+
+      if (!email || !password) {
+        showToast('Bitte E-Mail und Passwort eingeben.', 'warning');
+        return;
+      }
+
+      setLoading(loginBtn, true);
+
+      try {
+        await login(email, password);
+        window.location.href = '/pages/dashboard.html';
+      } catch (err) {
+        const msg = err.message?.includes('Invalid login')
+          ? 'E-Mail oder Passwort falsch.'
+          : 'Login fehlgeschlagen. Bitte versuche es erneut.';
+        showToast(msg, 'danger');
+        setLoading(loginBtn, false, 'Anmelden');
+      }
+    });
+
+    // Enter-Taste in beiden Feldern
+    [emailEl, passEl].forEach(el => {
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') form.requestSubmit();
+      });
+    });
+  </script>
+</body>
+</html>

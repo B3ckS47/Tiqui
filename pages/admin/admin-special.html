@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tiqui – Prognosen Admin</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <meta name="theme-color" content="#e0e5ec">
+  <style>
+    .question-card {
+      background: var(--bg);
+      box-shadow: var(--neu-raised);
+      border-radius: var(--radius-xl);
+      padding: var(--space-lg);
+      margin-bottom: var(--space-md);
+    }
+
+    .question-card.resolved {
+      box-shadow: var(--neu-raised-sm);
+      border-left: 4px solid var(--accent);
+    }
+
+    .question-text {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      margin-bottom: var(--space-sm);
+    }
+
+    .question-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: var(--space-md);
+      display: flex;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+
+    .resolve-area {
+      background: var(--bg);
+      box-shadow: var(--neu-inset-sm);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      margin-top: var(--space-md);
+    }
+
+    .resolve-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: var(--space-sm);
+    }
+
+    .answer-distribution {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: var(--space-md);
+    }
+
+    .answer-bar-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-size: 0.8rem;
+    }
+
+    .answer-bar-label {
+      min-width: 120px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .answer-bar-track {
+      flex: 1;
+      height: 8px;
+      background: var(--bg);
+      box-shadow: var(--neu-inset-sm);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+
+    .answer-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-light), var(--accent));
+      border-radius: var(--radius-full);
+      transition: width 0.4s ease;
+    }
+
+    .answer-bar-count {
+      min-width: 24px;
+      text-align: right;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    /* Formular */
+    .add-question-form {
+      background: var(--bg);
+      box-shadow: var(--neu-raised);
+      border-radius: var(--radius-xl);
+      padding: var(--space-lg);
+      margin-bottom: var(--space-lg);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-md);
+    }
+
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .skel {
+      background: var(--bg);
+      box-shadow: var(--neu-inset-sm);
+      border-radius: var(--radius-sm);
+      animation: pulse 1.5s ease-in-out infinite;
+      display: block;
+    }
+
+    .loader-spinner {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: white; border-radius: 50%;
+      display: inline-block;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+<div class="app-shell">
+
+  <div class="page-header">
+    <div>
+      <div class="page-header-title">Prognosen 🏆</div>
+      <div class="page-header-subtitle">Fragen erstellen & auflösen</div>
+    </div>
+    <a href="/pages/admin/admin-dashboard.html" class="btn btn-secondary btn-sm">← Admin</a>
+  </div>
+
+  <div class="page-content">
+
+    <!-- Neue Frage -->
+    <div class="section-label">Neue Frage</div>
+    <div class="add-question-form">
+
+      <div class="input-group">
+        <label class="input-label">Frage</label>
+        <input class="input" id="q-text" type="text" placeholder="z.B. Wer wird Weltmeister 2026?">
+      </div>
+
+      <div class="form-row">
+        <div class="input-group">
+          <label class="input-label">Antwort-Typ</label>
+          <select class="input" id="q-type">
+            <option value="team">Team (Dropdown)</option>
+            <option value="player">Spieler (Freitext)</option>
+            <option value="number">Zahl (Stepper)</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Punkte bei richtiger Antwort</label>
+          <input class="input" id="q-points" type="number" value="10" min="1" max="50">
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">Deadline (Eingabe gesperrt ab)</label>
+        <input class="input" id="q-deadline" type="datetime-local">
+      </div>
+
+      <button class="btn btn-primary btn-block" id="add-q-btn" onclick="addQuestion()">
+        Frage hinzufügen
+      </button>
+    </div>
+
+    <!-- Fragen-Liste -->
+    <div class="section-label">Alle Fragen</div>
+    <div id="questions-list">
+      <div class="skel" style="height:160px;border-radius:20px;margin-bottom:12px;"></div>
+      <div class="skel" style="height:160px;border-radius:20px;"></div>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+  import { requireAdmin } from '/js/auth.js';
+  import { supabase }     from '/js/supabase.js';
+  import { showToast, showConfirm } from '/js/ui.js';
+
+  await requireAdmin();
+
+  let questions = [];
+  let answers   = {};  // question_id → [answers]
+
+  async function loadData() {
+    const [{ data: qs }, { data: ans }] = await Promise.all([
+      supabase.from('special_questions').select('*').order('sort_order'),
+      supabase.from('special_answers').select('question_id, answer_value, is_correct, points_earned'),
+    ]);
+
+    questions = qs ?? [];
+
+    // Antworten nach Frage gruppieren
+    answers = {};
+    (ans ?? []).forEach(a => {
+      if (!answers[a.question_id]) answers[a.question_id] = [];
+      answers[a.question_id].push(a);
+    });
+
+    renderQuestions();
+  }
+
+  function renderQuestions() {
+    const container = document.getElementById('questions-list');
+    if (questions.length === 0) {
+      container.innerHTML = '<p class="text-muted text-sm">Noch keine Fragen angelegt.</p>';
+      return;
+    }
+
+    container.innerHTML = questions.map(q => {
+      const qAnswers   = answers[q.id] ?? [];
+      const totalCount = qAnswers.length;
+      const deadline   = new Date(q.deadline).toLocaleString('de-DE', {
+        day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit',
+      });
+
+      // Antwort-Verteilung berechnen
+      const distribution = {};
+      qAnswers.forEach(a => {
+        distribution[a.answer_value] = (distribution[a.answer_value] ?? 0) + 1;
+      });
+      const sortedDistrib = Object.entries(distribution)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5);
+
+      const distHTML = sortedDistrib.length > 0 ? `
+        <div class="answer-distribution">
+          ${sortedDistrib.map(([val, count]) => `
+            <div class="answer-bar-row">
+              <div class="answer-bar-label">${val}</div>
+              <div class="answer-bar-track">
+                <div class="answer-bar-fill" style="width:${Math.round(count/totalCount*100)}%"></div>
+              </div>
+              <div class="answer-bar-count">${count}</div>
+            </div>
+          `).join('')}
+        </div>
+      ` : '<p class="text-xs text-muted mt-sm">Noch keine Antworten.</p>';
+
+      return `
+        <div class="question-card ${q.is_resolved ? 'resolved' : ''}" id="qcard-${q.id}">
+
+          <div class="question-text">${q.question_text}</div>
+          <div class="question-meta">
+            <span>Typ: ${q.answer_type}</span>
+            <span>${q.points_correct} Punkte</span>
+            <span>Deadline: ${deadline} Uhr</span>
+            <span>${totalCount} Antworten</span>
+            ${q.is_resolved
+              ? `<span class="badge badge-green">✓ Aufgelöst: ${q.correct_answer}</span>`
+              : '<span class="badge badge-gray">Offen</span>'
+            }
+          </div>
+
+          ${distHTML}
+
+          ${!q.is_resolved ? `
+            <div class="resolve-area">
+              <div class="resolve-label">Frage auflösen</div>
+              <div class="flex gap-sm">
+                <input
+                  class="input"
+                  id="correct-${q.id}"
+                  type="text"
+                  placeholder="Richtige Antwort eingeben…"
+                  style="flex:1"
+                >
+                <button
+                  class="btn btn-primary btn-sm"
+                  onclick="resolveQuestion('${q.id}', ${q.points_correct})"
+                >
+                  Auflösen
+                </button>
+              </div>
+            </div>
+          ` : `
+            <div class="resolve-area">
+              <div class="resolve-label">Richtige Antwort</div>
+              <strong style="color:var(--accent)">${q.correct_answer}</strong>
+              <span class="text-xs text-muted ml-sm">
+                · ${qAnswers.filter(a => a.is_correct).length} von ${totalCount} korrekt
+              </span>
+            </div>
+          `}
+
+        </div>
+      `;
+    }).join('');
+  }
+
+  /* ---- Frage hinzufügen ---- */
+  window.addQuestion = async function() {
+    const text     = document.getElementById('q-text').value.trim();
+    const type     = document.getElementById('q-type').value;
+    const points   = parseInt(document.getElementById('q-points').value, 10);
+    const deadline = document.getElementById('q-deadline').value;
+
+    if (!text || !deadline) {
+      showToast('Bitte Frage und Deadline angeben.', 'warning');
+      return;
+    }
+
+    const btn = document.getElementById('add-q-btn');
+    btn.disabled  = true;
+    btn.innerHTML = '<span class="loader-spinner"></span>';
+
+    const { error } = await supabase.from('special_questions').insert({
+      question_text:  text,
+      answer_type:    type,
+      points_correct: points,
+      deadline:       new Date(deadline).toISOString(),
+      sort_order:     questions.length,
+    });
+
+    btn.disabled  = false;
+    btn.textContent = 'Frage hinzufügen';
+
+    if (error) {
+      showToast('Fehler beim Hinzufügen.', 'danger');
+    } else {
+      showToast('Frage hinzugefügt ✓', 'success');
+      document.getElementById('q-text').value    = '';
+      document.getElementById('q-deadline').value = '';
+      await loadData();
+    }
+  };
+
+  /* ---- Frage auflösen & Punkte vergeben ---- */
+  window.resolveQuestion = async function(questionId, pointsCorrect) {
+    const correctAnswer = document.getElementById(`correct-${questionId}`)?.value?.trim();
+    if (!correctAnswer) {
+      showToast('Bitte richtige Antwort eingeben.', 'warning');
+      return;
+    }
+
+    const ok = await showConfirm(
+      `Richtige Antwort: "${correctAnswer}"\n\nJetzt auflösen und Punkte vergeben?`
+    );
+    if (!ok) return;
+
+    // 1. Frage als aufgelöst markieren
+    const { error: qError } = await supabase
+      .from('special_questions')
+      .update({ is_resolved: true, correct_answer: correctAnswer })
+      .eq('id', questionId);
+
+    if (qError) { showToast('Fehler beim Auflösen.', 'danger'); return; }
+
+    // 2. Antworten bewerten
+    const qAnswers = answers[questionId] ?? [];
+    const updates  = qAnswers.map(async (ans) => {
+      const isCorrect = ans.answer_value.toLowerCase().trim() ===
+                        correctAnswer.toLowerCase().trim();
+      return supabase
+        .from('special_answers')
+        .update({
+          is_correct:    isCorrect,
+          points_earned: isCorrect ? pointsCorrect : 0,
+        })
+        .eq('question_id', questionId)
+        .eq('answer_value', ans.answer_value);
+    });
+
+    await Promise.all(updates);
+
+    // 3. Leaderboard aktualisieren
+    await supabase.rpc('refresh_leaderboard');
+
+    showToast('Frage aufgelöst & Punkte vergeben ✓', 'success');
+    await loadData();
+  };
+
+  await loadData();
+</script>
+</body>
+</html>

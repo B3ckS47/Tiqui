@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tiqui – User verwalten</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <meta name="theme-color" content="#e0e5ec">
+  <style>
+    .user-card {
+      background: var(--bg);
+      box-shadow: var(--neu-raised-sm);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      margin-bottom: var(--space-sm);
+    }
+
+    .user-card-info { flex: 1; min-width: 0; }
+
+    .user-card-name {
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--text-primary);
+    }
+
+    .user-card-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .user-card-actions {
+      display: flex;
+      gap: var(--space-sm);
+      align-items: center;
+    }
+
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .skel {
+      background: var(--bg);
+      box-shadow: var(--neu-inset-sm);
+      border-radius: var(--radius-sm);
+      animation: pulse 1.5s ease-in-out infinite;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+<div class="app-shell">
+
+  <div class="page-header">
+    <div>
+      <div class="page-header-title">User 👥</div>
+      <div class="page-header-subtitle">Konten verwalten</div>
+    </div>
+    <a href="/pages/admin/admin-dashboard.html" class="btn btn-secondary btn-sm">← Admin</a>
+  </div>
+
+  <div class="page-content">
+
+    <!-- Such-/Filter-Leiste -->
+    <div class="input-group mb-lg">
+      <input class="input" id="search" type="search" placeholder="Nach Username suchen…"
+             oninput="filterUsers(this.value)">
+    </div>
+
+    <!-- Stats -->
+    <div class="card-grid mb-lg" id="user-stats">
+      <div class="skel" style="height:72px;border-radius:12px;"></div>
+      <div class="skel" style="height:72px;border-radius:12px;"></div>
+    </div>
+
+    <!-- User-Liste -->
+    <div class="section-label">Alle Spieler (<span id="user-count">…</span>)</div>
+    <div id="users-list">
+      <div class="skel" style="height:64px;border-radius:12px;margin-bottom:8px;"></div>
+      <div class="skel" style="height:64px;border-radius:12px;margin-bottom:8px;"></div>
+      <div class="skel" style="height:64px;border-radius:12px;"></div>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+  import { requireAdmin, getCurrentUser } from '/js/auth.js';
+  import { supabase }                    from '/js/supabase.js';
+  import { showToast, showConfirm, getInitials } from '/js/ui.js';
+  import { getInitials as navInitials }  from '/js/router.js';
+
+  const adminUser = await requireAdmin();
+  if (!adminUser) throw new Error('Kein Admin');
+
+  let allUsers    = [];
+  let filteredUsers = [];
+
+  async function loadUsers() {
+    const [{ data: users }, { data: lb }] = await Promise.all([
+      supabase.from('users').select('*').order('created_at', { ascending: true }),
+      supabase.from('leaderboard_cache').select('user_id, total_points, rank'),
+    ]);
+
+    const lbMap = Object.fromEntries((lb ?? []).map(l => [l.user_id, l]));
+
+    allUsers = (users ?? []).map(u => ({
+      ...u,
+      total_points: lbMap[u.id]?.total_points ?? 0,
+      rank:         lbMap[u.id]?.rank ?? null,
+    }));
+
+    filteredUsers = allUsers;
+
+    // Stats
+    const adminCount = allUsers.filter(u => u.is_admin).length;
+    document.getElementById('user-stats').innerHTML = `
+      <div class="stat-tile">
+        <div class="stat-tile-value">${allUsers.length}</div>
+        <div class="stat-tile-label">Spieler gesamt</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-tile-value">${adminCount}</div>
+        <div class="stat-tile-label">Admins</div>
+      </div>
+    `;
+
+    renderUsers();
+  }
+
+  function renderUsers() {
+    document.getElementById('user-count').textContent = filteredUsers.length;
+
+    document.getElementById('users-list').innerHTML = filteredUsers.map(u => {
+      const isMe   = u.id === adminUser.id;
+      const joined = new Date(u.created_at).toLocaleDateString('de-DE', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+      });
+
+      return `
+        <div class="user-card">
+          <div class="avatar-placeholder avatar-sm">${navInitials(u.username)}</div>
+          <div class="user-card-info">
+            <div class="user-card-name">
+              ${u.username}
+              ${u.is_admin ? '<span class="badge badge-green" style="font-size:0.65rem">Admin</span>' : ''}
+              ${isMe ? '<span class="badge badge-gray" style="font-size:0.65rem">Du</span>' : ''}
+            </div>
+            <div class="user-card-meta">
+              Beigetreten: ${joined} · ${u.total_points} Punkte
+              ${u.rank ? ` · Platz #${u.rank}` : ''}
+            </div>
+          </div>
+          <div class="user-card-actions">
+            ${!isMe ? `
+              <button
+                class="btn btn-secondary btn-sm"
+                onclick="toggleAdmin('${u.id}', '${u.username}', ${u.is_admin})"
+                title="${u.is_admin ? 'Admin entfernen' : 'Admin machen'}"
+              >
+                ${u.is_admin ? '👤' : '⭐'}
+              </button>
+            ` : ''}
+          </div>
+        </div>
+      `;
+    }).join('') || '<p class="text-muted text-sm">Keine User gefunden.</p>';
+  }
+
+  /* ---- Suche ---- */
+  window.filterUsers = function(query) {
+    const q = query.toLowerCase();
+    filteredUsers = q
+      ? allUsers.filter(u => u.username.toLowerCase().includes(q))
+      : allUsers;
+    renderUsers();
+  };
+
+  /* ---- Admin-Rolle umschalten ---- */
+  window.toggleAdmin = async function(userId, username, isCurrentlyAdmin) {
+    const action = isCurrentlyAdmin ? 'Admin-Rechte entfernen' : 'zum Admin machen';
+    const ok = await showConfirm(`"${username}" ${action}?`);
+    if (!ok) return;
+
+    const { error } = await supabase
+      .from('users')
+      .update({ is_admin: !isCurrentlyAdmin })
+      .eq('id', userId);
+
+    if (error) {
+      showToast('Fehler beim Aktualisieren.', 'danger');
+    } else {
+      showToast(`${username} ${isCurrentlyAdmin ? 'ist kein Admin mehr' : 'ist jetzt Admin'} ✓`, 'success');
+      await loadUsers();
+    }
+  };
+
+  await loadUsers();
+</script>
+</body>
+</html>

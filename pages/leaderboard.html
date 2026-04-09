@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tiqui – Rangliste</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <meta name="theme-color" content="#e0e5ec">
+  <style>
+    /* ---- Podest (Top 3) ---- */
+    .podium {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: var(--space-md);
+      margin: var(--space-lg) 0 var(--space-xl);
+      padding: 0 var(--space-sm);
+    }
+
+    .podium-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-sm);
+      max-width: 120px;
+    }
+
+    .podium-item.rank-1 { order: 2; }
+    .podium-item.rank-2 { order: 1; }
+    .podium-item.rank-3 { order: 3; }
+
+    .podium-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-full);
+      background: var(--accent-bg);
+      box-shadow: var(--neu-raised);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--accent-dark);
+      position: relative;
+    }
+
+    .podium-item.rank-1 .podium-avatar {
+      width: 68px;
+      height: 68px;
+      font-size: 1.3rem;
+      background: #fef3cd;
+      color: var(--gold-dark);
+      box-shadow: var(--neu-raised), 0 0 0 3px var(--gold);
+    }
+
+    .podium-crown {
+      position: absolute;
+      top: -14px;
+      font-size: 1.1rem;
+    }
+
+    .podium-name {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-align: center;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: 100%;
+    }
+
+    .podium-points {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .podium-block {
+      width: 100%;
+      border-radius: var(--radius-md) var(--radius-md) 0 0;
+      box-shadow: var(--neu-raised-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      font-weight: 900;
+    }
+
+    .podium-item.rank-1 .podium-block {
+      height: 56px;
+      background: linear-gradient(180deg, #fef3cd, #fde68a);
+      color: var(--gold-dark);
+    }
+
+    .podium-item.rank-2 .podium-block {
+      height: 40px;
+      background: var(--bg);
+      color: var(--text-muted);
+    }
+
+    .podium-item.rank-3 .podium-block {
+      height: 28px;
+      background: var(--bg);
+      color: var(--text-muted);
+    }
+
+    /* ---- Mein Platz (Highlight) ---- */
+    .my-rank-card {
+      background: var(--bg);
+      box-shadow: var(--neu-raised);
+      border-radius: var(--radius-xl);
+      padding: var(--space-md) var(--space-lg);
+      margin-bottom: var(--space-lg);
+      border-left: 4px solid var(--accent);
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    .my-rank-position {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--accent);
+      min-width: 40px;
+    }
+
+    .my-rank-info { flex: 1; }
+
+    .my-rank-name {
+      font-weight: 700;
+      color: var(--text-primary);
+      font-size: 0.95rem;
+    }
+
+    .my-rank-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .my-rank-points {
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: var(--accent);
+    }
+
+    /* ---- View-Toggle (Gesamt / Tipps / Quiz) ---- */
+    .view-toggle {
+      display: flex;
+      background: var(--bg);
+      box-shadow: var(--neu-inset-sm);
+      border-radius: var(--radius-full);
+      padding: 4px;
+      margin-bottom: var(--space-lg);
+    }
+
+    .view-toggle-btn {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      background: transparent;
+      border-radius: var(--radius-full);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: var(--font-sans);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .view-toggle-btn.active {
+      background: var(--bg);
+      box-shadow: var(--neu-raised-sm);
+      color: var(--accent);
+    }
+
+    /* ---- Ranglisten-Liste ---- */
+    .rank-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    .rank-row-extended {
+      background: var(--bg);
+      box-shadow: var(--neu-raised-sm);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      transition: all var(--transition);
+      cursor: pointer;
+    }
+
+    .rank-row-extended.is-me {
+      box-shadow: var(--neu-raised), 0 0 0 2px var(--accent);
+    }
+
+    .rank-row-extended:active {
+      box-shadow: var(--neu-inset-sm);
+      transform: scale(0.98);
+    }
+
+    .rank-pos {
+      font-size: 0.95rem;
+      font-weight: 800;
+      min-width: 28px;
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    .rank-pos.p-1 { color: #c9a227; }
+    .rank-pos.p-2 { color: #9e9e9e; }
+    .rank-pos.p-3 { color: #a0522d; }
+
+    .rank-row-info { flex: 1; min-width: 0; }
+
+    .rank-row-name {
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .rank-row-breakdown {
+      display: flex;
+      gap: var(--space-sm);
+      margin-top: 3px;
+      flex-wrap: wrap;
+    }
+
+    .breakdown-pill {
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .rank-row-pts {
+      font-weight: 800;
+      font-size: 1rem;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+
+    /* ---- Skeleton ---- */
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .skel {
+      background: var(--bg);
+      box-shadow: var(--neu-inset-sm);
+      border-radius: var(--radius-sm);
+      animation: pulse 1.5s ease-in-out infinite;
+      display: block;
+    }
+
+    /* ---- Kategorie-Stats (Ausklapp-Detail) ---- */
+    .detail-panel {
+      background: var(--bg);
+      box-shadow: var(--neu-inset-sm);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      margin-top: var(--space-sm);
+      display: none;
+    }
+
+    .detail-panel.open { display: block; }
+
+    .detail-stat-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      font-size: 0.8rem;
+    }
+
+    .detail-stat-row:last-child { border-bottom: none; }
+
+    @media (prefers-color-scheme: dark) {
+      .detail-stat-row { border-color: rgba(255,255,255,0.05); }
+    }
+  </style>
+</head>
+<body>
+<div class="app-shell">
+
+  <div class="page-header">
+    <div>
+      <div class="page-header-title">Rangliste 📊</div>
+      <div class="page-header-subtitle" id="lb-subtitle">Wird geladen…</div>
+    </div>
+  </div>
+
+  <div class="page-content">
+
+    <!-- Podest Top 3 -->
+    <div class="podium" id="podium">
+      <div class="skel" style="height:160px;flex:1;border-radius:12px;"></div>
+      <div class="skel" style="height:160px;flex:1;border-radius:12px;"></div>
+      <div class="skel" style="height:160px;flex:1;border-radius:12px;"></div>
+    </div>
+
+    <!-- Mein Platz -->
+    <div class="section-label">Mein Platz</div>
+    <div class="my-rank-card" id="my-rank-card">
+      <div class="skel" style="width:100%;height:48px;border-radius:8px;"></div>
+    </div>
+
+    <!-- View Toggle -->
+    <div class="view-toggle" id="view-toggle">
+      <button class="view-toggle-btn active" data-view="total">Gesamt</button>
+      <button class="view-toggle-btn" data-view="tips">⚽ Tipps</button>
+      <button class="view-toggle-btn" data-view="quiz">🧠 Quiz</button>
+      <button class="view-toggle-btn" data-view="special">🏆 Prognosen</button>
+    </div>
+
+    <!-- Ranglisten-Liste -->
+    <div class="section-label">Alle Spieler</div>
+    <div class="rank-list" id="rank-list">
+      <div class="skel" style="height:64px;border-radius:12px;margin-bottom:8px;"></div>
+      <div class="skel" style="height:64px;border-radius:12px;margin-bottom:8px;"></div>
+      <div class="skel" style="height:64px;border-radius:12px;"></div>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+  import { requireAuth } from '/js/auth.js';
+  import { supabase }    from '/js/supabase.js';
+  import { initNav, getInitials } from '/js/router.js';
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  }
+
+  const session = await requireAuth();
+  if (!session) throw new Error('Nicht eingeloggt');
+  const userId = session.user.id;
+
+  initNav();
+
+  let leaderboard = [];
+  let currentView = 'total';
+
+  /* ---- Daten laden ---- */
+  async function loadLeaderboard() {
+    const { data, error } = await supabase
+      .from('leaderboard')   // View mit Usernamen
+      .select('*')
+      .order('rank', { ascending: true });
+
+    if (error || !data) return;
+    leaderboard = data;
+
+    document.getElementById('lb-subtitle').textContent =
+      `${data.length} Spieler · Stand: jetzt`;
+
+    renderPodium();
+    renderMyRank();
+    renderList();
+  }
+
+  /* ---- Podest ---- */
+  function renderPodium() {
+    const top3   = leaderboard.slice(0, 3);
+    const podium = document.getElementById('podium');
+
+    if (top3.length < 1) {
+      podium.innerHTML = `<p class="text-muted text-sm">Noch keine Punkte vergeben.</p>`;
+      return;
+    }
+
+    // Positionen: 1=Mitte, 2=Links, 3=Rechts
+    const slots = [
+      top3[1] ?? null,  // links  (Platz 2)
+      top3[0] ?? null,  // mitte  (Platz 1)
+      top3[2] ?? null,  // rechts (Platz 3)
+    ];
+
+    const medals = ['🥈', '🥇', '🥉'];
+    const ranks  = [2, 1, 3];
+
+    podium.innerHTML = slots.map((player, i) => {
+      if (!player) return `<div style="flex:1"></div>`;
+      const isMe = player.user_id === userId;
+      return `
+        <div class="podium-item rank-${ranks[i]}">
+          <div class="podium-avatar">
+            ${ranks[i] === 1 ? '<span class="podium-crown">👑</span>' : ''}
+            ${getInitials(player.username)}
+          </div>
+          <div class="podium-name">${isMe ? 'Du' : player.username}</div>
+          <div class="podium-points">${player.total_points} Pkt</div>
+          <div class="podium-block">${medals[i]}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  /* ---- Mein Platz ---- */
+  function renderMyRank() {
+    const me  = leaderboard.find(p => p.user_id === userId);
+    const el  = document.getElementById('my-rank-card');
+
+    if (!me) {
+      el.innerHTML = `<p class="text-muted text-sm">Noch keine Punkte — gib deinen ersten Tipp ab!</p>`;
+      return;
+    }
+
+    el.innerHTML = `
+      <div class="my-rank-position">#${me.rank}</div>
+      <div class="my-rank-info">
+        <div class="my-rank-name">Du (${me.username})</div>
+        <div class="my-rank-sub">
+          ⚽ ${me.tip_points} · 🧠 ${me.quiz_points} · 🏆 ${me.special_points}
+        </div>
+      </div>
+      <div class="my-rank-points">${me.total_points} Pkt</div>
+    `;
+  }
+
+  /* ---- Ranglisten-Liste ---- */
+  function renderList() {
+    const list = document.getElementById('rank-list');
+
+    const pointKey = {
+      total:   'total_points',
+      tips:    'tip_points',
+      quiz:    'quiz_points',
+      special: 'special_points',
+    }[currentView];
+
+    // Nach aktuellem View sortieren
+    const sorted = [...leaderboard].sort((a, b) => (b[pointKey] ?? 0) - (a[pointKey] ?? 0));
+
+    list.innerHTML = sorted.map((player, idx) => {
+      const isMe  = player.user_id === userId;
+      const pos   = idx + 1;
+      const pts   = player[pointKey] ?? 0;
+      const posClass = pos <= 3 ? `p-${pos}` : '';
+
+      return `
+        <div class="rank-row-extended ${isMe ? 'is-me' : ''}"
+             onclick="toggleDetail('${player.user_id}')">
+          <div class="rank-pos ${posClass}">${pos}</div>
+          <div class="avatar-placeholder avatar-sm">${getInitials(player.username)}</div>
+          <div class="rank-row-info">
+            <div class="rank-row-name">${isMe ? `${player.username} (Du)` : player.username}</div>
+            <div class="rank-row-breakdown">
+              <span class="breakdown-pill">⚽ ${player.tip_points}</span>
+              <span class="breakdown-pill">🧠 ${player.quiz_points}</span>
+              <span class="breakdown-pill">🏆 ${player.special_points}</span>
+            </div>
+          </div>
+          <div class="rank-row-pts">${pts}</div>
+        </div>
+        <div class="detail-panel" id="detail-${player.user_id}">
+          <div class="detail-stat-row">
+            <span>⚽ Tipp-Punkte</span>
+            <strong>${player.tip_points}</strong>
+          </div>
+          <div class="detail-stat-row">
+            <span>🧠 Quiz-Punkte</span>
+            <strong>${player.quiz_points}</strong>
+          </div>
+          <div class="detail-stat-row">
+            <span>🏆 Prognose-Punkte</span>
+            <strong>${player.special_points}</strong>
+          </div>
+          <div class="detail-stat-row">
+            <span style="font-weight:700">Gesamt</span>
+            <strong style="color:var(--accent)">${player.total_points}</strong>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  /* ---- Detail ausklappen ---- */
+  window.toggleDetail = function(uid) {
+    const panel = document.getElementById(`detail-${uid}`);
+    if (!panel) return;
+    panel.classList.toggle('open');
+  };
+
+  /* ---- View-Toggle ---- */
+  document.getElementById('view-toggle').addEventListener('click', e => {
+    const btn = e.target.closest('.view-toggle-btn');
+    if (!btn) return;
+    document.querySelectorAll('.view-toggle-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentView = btn.dataset.view;
+    renderList();
+  });
+
+  await loadLeaderboard();
+</script>
+</body>
+</html>

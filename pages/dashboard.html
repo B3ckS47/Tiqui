@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tiqui – Dashboard</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <meta name="theme-color" content="#e0e5ec">
+  <style>
+    .greeting-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      padding: var(--space-lg);
+      padding-bottom: 0;
+    }
+    .greeting-text h1 {
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .greeting-text p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .points-banner {
+      margin: var(--space-lg);
+      background: var(--bg);
+      box-shadow: var(--neu-raised);
+      border-radius: var(--radius-xl);
+      padding: var(--space-lg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+    }
+    .points-value {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--accent);
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+    .points-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 4px;
+    }
+    .rank-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg);
+      box-shadow: var(--neu-inset-sm);
+      border-radius: var(--radius-lg);
+      padding: var(--space-md) var(--space-lg);
+      flex-shrink: 0;
+    }
+    .rank-badge-value {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--text-primary);
+      line-height: 1;
+    }
+    .rank-badge-label {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .quick-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-md);
+    }
+    .quick-action {
+      background: var(--bg);
+      box-shadow: var(--neu-raised);
+      border-radius: var(--radius-lg);
+      padding: var(--space-md);
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      transition: all var(--transition);
+    }
+    .quick-action:active {
+      box-shadow: var(--neu-inset-sm);
+      transform: scale(0.97);
+    }
+    .quick-action-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      background: var(--bg);
+      box-shadow: var(--neu-inset-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+    }
+    .quick-action-accent .quick-action-icon {
+      background: var(--accent-bg);
+      box-shadow: none;
+    }
+    .quick-action-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .quick-action-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .next-match-card {
+      background: var(--bg);
+      box-shadow: var(--neu-raised);
+      border-radius: var(--radius-xl);
+      padding: var(--space-lg);
+      position: relative;
+      overflow: hidden;
+    }
+    .next-match-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent-light), var(--accent));
+    }
+    .next-match-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-bottom: var(--space-md);
+    }
+    .next-match-teams {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      margin-bottom: var(--space-md);
+    }
+    .next-match-team    { flex: 1; text-align: center; }
+    .next-match-flag    { font-size: 2.2rem; display: block; }
+    .next-match-name    { font-size: 0.85rem; font-weight: 700; color: var(--text-primary); margin-top: var(--space-xs); }
+    .next-match-vs      { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); }
+    .next-match-countdown {
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: var(--space-md);
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .skel {
+      background: var(--bg);
+      box-shadow: var(--neu-inset-sm);
+      border-radius: var(--radius-sm);
+      animation: pulse 1.5s ease-in-out infinite;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+<div class="app-shell">
+
+  <div class="greeting-header">
+    <div class="greeting-text">
+      <h1 id="greeting">Hallo! 👋</h1>
+      <p>WM 2026 · Tiqui</p>
+    </div>
+    <div id="user-avatar" class="avatar-placeholder avatar-md">?</div>
+  </div>
+
+  <div class="page-content">
+
+    <!-- Punkte-Banner -->
+    <div class="points-banner">
+      <div>
+        <div class="points-value" id="total-points">
+          <span class="skel" style="width:64px;height:36px;border-radius:8px;"></span>
+        </div>
+        <div class="points-label">Gesamtpunkte</div>
+        <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;" id="points-breakdown">
+          <span class="badge badge-green skel" style="width:80px;height:20px;"></span>
+          <span class="badge badge-gray skel"  style="width:80px;height:20px;"></span>
+        </div>
+      </div>
+      <div class="rank-badge">
+        <div class="rank-badge-value" id="user-rank">–</div>
+        <div class="rank-badge-label">Platz</div>
+      </div>
+    </div>
+
+    <!-- Statistik-Kacheln -->
+    <div class="section-label">Meine Statistiken</div>
+    <div class="card-grid mb-lg">
+      <div class="stat-tile stat-tile-accent">
+        <div class="stat-tile-value" id="stat-tips">–</div>
+        <div class="stat-tile-label">Tipps abgegeben</div>
+      </div>
+      <div class="stat-tile stat-tile-gold">
+        <div class="stat-tile-value" id="stat-exact">–</div>
+        <div class="stat-tile-label">Exakte Treffer</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-tile-value" id="stat-quiz">–</div>
+        <div class="stat-tile-label">Quiz-Punkte</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-tile-value" id="stat-special">–</div>
+        <div class="stat-tile-label">Prognose-Punkte</div>
+      </div>
+    </div>
+
+    <!-- Nächstes Spiel -->
+    <div class="section-label">Nächstes Spiel</div>
+    <div class="next-match-card mb-lg" id="next-match-area">
+      <div class="empty-state" style="padding:var(--space-lg) 0;">
+        <span class="empty-state-icon">📅</span>
+        <p class="empty-state-title">Kein Spiel in Sicht</p>
+        <p class="text-sm">Schau später wieder vorbei.</p>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="section-label">Schnellzugriff</div>
+    <div class="quick-actions">
+      <a href="/pages/tips.html" class="quick-action quick-action-accent">
+        <div class="quick-action-icon">⚽</div>
+        <div class="quick-action-title">Tipps abgeben</div>
+        <div class="quick-action-sub" id="qa-tips-sub">Spielplan ansehen</div>
+      </a>
+      <a href="/pages/quiz.html" class="quick-action">
+        <div class="quick-action-icon">🧠</div>
+        <div class="quick-action-title">Quiz spielen</div>
+        <div class="quick-action-sub" id="qa-quiz-sub">Wissen testen</div>
+      </a>
+      <a href="/pages/special.html" class="quick-action">
+        <div class="quick-action-icon">🏆</div>
+        <div class="quick-action-title">Prognosen</div>
+        <div class="quick-action-sub">Vor-WM-Tipps</div>
+      </a>
+      <a href="/pages/leaderboard.html" class="quick-action">
+        <div class="quick-action-icon">📊</div>
+        <div class="quick-action-title">Rangliste</div>
+        <div class="quick-action-sub" id="qa-rank-sub">Aktueller Stand</div>
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+  import { requireAuth, getCurrentUser } from '/js/auth.js';
+  import { supabase }                    from '/js/supabase.js';
+  import { initNav, getInitials }        from '/js/router.js';
+  import { getCountdown, formatDateTime } from '/js/ui.js';
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  }
+
+  const session = await requireAuth();
+  if (!session) throw new Error('Nicht eingeloggt');
+
+  initNav();
+
+  /* ---- User & Punkte ---- */
+  async function loadUserData() {
+    const user = await getCurrentUser();
+    if (!user) return;
+
+    const hour  = new Date().getHours();
+    const greet = hour < 12 ? 'Guten Morgen' : hour < 18 ? 'Hallo' : 'Guten Abend';
+    document.getElementById('greeting').textContent = `${greet}, ${user.username}! 👋`;
+
+    const av = document.getElementById('user-avatar');
+    av.textContent = getInitials(user.username);
+
+    const { data: lb } = await supabase
+      .from('leaderboard_cache')
+      .select('tip_points, special_points, quiz_points, total_points, rank')
+      .eq('user_id', user.id)
+      .single();
+
+    if (lb) {
+      document.getElementById('total-points').textContent = lb.total_points ?? 0;
+      document.getElementById('user-rank').textContent    = lb.rank ? `#${lb.rank}` : '–';
+      document.getElementById('stat-quiz').textContent    = lb.quiz_points    ?? 0;
+      document.getElementById('stat-special').textContent = lb.special_points ?? 0;
+      document.getElementById('points-breakdown').innerHTML = `
+        <span class="badge badge-green">⚽ ${lb.tip_points ?? 0} Tipps</span>
+        <span class="badge badge-gray">🧠 ${lb.quiz_points ?? 0} Quiz</span>
+        ${lb.special_points ? `<span class="badge badge-gold">🏆 ${lb.special_points} Prognosen</span>` : ''}
+      `;
+      if (lb.rank) {
+        document.getElementById('qa-rank-sub').textContent = `Du bist auf Platz ${lb.rank}`;
+      }
+    }
+
+    const { data: tips } = await supabase
+      .from('tips')
+      .select('id, point_reason')
+      .eq('user_id', user.id);
+
+    if (tips) {
+      document.getElementById('stat-tips').textContent  = tips.length;
+      document.getElementById('stat-exact').textContent = tips.filter(t => t.point_reason === 'exact').length;
+    }
+  }
+
+  /* ---- Nächstes Spiel ---- */
+  async function loadNextMatch() {
+    const { data: match } = await supabase
+      .from('matches')
+      .select('*')
+      .eq('status', 'upcoming')
+      .order('kickoff_at', { ascending: true })
+      .limit(1)
+      .single();
+
+    if (!match) return;
+
+    const countdown = getCountdown(match.kickoff_at);
+    const area      = document.getElementById('next-match-area');
+
+    area.innerHTML = `
+      <div class="next-match-label">Nächstes Spiel · ${match.group_name ?? match.stage}</div>
+      <div class="next-match-teams">
+        <div class="next-match-team">
+          <span class="next-match-flag">${match.home_team}</span>
+          <div class="next-match-name">${match.home_team}</div>
+        </div>
+        <div class="next-match-vs">VS</div>
+        <div class="next-match-team">
+          <span class="next-match-flag">${match.away_team}</span>
+          <div class="next-match-name">${match.away_team}</div>
+        </div>
+      </div>
+      ${countdown ? `<div class="next-match-countdown">⏱ in ${countdown}</div>` : ''}
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <span class="text-xs text-muted">${formatDateTime(match.kickoff_at)} Uhr</span>
+        <a href="/pages/tips.html" class="btn btn-primary btn-sm">Jetzt tippen</a>
+      </div>
+    `;
+
+    // Prüfen ob Tipp für nächstes Spiel schon abgegeben
+    const { data: myTip } = await supabase
+      .from('tips')
+      .select('id')
+      .eq('match_id', match.id)
+      .eq('user_id', session.user.id)
+      .maybeSingle();
+
+    if (!myTip) {
+      document.getElementById('qa-tips-sub').textContent = '⚠ Tipp noch offen!';
+    }
+  }
+
+  await Promise.all([loadUserData(), loadNextMatch()]);
+</script>
+</body>
+</html>
