@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tiqui – Profil</title>
+  <link rel="manifest" href="../manifest.json">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <meta name="theme-color" content="#f0f2f5">
+  <style>
+
+    /* ---- Header-Kachel ---- */
+    .profile-header { padding: var(--space-md); padding-bottom: 0; }
+
+    .profile-header-tile {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      position: relative;
+      min-height: 72px;
+    }
+
+    .profile-header-tile::after {
+      content: '';
+      position: absolute;
+      inset: -10px;
+      background-image: url('../icons/tile-stadium.png');
+      background-size: cover;
+      background-position: center top;
+      filter: blur(3px);
+      z-index: 0;
+    }
+
+    .profile-header-tile::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.58);
+      z-index: 1;
+    }
+
+    .profile-header-inner {
+      position: relative;
+      z-index: 2;
+      padding: var(--space-md);
+    }
+
+    .profile-header-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .profile-header-sub {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.7);
+      margin-top: 2px;
+    }
+
+    /* ---- Profil-Hero ---- */
+    .profile-hero {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      padding: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-sm);
+      text-align: center;
+    }
+
+    /* Avatar */
+    .avatar-wrap {
+      position: relative;
+      width: 88px;
+      height: 88px;
+      flex-shrink: 0;
+    }
+
+    .profile-avatar {
+      width: 88px;
+      height: 88px;
+      border-radius: var(--radius-full);
+      background: var(--accent);
+      border: 3px solid var(--bg-card);
+      box-shadow: var(--shadow-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: white;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .profile-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .avatar-edit-btn {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-full);
+      background: var(--accent);
+      border: 2px solid var(--bg-card);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Versteckter File Input */
+    #avatar-file-input { display: none; }
+
+    .profile-name {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-top: var(--space-xs);
+    }
+
+    .profile-email {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .profile-badges {
+      display: flex;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: var(--space-xs);
+    }
+
+    /* ---- Stats ---- */
+    .profile-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-sm);
+    }
+
+    .profile-stat {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      padding: var(--space-md) var(--space-sm);
+      text-align: center;
+    }
+
+    .profile-stat-value {
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--text-primary);
+      line-height: 1;
+    }
+
+    .profile-stat-label {
+      font-size: 0.62rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* ---- Einladungs-Karte ---- */
+    .invite-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      padding: var(--space-md);
+    }
+
+    .invite-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-md);
+    }
+
+    .invite-card-title { font-weight: 700; color: var(--text-primary); font-size: 0.95rem; }
+    .invite-card-sub   { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+
+    .invite-link-box {
+      background: var(--bg);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      padding: var(--space-sm) var(--space-md);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-sm);
+    }
+
+    .invite-link-text {
+      flex: 1;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .invite-list { display: flex; flex-direction: column; gap: var(--space-sm); margin-top: var(--space-md); }
+
+    .invite-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: var(--space-sm) var(--space-md);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: 0.8rem;
+    }
+
+    .invite-item-token {
+      flex: 1;
+      font-family: var(--font-mono);
+      color: var(--text-secondary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* ---- Einstellungs-Liste ---- */
+    .settings-list {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .settings-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      padding: var(--space-md) var(--space-lg);
+      cursor: pointer;
+      transition: background var(--transition);
+      border-bottom: 1px solid var(--border);
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .settings-item:last-child { border-bottom: none; }
+    .settings-item:active { background: var(--bg); }
+
+    .settings-item-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-md);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .settings-item-text { flex: 1; }
+    .settings-item-label { font-weight: 600; color: var(--text-primary); font-size: 0.9rem; }
+    .settings-item-sub   { font-size: 0.72rem; color: var(--text-muted); margin-top: 1px; }
+    .settings-item-arrow { color: var(--text-muted); font-size: 1rem; }
+
+    .settings-item-danger .settings-item-label { color: var(--danger); }
+
+    /* PWA Install Button — versteckt bis Prompt verfügbar */
+    #pwa-install-item { display: none; }
+
+    /* ---- Avatar Upload Modal ---- */
+    .avatar-modal-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 200;
+      display: flex; align-items: flex-end;
+      animation: fadein 0.2s ease;
+    }
+
+    .avatar-modal {
+      background: var(--bg-card);
+      border-radius: 20px 20px 0 0;
+      width: 100%; max-width: 480px;
+      margin: 0 auto;
+      padding: var(--space-lg);
+      padding-bottom: env(safe-area-inset-bottom, 16px);
+      animation: slideup 0.25s ease;
+    }
+
+    @keyframes fadein  { from{opacity:0} to{opacity:1} }
+    @keyframes slideup {
+      from { transform: translateY(100%); }
+      to   { transform: translateY(0); }
+    }
+
+    .avatar-modal-handle {
+      width: 36px; height: 4px;
+      background: var(--border-strong);
+      border-radius: var(--radius-full);
+      margin: 0 auto var(--space-lg);
+    }
+
+    .avatar-preview {
+      width: 100px; height: 100px;
+      border-radius: var(--radius-full);
+      background: var(--accent);
+      border: 3px solid var(--border);
+      margin: 0 auto var(--space-lg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; font-weight: 800; color: white;
+      overflow: hidden;
+    }
+
+    .avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* ---- Loader ---- */
+    .loader-spinner {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.4); border-top-color: white;
+      border-radius: 50%; display: inline-block;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .skel {
+      background: #e9ecf0; border-radius: var(--radius-sm);
+      animation: pulse 1.4s ease-in-out infinite; display: block;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.45} }
+
+  </style>
+</head>
+<body>
+<div class="app-shell">
+
+  <!-- Header-Kachel -->
+  <div class="profile-header">
+    <div class="profile-header-tile">
+      <div class="profile-header-inner">
+        <div class="profile-header-title">Profil</div>
+        <div class="profile-header-sub" id="profile-header-sub">Wird geladen…</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content" style="padding-top:var(--space-md);">
+
+    <!-- Profil-Hero -->
+    <div class="profile-hero mb-md" id="profile-hero">
+      <div class="avatar-wrap">
+        <div class="profile-avatar" onclick="openAvatarModal()" id="profile-avatar">
+          <span class="skel" style="width:88px;height:88px;border-radius:50%;"></span>
+        </div>
+        <div class="avatar-edit-btn" onclick="openAvatarModal()">✏️</div>
+      </div>
+      <div class="profile-name" id="profile-name">
+        <span class="skel" style="width:120px;height:20px;display:inline-block;"></span>
+      </div>
+      <div class="profile-email" id="profile-email"></div>
+      <div class="profile-badges" id="profile-badges"></div>
+    </div>
+
+    <!-- Statistiken -->
+    <div class="section-label">Statistiken</div>
+    <div class="profile-stats mb-md" id="profile-stats">
+      <div class="profile-stat"><div class="skel" style="height:56px;"></div></div>
+      <div class="profile-stat"><div class="skel" style="height:56px;"></div></div>
+      <div class="profile-stat"><div class="skel" style="height:56px;"></div></div>
+    </div>
+
+    <!-- Einladungen -->
+    <div class="section-label">Freunde einladen</div>
+    <div class="invite-card mb-md">
+      <div class="invite-card-header">
+        <div>
+          <div class="invite-card-title">Einladungslink</div>
+          <div class="invite-card-sub">Gültig 7 Tage · einmalig verwendbar</div>
+        </div>
+        <button class="btn btn-primary btn-sm" id="generate-btn" onclick="generateInvite()">
+          Erstellen
+        </button>
+      </div>
+
+      <div id="invite-link-area" class="hidden">
+        <div class="invite-link-box">
+          <span class="invite-link-text" id="invite-link-text"></span>
+          <button class="btn btn-sm btn-secondary" onclick="copyLink()">Kopieren</button>
+        </div>
+        <button class="btn btn-secondary btn-block btn-sm" onclick="shareLink()">Teilen ↗</button>
+      </div>
+
+      <div id="my-invites-area" class="hidden">
+        <hr class="divider">
+        <div class="section-label" style="margin-top:var(--space-md);">Meine Einladungen</div>
+        <div class="invite-list" id="invite-list"></div>
+      </div>
+    </div>
+
+    <!-- Einstellungen -->
+    <div class="section-label">Einstellungen</div>
+    <div class="settings-list mb-md">
+
+      <div class="settings-item" onclick="openAvatarModal()">
+        <div class="settings-item-icon">🖼️</div>
+        <div class="settings-item-text">
+          <div class="settings-item-label">Profilbild ändern</div>
+          <div class="settings-item-sub">Foto hochladen</div>
+        </div>
+        <span class="settings-item-arrow">›</span>
+      </div>
+
+      <div class="settings-item" onclick="editUsername()">
+        <div class="settings-item-icon">✏️</div>
+        <div class="settings-item-text">
+          <div class="settings-item-label">Benutzername ändern</div>
+          <div class="settings-item-sub" id="current-username-sub">Wird geladen…</div>
+        </div>
+        <span class="settings-item-arrow">›</span>
+      </div>
+
+      <!-- PWA Install (wird per JS eingeblendet) -->
+      <div class="settings-item" id="pwa-install-item" onclick="installPWA()">
+        <div class="settings-item-icon">📲</div>
+        <div class="settings-item-text">
+          <div class="settings-item-label">App installieren</div>
+          <div class="settings-item-sub">Tiqui als PWA auf dem Homescreen</div>
+        </div>
+        <span class="settings-item-arrow">›</span>
+      </div>
+
+      <a href="../pages/leaderboard.html" class="settings-item">
+        <div class="settings-item-icon">📊</div>
+        <div class="settings-item-text">
+          <div class="settings-item-label">Zur Rangliste</div>
+          <div class="settings-item-sub">Aktuellen Stand ansehen</div>
+        </div>
+        <span class="settings-item-arrow">›</span>
+      </a>
+
+      <a href="../pages/admin/admin-dashboard.html" class="settings-item hidden" id="admin-link">
+        <div class="settings-item-icon">⚙️</div>
+        <div class="settings-item-text">
+          <div class="settings-item-label">Admin-Bereich</div>
+          <div class="settings-item-sub">Spiele, Quiz & User verwalten</div>
+        </div>
+        <span class="settings-item-arrow">›</span>
+      </a>
+
+    </div>
+
+    <!-- Logout -->
+    <div class="settings-list mb-md">
+      <div class="settings-item settings-item-danger" onclick="handleLogout()">
+        <div class="settings-item-icon">🚪</div>
+        <div class="settings-item-text">
+          <div class="settings-item-label">Abmelden</div>
+        </div>
+        <span class="settings-item-arrow">›</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Versteckter File Input -->
+<input type="file" id="avatar-file-input" accept="image/*">
+
+<script type="module">
+  import { requireAuth, getCurrentUser, logout } from '../js/auth.js';
+  import { supabase }                            from '../js/supabase.js';
+  import { initNav, getInitials }                from '../js/router.js';
+  import { showToast, showConfirm }              from '../js/ui.js';
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('../sw.js').catch(() => {});
+  }
+
+  const session = await requireAuth();
+  if (!session) throw new Error('Nicht eingeloggt');
+  const userId = session.user.id;
+  const email  = session.user.email;
+
+  initNav();
+
+  let currentUser       = null;
+  let currentInviteLink = '';
+  let pwaPrompt         = null;
+  let selectedFile      = null;
+
+  /* ================================================
+     PWA Install Prompt abfangen
+  ================================================ */
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    pwaPrompt = e;
+    document.getElementById('pwa-install-item').style.display = 'flex';
+  });
+
+  window.addEventListener('appinstalled', () => {
+    document.getElementById('pwa-install-item').style.display = 'none';
+    pwaPrompt = null;
+    showToast('Tiqui wurde installiert! 🎉', 'success');
+  });
+
+  window.installPWA = async function() {
+    if (!pwaPrompt) {
+      showToast('Installation nicht verfügbar. Nutze den Browser-Menü-Button.', 'info');
+      return;
+    }
+    pwaPrompt.prompt();
+    const { outcome } = await pwaPrompt.userChoice;
+    if (outcome === 'accepted') pwaPrompt = null;
+  };
+
+  /* ================================================
+     PROFIL LADEN
+  ================================================ */
+  async function loadProfile() {
+    currentUser = await getCurrentUser();
+    if (!currentUser) return;
+
+    // Header Sub
+    document.getElementById('profile-header-sub').textContent = currentUser.username;
+
+    // Avatar
+    const avatarEl = document.getElementById('profile-avatar');
+    if (currentUser.avatar_url) {
+      avatarEl.innerHTML = `<img src="${currentUser.avatar_url}" alt="Avatar">`;
+    } else {
+      avatarEl.textContent = getInitials(currentUser.username);
+    }
+
+    document.getElementById('profile-name').textContent  = currentUser.username;
+    document.getElementById('profile-email').textContent = email;
+
+    document.getElementById('profile-badges').innerHTML = [
+      currentUser.is_admin ? '<span class="badge badge-green">Admin</span>' : '',
+      `<span class="badge badge-gray">Dabei seit ${formatJoinDate(currentUser.created_at)}</span>`,
+    ].join('');
+
+    document.getElementById('current-username-sub').textContent = `Aktuell: ${currentUser.username}`;
+
+    if (currentUser.is_admin) {
+      document.getElementById('admin-link').classList.remove('hidden');
+    }
+
+    // Stats
+    const { data: lb } = await supabase
+      .from('leaderboard_cache')
+      .select('total_points, rank, tip_points, quiz_points, special_points')
+      .eq('user_id', userId)
+      .single();
+
+    document.getElementById('profile-stats').innerHTML = `
+      <div class="profile-stat">
+        <div class="profile-stat-value" style="color:var(--accent)">${lb?.total_points ?? 0}</div>
+        <div class="profile-stat-label">Gesamt</div>
+      </div>
+      <div class="profile-stat">
+        <div class="profile-stat-value">${lb?.rank ? `#${lb.rank}` : '–'}</div>
+        <div class="profile-stat-label">Platz</div>
+      </div>
+      <div class="profile-stat">
+        <div class="profile-stat-value">${lb?.tip_points ?? 0}</div>
+        <div class="profile-stat-label">Tipps</div>
+      </div>`;
+
+    loadMyInvites();
+  }
+
+  /* ================================================
+     AVATAR UPLOAD
+  ================================================ */
+  window.openAvatarModal = function() {
+    const backdrop = document.createElement('div');
+    backdrop.className = 'avatar-modal-backdrop';
+    backdrop.id = 'avatar-modal-backdrop';
+
+    const initials = getInitials(currentUser?.username ?? '?');
+    const currentAvatar = currentUser?.avatar_url
+      ? `<img src="${currentUser.avatar_url}" alt="Avatar">`
+      : initials;
+
+    backdrop.innerHTML = `
+      <div class="avatar-modal">
+        <div class="avatar-modal-handle"></div>
+        <div class="avatar-preview" id="avatar-preview">${currentAvatar}</div>
+        <button class="btn btn-secondary btn-block mb-md" onclick="triggerFileInput()">
+          📷 Foto auswählen
+        </button>
+        <button class="btn btn-primary btn-block mb-md hidden" id="avatar-upload-btn"
+                onclick="uploadAvatar()">
+          Hochladen
+        </button>
+        <button class="btn btn-block" style="color:var(--text-muted);background:transparent;border:none;"
+                onclick="closeAvatarModal()">
+          Abbrechen
+        </button>
+      </div>`;
+
+    backdrop.addEventListener('click', e => {
+      if (e.target === backdrop) closeAvatarModal();
+    });
+
+    document.body.appendChild(backdrop);
+  };
+
+  window.closeAvatarModal = function() {
+    document.getElementById('avatar-modal-backdrop')?.remove();
+    selectedFile = null;
+  };
+
+  window.triggerFileInput = function() {
+    document.getElementById('avatar-file-input').click();
+  };
+
+  /* File ausgewählt → Vorschau anzeigen */
+  document.getElementById('avatar-file-input').addEventListener('change', e => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('Bild darf maximal 5 MB groß sein.', 'warning');
+      return;
+    }
+
+    selectedFile = file;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const preview = document.getElementById('avatar-preview');
+      if (preview) preview.innerHTML = `<img src="${ev.target.result}" alt="Vorschau">`;
+      const uploadBtn = document.getElementById('avatar-upload-btn');
+      if (uploadBtn) uploadBtn.classList.remove('hidden');
+    };
+    reader.readAsDataURL(file);
+    e.target.value = ''; // Reset damit man dasselbe Bild nochmal wählen kann
+  });
+
+  window.uploadAvatar = async function() {
+    if (!selectedFile) return;
+    const btn = document.getElementById('avatar-upload-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loader-spinner"></span> Wird hochgeladen…';
+
+    try {
+      // Immer als .png speichern um Pfad-Probleme zu vermeiden
+      const filePath = `${userId}/avatar.png`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, selectedFile, {
+          upsert:      true,
+          contentType: selectedFile.type,
+          cacheControl: '3600',
+        });
+
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        throw uploadError;
+      }
+
+      const { data: urlData } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+
+      const avatarUrl = `${urlData.publicUrl}?t=${Date.now()}`;
+
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({ avatar_url: avatarUrl })
+        .eq('id', userId);
+
+      if (updateError) {
+        console.error('Update error:', updateError);
+        throw updateError;
+      }
+
+      showToast('Profilbild gespeichert ✓', 'success');
+      closeAvatarModal();
+      await loadProfile();
+    } catch (err) {
+      console.error('Avatar upload failed:', err);
+      showToast(`Fehler: ${err.message ?? 'Unbekannter Fehler'}`, 'danger');
+      btn.disabled = false;
+      btn.textContent = 'Hochladen';
+    }
+  };
+
+  /* ================================================
+     EINLADUNGEN
+  ================================================ */
+  async function loadMyInvites() {
+    const { data: invites } = await supabase
+      .from('invitations')
+      .select('token, used, expires_at')
+      .eq('invited_by', userId)
+      .order('created_at', { ascending: false })
+      .limit(10);
+
+    if (!invites?.length) return;
+
+    document.getElementById('my-invites-area').classList.remove('hidden');
+    document.getElementById('invite-list').innerHTML = invites.map(inv => {
+      const expired = new Date(inv.expires_at) < new Date();
+      const status  = inv.used
+        ? '<span class="badge badge-green">Verwendet</span>'
+        : expired
+          ? '<span class="badge badge-danger">Abgelaufen</span>'
+          : '<span class="badge badge-gray">Offen</span>';
+      return `
+        <div class="invite-item">
+          <span class="invite-item-token">${inv.token.slice(0, 16)}…</span>
+          <div>${status}</div>
+        </div>`;
+    }).join('');
+  }
+
+  window.generateInvite = async function() {
+    const btn = document.getElementById('generate-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loader-spinner"></span>';
+
+    try {
+      const { data, error } = await supabase
+        .from('invitations')
+        .insert({ invited_by: userId })
+        .select('token')
+        .single();
+
+      if (error) throw error;
+
+      currentInviteLink = `${window.location.origin}/pages/register.html?token=${data.token}`;
+      document.getElementById('invite-link-text').textContent = currentInviteLink;
+      document.getElementById('invite-link-area').classList.remove('hidden');
+      showToast('Einladungslink erstellt!', 'success');
+      loadMyInvites();
+    } catch {
+      showToast('Fehler beim Erstellen.', 'danger');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Neu erstellen';
+    }
+  };
+
+  window.copyLink = async function() {
+    try {
+      await navigator.clipboard.writeText(currentInviteLink);
+      showToast('Link kopiert ✓', 'success');
+    } catch {
+      showToast('Bitte Link manuell kopieren.', 'warning');
+    }
+  };
+
+  window.shareLink = async function() {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Tiqui – WM 2026',
+          text:  'Ich lade dich zu Tiqui ein — dem WM 2026 Tipp- & Quiz-Spiel!',
+          url:   currentInviteLink,
+        });
+      } catch {}
+    } else {
+      await window.copyLink();
+    }
+  };
+
+  /* ================================================
+     BENUTZERNAME ÄNDERN — Bottom Sheet
+  ================================================ */
+  window.editUsername = function() {
+    const current = currentUser?.username ?? '';
+
+    const backdrop = document.createElement('div');
+    backdrop.className = 'avatar-modal-backdrop';
+    backdrop.id = 'username-modal-backdrop';
+
+    backdrop.innerHTML = `
+      <div class="avatar-modal">
+        <div class="avatar-modal-handle"></div>
+        <div style="font-size:1rem;font-weight:800;color:var(--text-primary);margin-bottom:4px;">
+          Benutzername ändern
+        </div>
+        <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:var(--space-lg);">
+          Aktuell: <strong>${current}</strong>
+        </div>
+        <input
+          id="username-input"
+          type="text"
+          value="${current}"
+          maxlength="30"
+          placeholder="Neuer Benutzername…"
+          style="
+            width:100%;
+            padding:12px var(--space-md);
+            border:1.5px solid var(--border-strong);
+            border-radius:var(--radius-md);
+            background:var(--bg-card);
+            color:var(--text-primary);
+            font-family:var(--font-sans);
+            font-size:1rem;
+            outline:none;
+            margin-bottom:var(--space-lg);
+            box-sizing:border-box;
+          "
+        >
+        <button class="btn btn-primary btn-block mb-md" onclick="saveUsername()">
+          Speichern
+        </button>
+        <button class="btn btn-block"
+                style="color:var(--text-muted);background:transparent;border:none;"
+                onclick="closeUsernameModal()">
+          Abbrechen
+        </button>
+      </div>`;
+
+    backdrop.addEventListener('click', e => {
+      if (e.target === backdrop) closeUsernameModal();
+    });
+
+    document.body.appendChild(backdrop);
+
+    // Input fokussieren und Text markieren
+    setTimeout(() => {
+      const input = document.getElementById('username-input');
+      input?.focus();
+      input?.select();
+      input?.addEventListener('keydown', e => {
+        if (e.key === 'Enter') saveUsername();
+        if (e.key === 'Escape') closeUsernameModal();
+      });
+      // Border beim Fokus
+      if (input) {
+        input.addEventListener('focus', () => input.style.borderColor = 'var(--accent)');
+        input.addEventListener('blur',  () => input.style.borderColor = 'var(--border-strong)');
+      }
+    }, 100);
+  };
+
+  window.closeUsernameModal = function() {
+    document.getElementById('username-modal-backdrop')?.remove();
+  };
+
+  window.saveUsername = async function() {
+    const input   = document.getElementById('username-input');
+    const newName = input?.value?.trim() ?? '';
+
+    if (newName.length < 2) {
+      input.style.borderColor = 'var(--danger)';
+      showToast('Benutzername muss mindestens 2 Zeichen lang sein.', 'warning');
+      return;
+    }
+
+    if (newName === currentUser?.username) {
+      closeUsernameModal();
+      return;
+    }
+
+    const saveBtn = document.querySelector('#username-modal-backdrop .btn-primary');
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<span class="loader-spinner"></span>';
+
+    const { error } = await supabase
+      .from('users')
+      .update({ username: newName })
+      .eq('id', userId);
+
+    if (error) {
+      const isDuplicate = error.code === '23505' || error.message?.toLowerCase().includes('unique');
+      showToast(isDuplicate ? 'Dieser Name ist bereits vergeben.' : 'Fehler beim Speichern.', 'danger');
+      input.style.borderColor = 'var(--danger)';
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'Speichern';
+    } else {
+      showToast('Benutzername geändert ✓', 'success');
+      closeUsernameModal();
+      await loadProfile();
+    }
+  };
+
+  /* ================================================
+     LOGOUT
+  ================================================ */
+  window.handleLogout = async function() {
+    const ok = await showConfirm('Möchtest du dich wirklich abmelden?');
+    if (ok) await logout();
+  };
+
+  /* ---- Hilfsfunktionen ---- */
+  function formatJoinDate(iso) {
+    return new Date(iso).toLocaleDateString('de-DE', { month: 'long', year: 'numeric' });
+  }
+
+  await loadProfile();
+</script>
+</body>
+</html>

@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tiqui – Tipps</title>
+  <link rel="manifest" href="../manifest.json">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <meta name="theme-color" content="#f0f2f5">
+  <style>
+
+    /* ---- Header-Kachel mit Stadion-Bild ---- */
+    .tips-header { padding: var(--space-md); padding-bottom: 0; }
+
+    .tips-header-tile {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      position: relative;
+      min-height: 72px;
+    }
+
+    .tips-header-tile::after {
+      content: '';
+      position: absolute;
+      inset: -10px;
+      background-image: var(--header-bg, url('../icons/tile-tipps.png'));
+      background-size: cover;
+      background-position: center;
+      filter: blur(3px);
+      z-index: 0;
+    }
+
+    .tips-header-tile::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.58);
+      z-index: 1;
+    }
+
+    .tips-header-inner {
+      position: relative;
+      z-index: 2;
+      padding: var(--space-md);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .tips-header-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .tips-header-sub {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.7);
+      margin-top: 2px;
+    }
+
+    .tips-header-badge {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: var(--radius-full);
+      padding: 4px 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: white;
+    }
+
+    /* ---- Tab-Toggle ---- */
+    .tab-toggle {
+      display: flex;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 3px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 9px;
+      border: none;
+      background: transparent;
+      border-radius: var(--radius-md);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: var(--font-sans);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .tab-btn.active { background: var(--accent); color: white; box-shadow: var(--shadow-sm); }
+
+    /* ---- Filter-Toggle (5 Buttons) ---- */
+    .filter-toggle {
+      display: flex;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 3px;
+      box-shadow: var(--shadow-sm);
+      gap: 2px;
+    }
+
+    .filter-btn {
+      flex: 1;
+      padding: 7px 2px;
+      border: none;
+      background: transparent;
+      border-radius: var(--radius-md);
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: var(--font-sans);
+      -webkit-tap-highlight-color: transparent;
+      white-space: nowrap;
+    }
+
+    .filter-btn.active { background: var(--accent); color: white; box-shadow: var(--shadow-sm); }
+
+    /* ---- Gruppenüberschrift ---- */
+    .group-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin: var(--space-md) 0 var(--space-xs);
+    }
+
+    .group-header-line { flex: 1; height: 1px; background: var(--border); }
+
+    /* ---- Kompakte Spiel-Zeile ---- */
+    .match-row {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 3px solid transparent;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      padding: var(--space-sm) var(--space-md);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-bottom: 6px;
+      cursor: pointer;
+      transition: all var(--transition);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .match-row:active       { opacity: 0.8; transform: scale(0.99); }
+    .match-row.tipped       { border-left-color: var(--accent); }
+    .match-row.open         { border-left-color: var(--danger); }
+    .match-row.live         { border-left-color: #f59e0b; }
+    .match-row.finished     { border-left-color: var(--border-strong); opacity: 0.7; }
+
+    .match-row-flags {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .match-row-vs { font-size: 0.58rem; color: var(--text-muted); font-weight: 600; }
+
+    .match-row-info { flex: 1; min-width: 0; }
+
+    .match-row-teams {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .match-row-meta { font-size: 0.68rem; color: var(--text-muted); margin-top: 1px; }
+
+    .match-row-right {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2px;
+    }
+
+    .match-row-score {
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .match-row-score.result { color: var(--text-primary); }
+
+    .row-badge {
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      border: 1px solid transparent;
+    }
+
+    .rb-live     { background:#fef3cd; color:#92400e; border-color:#fcd34d; }
+    .rb-tipped   { background:var(--accent-bg); color:var(--accent-dark); border-color:var(--accent-border); }
+    .rb-open     { background:var(--danger-bg); color:var(--danger); border-color:var(--danger-border); }
+    .rb-exact    { background:var(--accent-bg); color:var(--accent-dark); border-color:var(--accent-border); }
+    .rb-diff     { background:#eff6ff; color:#1d4ed8; border-color:#bfdbfe; }
+    .rb-tendency { background:var(--gold-bg); color:var(--gold-dark); border-color:#f9e08b; }
+    .rb-wrong    { background:var(--danger-bg); color:var(--danger); border-color:var(--danger-border); }
+
+    /* ---- Bottom Sheet ---- */
+    .sheet-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 200;
+      animation: fadein 0.2s ease;
+    }
+
+    .sheet {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 480px;
+      background: var(--bg-card);
+      border-radius: 20px 20px 0 0;
+      box-shadow: 0 -4px 24px rgba(0,0,0,0.15);
+      z-index: 201;
+      animation: slideup 0.28s ease;
+      max-height: 88vh;
+      overflow-y: auto;
+      padding-bottom: env(safe-area-inset-bottom, 16px);
+    }
+
+    @keyframes fadein  { from{opacity:0} to{opacity:1} }
+    @keyframes slideup {
+      from { transform: translateX(-50%) translateY(100%); }
+      to   { transform: translateX(-50%) translateY(0); }
+    }
+
+    .sheet-handle {
+      width: 36px; height: 4px;
+      background: var(--border-strong);
+      border-radius: var(--radius-full);
+      margin: 12px auto var(--space-md);
+    }
+
+    .sheet-header {
+      padding: 0 var(--space-lg) var(--space-md);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sheet-teams {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      margin-bottom: 6px;
+    }
+
+    .sheet-team { flex: 1; display: flex; align-items: center; gap: var(--space-sm); }
+    .sheet-team.away { flex-direction: row-reverse; text-align: right; }
+    .sheet-team-flag { font-size: 1.8rem; }
+    .sheet-team-name { font-size: 0.9rem; font-weight: 700; color: var(--text-primary); }
+    .sheet-vs        { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); }
+    .sheet-meta      { font-size: 0.75rem; color: var(--text-muted); text-align: center; }
+
+    .sheet-body { padding: var(--space-lg); }
+
+    /* Score-Eingabe */
+    .sheet-score-area {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-xl);
+      margin-bottom: var(--space-lg);
+    }
+
+    .score-ctrl { display: flex; flex-direction: column; align-items: center; gap: var(--space-sm); }
+
+    .score-btn {
+      width: 36px; height: 36px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-strong);
+      background: var(--bg-card);
+      box-shadow: var(--shadow-sm);
+      font-size: 1.1rem; font-weight: 700;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all var(--transition);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .score-btn:active { transform: scale(0.88); }
+
+    .score-disp {
+      width: 72px; height: 72px;
+      border-radius: var(--radius-md);
+      border: 2px solid var(--border-strong);
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; font-weight: 900;
+      color: var(--text-primary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .score-sep {
+      font-size: 2rem; font-weight: 900;
+      color: var(--text-muted);
+      padding-top: 36px;
+    }
+
+    /* Ergebnis */
+    .sheet-result {
+      text-align: center;
+      margin-bottom: var(--space-lg);
+    }
+
+    .sheet-result-score {
+      font-size: 3rem; font-weight: 900;
+      color: var(--text-primary);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.05em;
+    }
+
+    .sheet-result-sub { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
+
+    /* Alle Tipps */
+    .all-tips-section {
+      border-top: 1px solid var(--border);
+      padding-top: var(--space-md);
+      margin-top: var(--space-md);
+    }
+
+    .all-tips-title {
+      font-size: 0.7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.07em;
+      color: var(--text-muted);
+      margin-bottom: var(--space-sm);
+    }
+
+    .all-tips-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+    }
+
+    .all-tips-row:last-child { border-bottom: none; }
+
+    .all-tips-user {
+      display: flex; align-items: center; gap: var(--space-sm);
+      font-weight: 600; color: var(--text-primary);
+    }
+
+    .all-tips-right { display: flex; align-items: center; gap: 6px; }
+
+    .all-tips-score {
+      font-weight: 800; color: var(--accent);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ---- Prognosen ---- */
+    .prognose-intro {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      padding: var(--space-md);
+      position: relative; overflow: hidden;
+    }
+
+    .prognose-intro::before {
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--gold-light), var(--gold));
+    }
+
+    .prognose-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      padding: var(--space-md);
+      margin-bottom: var(--space-sm);
+    }
+
+    .prognose-card.answered { border-color: var(--accent-border); }
+    .prognose-card.locked   { opacity: 0.7; }
+
+    .prognose-header {
+      display: flex; align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-md); margin-bottom: var(--space-md);
+    }
+
+    .prognose-question { font-size: 0.95rem; font-weight: 700; color: var(--text-primary); line-height: 1.4; flex: 1; }
+
+    .prognose-pts {
+      flex-shrink: 0;
+      background: var(--gold-bg); border: 1px solid #f9e08b;
+      border-radius: var(--radius-md); padding: 4px 10px; text-align: center;
+    }
+
+    .prognose-pts-value { font-size: 1rem; font-weight: 900; color: var(--gold-dark); line-height: 1; }
+    .prognose-pts-label { font-size: 0.58rem; color: var(--gold); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    .prognose-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: var(--space-sm); margin-top: var(--space-md);
+      padding-top: var(--space-sm); border-top: 1px solid var(--border);
+    }
+
+    .prognose-deadline        { font-size: 0.72rem; color: var(--text-muted); }
+    .prognose-deadline.urgent { color: var(--danger); font-weight: 600; }
+
+    .prognose-result {
+      background: #f8fafc; border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: var(--space-sm) var(--space-md);
+      margin-top: var(--space-sm);
+    }
+
+    .prognose-result-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 3px 0; font-size: 0.82rem;
+    }
+
+    .prognose-result-row:not(:last-child) { border-bottom: 1px solid var(--border); }
+
+    .answer-select {
+      width: 100%; padding: 10px var(--space-md);
+      border: 1px solid var(--border-strong); border-radius: var(--radius-md);
+      background: var(--bg-card); color: var(--text-primary);
+      font-family: var(--font-sans); font-size: 0.95rem; outline: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239ca3af' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px;
+    }
+
+    .answer-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(46,158,79,0.15); }
+
+    .answer-input {
+      width: 100%; padding: 10px var(--space-md);
+      border: 1px solid var(--border-strong); border-radius: var(--radius-md);
+      background: var(--bg-card); color: var(--text-primary);
+      font-family: var(--font-sans); font-size: 0.95rem; outline: none;
+    }
+
+    .answer-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(46,158,79,0.15); }
+
+    .number-control { display: flex; align-items: center; gap: var(--space-md); justify-content: center; }
+
+    .number-btn {
+      width: 40px; height: 40px; border-radius: var(--radius-full);
+      border: 1px solid var(--border-strong); background: var(--bg-card);
+      box-shadow: var(--shadow-sm); font-size: 1.2rem; font-weight: 700;
+      color: var(--text-secondary); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all var(--transition);
+    }
+
+    .number-btn:active { transform: scale(0.92); }
+
+    .number-display {
+      min-width: 80px; height: 56px; border-radius: var(--radius-md);
+      border: 2px solid var(--border-strong); background: var(--bg-card);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.75rem; font-weight: 900; color: var(--text-primary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ---- Loader ---- */
+    .loader-spinner {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.4); border-top-color: white;
+      border-radius: 50%; display: inline-block;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .skel {
+      background: #e9ecf0; border-radius: var(--radius-sm);
+      animation: pulse 1.4s ease-in-out infinite; display: block;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.45} }
+
+  </style>
+</head>
+<body>
+<div class="app-shell">
+
+  <!-- Header-Kachel -->
+  <div class="tips-header">
+    <div class="tips-header-tile">
+      <div class="tips-header-inner">
+        <div>
+          <div class="tips-header-title" id="page-title">Tipps ⚽</div>
+          <div class="tips-header-sub" id="page-subtitle">Wird geladen…</div>
+        </div>
+        <div class="tips-header-badge hidden" id="header-badge"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content" style="padding-top:var(--space-md);">
+
+    <!-- Tab-Toggle -->
+    <div class="tab-toggle mb-md">
+      <button class="tab-btn active" id="tab-tipps" onclick="switchTab('tipps')">⚽ Spieltipps</button>
+      <button class="tab-btn" id="tab-prognose" onclick="switchTab('prognose')">🏆 Prognosen</button>
+    </div>
+
+    <!-- ===== TIPPS ===== -->
+    <div id="view-tipps">
+
+      <div class="filter-toggle mb-md" id="filter-toggle">
+        <button class="filter-btn active" data-filter="today">Heute</button>
+        <button class="filter-btn" data-filter="tomorrow">Morgen</button>
+        <button class="filter-btn" data-filter="open">Offen</button>
+        <button class="filter-btn" data-filter="finished">Beendet</button>
+        <button class="filter-btn" data-filter="all">Alle</button>
+      </div>
+
+      <div id="matches-container">
+        <div class="skel" style="height:54px;border-radius:8px;margin-bottom:6px;"></div>
+        <div class="skel" style="height:54px;border-radius:8px;margin-bottom:6px;"></div>
+        <div class="skel" style="height:54px;border-radius:8px;margin-bottom:6px;"></div>
+        <div class="skel" style="height:54px;border-radius:8px;"></div>
+      </div>
+
+    </div>
+
+    <!-- ===== PROGNOSEN ===== -->
+    <div id="view-prognose" class="hidden">
+
+      <div class="prognose-intro mb-md">
+        <div style="font-weight:800;font-size:0.95rem;color:var(--text-primary);margin-bottom:4px;">Vor-WM-Prognosen 🏆</div>
+        <div style="font-size:0.8rem;color:var(--text-secondary);line-height:1.5;">
+          Beantworte diese Fragen vor WM-Start — richtige Prognosen bringen Bonuspunkte.
+        </div>
+        <div style="margin-top:8px;" id="prognose-status"></div>
+      </div>
+
+      <div id="prognose-container">
+        <div class="skel" style="height:140px;border-radius:12px;margin-bottom:8px;"></div>
+        <div class="skel" style="height:140px;border-radius:12px;"></div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+  import { requireAuth } from '../js/auth.js';
+  import { supabase }    from '../js/supabase.js';
+  import { initNav, getInitials } from '../js/router.js';
+  import { showToast, formatDateTime, getCountdown, renderAvatar } from '../js/ui.js';
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('../sw.js').catch(() => {});
+  }
+
+  const session = await requireAuth();
+  if (!session) throw new Error('Nicht eingeloggt');
+  const userId = session.user.id;
+
+  initNav();
+
+  let currentTab    = 'tipps';
+  let currentFilter = 'today';
+  let allMatches    = [];
+  let myTips        = {};
+  let questions     = [];
+  let myAnswers     = {};
+  let _myUsername   = null;
+
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('tab') === 'prognose') currentTab = 'prognose';
+
+  /* ---- Teams & Flags ---- */
+  const WM_TEAMS = ['Argentinien','Australien','Belgien','Brasilien','Chile',
+    'Dänemark','Deutschland','Ecuador','England','Frankreich','Iran','Italien',
+    'Japan','Kanada','Kolumbien','Kroatien','Marokko','Mexiko','Niederlande',
+    'Nigeria','Österreich','Polen','Portugal','Saudi-Arabien','Schottland',
+    'Schweiz','Senegal','Serbien','Südkorea','Spanien','Tschechien','Türkei',
+    'Ungarn','Uruguay','USA','Wales'].sort();
+
+  const FLAGS = {
+    'Deutschland':'🇩🇪','Frankreich':'🇫🇷','Spanien':'🇪🇸','England':'🏴󠁧󠁢󠁥󠁮󠁧󠁿',
+    'Italien':'🇮🇹','Portugal':'🇵🇹','Brasilien':'🇧🇷','Argentinien':'🇦🇷',
+    'Niederlande':'🇳🇱','Belgien':'🇧🇪','Kroatien':'🇭🇷','Dänemark':'🇩🇰',
+    'Schweiz':'🇨🇭','Österreich':'🇦🇹','Polen':'🇵🇱','USA':'🇺🇸',
+    'Mexiko':'🇲🇽','Kanada':'🇨🇦','Japan':'🇯🇵','Südkorea':'🇰🇷',
+    'Australien':'🇦🇺','Marokko':'🇲🇦','Senegal':'🇸🇳','Nigeria':'🇳🇬',
+    'Saudi-Arabien':'🇸🇦','Iran':'🇮🇷','Uruguay':'🇺🇾','Kolumbien':'🇨🇴',
+    'Ecuador':'🇪🇨','Türkei':'🇹🇷','Serbien':'🇷🇸',
+  };
+  const flag = t => FLAGS[t] ?? '🏳';
+
+  /* ================================================ TAB */
+  window.switchTab = function(tab) {
+    currentTab = tab;
+    document.getElementById('view-tipps').classList.toggle('hidden', tab !== 'tipps');
+    document.getElementById('view-prognose').classList.toggle('hidden', tab !== 'prognose');
+    document.getElementById('tab-tipps').classList.toggle('active', tab === 'tipps');
+    document.getElementById('tab-prognose').classList.toggle('active', tab === 'prognose');
+
+    // Hintergrundbild tauschen
+    const tile = document.querySelector('.tips-header-tile::after');
+    const img  = tab === 'tipps' ? '/icons/tile-tipps.png' : '/icons/tile-prognose.png';
+    document.documentElement.style.setProperty('--header-bg', `url('${img}')`);
+
+    if (tab === 'tipps') {
+      document.getElementById('page-title').textContent = 'Tipps ⚽';
+      updateTipHeader();
+    } else {
+      document.getElementById('page-title').textContent = 'Prognosen 🏆';
+      document.getElementById('page-subtitle').textContent = 'Vor-WM-Tipps';
+      document.getElementById('header-badge').classList.add('hidden');
+    }
+  };
+
+  switchTab(currentTab);
+
+  /* ================================================ TIPPS */
+  async function loadTipps() {
+    const [{ data: matches }, { data: tips }] = await Promise.all([
+      supabase.from('matches').select('*').order('kickoff_at', { ascending: true }),
+      supabase.from('tips').select('*').eq('user_id', userId),
+    ]);
+    allMatches = matches ?? [];
+    myTips     = Object.fromEntries((tips ?? []).map(t => [t.match_id, t]));
+    updateTipHeader();
+    renderMatches();
+  }
+
+  function updateTipHeader() {
+    if (currentTab !== 'tipps') return;
+    const open = allMatches.filter(m => m.status === 'upcoming' && !myTips[m.id]).length;
+    document.getElementById('page-subtitle').textContent =
+      open > 0 ? `${open} Tipp${open !== 1 ? 's' : ''} noch offen` : 'Alle Tipps abgegeben ✓';
+    const badge = document.getElementById('header-badge');
+    if (open > 0) { badge.textContent = `${open} offen`; badge.classList.remove('hidden'); }
+    else { badge.classList.add('hidden'); }
+  }
+
+  function isToday(iso) {
+    const d = new Date(iso), n = new Date();
+    return d.toDateString() === n.toDateString();
+  }
+
+  function isTomorrow(iso) {
+    const d = new Date(iso), n = new Date();
+    n.setDate(n.getDate() + 1);
+    return d.toDateString() === n.toDateString();
+  }
+
+  function renderMatches() {
+    const container = document.getElementById('matches-container');
+    let filtered = allMatches;
+
+    if      (currentFilter === 'open')     filtered = allMatches.filter(m => m.status === 'upcoming' && !myTips[m.id]);
+    else if (currentFilter === 'today')    filtered = allMatches.filter(m => isToday(m.kickoff_at));
+    else if (currentFilter === 'tomorrow') filtered = allMatches.filter(m => isTomorrow(m.kickoff_at));
+    else if (currentFilter === 'finished') filtered = allMatches.filter(m => m.status === 'finished');
+
+    if (!filtered.length) {
+      container.innerHTML = `<div class="empty-state">
+        <span class="empty-state-icon">✓</span>
+        <p class="empty-state-title">${currentFilter === 'open' ? 'Alle Tipps abgegeben!' : 'Keine Spiele in dieser Kategorie.'}</p>
+      </div>`;
+      return;
+    }
+
+    const groups = {};
+    filtered.forEach(m => {
+      const key = m.group_name ?? stageLabel(m.stage);
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(m);
+    });
+
+    container.innerHTML = Object.entries(groups).map(([group, matches]) => `
+      <div class="group-header">
+        <span class="section-label" style="margin:0">${group}</span>
+        <div class="group-header-line"></div>
+      </div>
+      ${matches.map(renderMatchRow).join('')}
+    `).join('');
+  }
+
+  function renderMatchRow(match) {
+    const tip      = myTips[match.id];
+    const isTipped = !!tip;
+    const timeStr  = formatDateTime(match.kickoff_at);
+    const countdown = getCountdown(match.kickoff_at);
+
+    let rowClass = '';
+    let rightHtml = '';
+
+    if (match.status === 'live') {
+      rowClass = 'live';
+      rightHtml = `
+        <span class="row-badge rb-live">LIVE</span>
+        ${tip ? `<div class="match-row-score">${tip.home_score_tip}:${tip.away_score_tip}</div>` : ''}`;
+    } else if (match.status === 'finished') {
+      rowClass = 'finished';
+      const icons  = { exact:'🎯', diff:'✓', tendency:'~', wrong:'✕' };
+      const cls    = { exact:'rb-exact', diff:'rb-diff', tendency:'rb-tendency', wrong:'rb-wrong' };
+      rightHtml = `
+        <div class="match-row-score result">${match.home_score ?? '?'}:${match.away_score ?? '?'}</div>
+        ${tip
+          ? `<span class="row-badge ${cls[tip.point_reason] ?? ''}">${icons[tip.point_reason] ?? '–'} ${tip.points_earned ?? 0}P</span>`
+          : `<span style="font-size:0.65rem;color:var(--text-muted);">–</span>`}`;
+    } else if (isTipped) {
+      rowClass = 'tipped';
+      rightHtml = `
+        <div class="match-row-score">${tip.home_score_tip}:${tip.away_score_tip}</div>
+        <span class="row-badge rb-tipped">✓</span>`;
+    } else {
+      rowClass = 'open';
+      rightHtml = `
+        <span class="row-badge rb-open">Offen</span>
+        ${countdown ? `<div style="font-size:0.6rem;color:var(--text-muted);">⏱ ${countdown}</div>` : ''}`;
+    }
+
+    return `
+      <div class="match-row ${rowClass}" onclick="openSheet('${match.id}')">
+        <div class="match-row-flags">
+          ${flag(match.home_team)}
+          <span class="match-row-vs">vs</span>
+          ${flag(match.away_team)}
+        </div>
+        <div class="match-row-info">
+          <div class="match-row-teams">${match.home_team} – ${match.away_team}</div>
+          <div class="match-row-meta">${timeStr} Uhr</div>
+        </div>
+        <div class="match-row-right">${rightHtml}</div>
+      </div>`;
+  }
+
+  /* ================================================ BOTTOM SHEET */
+  window.openSheet = async function(matchId) {
+    const match = allMatches.find(m => m.id === matchId);
+    if (!match) return;
+
+    const tip       = myTips[matchId];
+    const isLocked  = match.status !== 'upcoming';
+    const timeStr   = formatDateTime(match.kickoff_at);
+    const countdown = getCountdown(match.kickoff_at);
+
+    /* Score-Bereich */
+    let scoreHtml = '';
+    if (match.status === 'finished') {
+      const resultMap = {
+        exact:    ['🎯 Exakt',    'var(--accent)'],
+        diff:     ['✓ Differenz', '#1d4ed8'],
+        tendency: ['~ Tendenz',   'var(--gold-dark)'],
+        wrong:    ['✕ Daneben',   'var(--danger)'],
+      };
+      const [label, color] = resultMap[tip?.point_reason] ?? ['–', 'var(--text-muted)'];
+      scoreHtml = `
+        <div class="sheet-result">
+          <div class="sheet-result-score">${match.home_score ?? '?'} : ${match.away_score ?? '?'}</div>
+          <div class="sheet-result-sub">Endergebnis</div>
+          ${tip ? `
+            <div style="margin-top:var(--space-sm);font-size:0.85rem;">
+              Dein Tipp: <strong>${tip.home_score_tip} : ${tip.away_score_tip}</strong>
+              <span style="margin-left:6px;color:${color};font-weight:700;">${label} · ${tip.points_earned ?? 0} Pkt</span>
+            </div>` : `<div class="sheet-result-sub">Nicht getippt</div>`}
+        </div>`;
+    } else if (match.status === 'live') {
+      scoreHtml = `
+        <div class="sheet-result">
+          <div style="font-size:0.8rem;font-weight:700;color:#f59e0b;margin-bottom:8px;">● LIVE</div>
+          ${tip ? `
+            <div style="font-size:0.85rem;color:var(--text-secondary);">
+              Dein Tipp: <strong>${tip.home_score_tip} : ${tip.away_score_tip}</strong>
+            </div>` : `<div class="sheet-result-sub">Nicht getippt</div>`}
+        </div>`;
+    } else {
+      const homeVal = tip?.home_score_tip ?? 0;
+      const awayVal = tip?.away_score_tip ?? 0;
+      scoreHtml = `
+        <div class="sheet-score-area">
+          <div class="score-ctrl">
+            <button class="score-btn" onclick="chg('home','up')">+</button>
+            <div class="score-disp" id="sh-home">${homeVal}</div>
+            <button class="score-btn" onclick="chg('home','down')">−</button>
+          </div>
+          <div class="score-sep">:</div>
+          <div class="score-ctrl">
+            <button class="score-btn" onclick="chg('away','up')">+</button>
+            <div class="score-disp" id="sh-away">${awayVal}</div>
+            <button class="score-btn" onclick="chg('away','down')">−</button>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-block" id="sh-save" onclick="saveSheet('${matchId}')">
+          ${tip ? 'Tipp ändern' : 'Tippen'}
+        </button>`;
+    }
+
+    /* Alle Tipps der Mitspieler */
+    let allTipsHtml = '';
+    if (match.status !== 'upcoming') {
+      const { data: allTips } = await supabase
+        .from('tips')
+        .select('home_score_tip, away_score_tip, points_earned, point_reason, users(username, avatar_url)')
+        .eq('match_id', matchId)
+        .order('points_earned', { ascending: false });
+
+      if (allTips?.length) {
+        const myName   = await getMyUsername();
+        const icons    = { exact:'🎯', diff:'✓', tendency:'~', wrong:'✕' };
+        const clsMap   = { exact:'rb-exact', diff:'rb-diff', tendency:'rb-tendency', wrong:'rb-wrong' };
+        allTipsHtml = `
+          <div class="all-tips-section">
+            <div class="all-tips-title">Alle Tipps (${allTips.length})</div>
+            ${allTips.map(t => `
+              <div class="all-tips-row">
+                <div class="all-tips-user">
+                  ${renderAvatar(t.users?.username, t.users?.avatar_url, 'sm')}
+                  ${t.users?.username ?? '–'}
+                  ${t.users?.username === myName ? '<span style="font-size:0.65rem;color:var(--accent);font-weight:700;">(Du)</span>' : ''}
+                </div>
+                <div class="all-tips-right">
+                  <span class="all-tips-score">${t.home_score_tip} : ${t.away_score_tip}</span>
+                  ${match.status === 'finished' && t.point_reason
+                    ? `<span class="row-badge ${clsMap[t.point_reason]}">${icons[t.point_reason]} ${t.points_earned}P</span>`
+                    : ''}
+                </div>
+              </div>`).join('')}
+          </div>`;
+      }
+    }
+
+    /* Sheet aufbauen */
+    closeSheet();
+    const backdrop = document.createElement('div');
+    backdrop.className = 'sheet-backdrop';
+    backdrop.onclick   = closeSheet;
+
+    const sheet = document.createElement('div');
+    sheet.className = 'sheet';
+    sheet.id        = 'tip-sheet';
+    sheet.innerHTML = `
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <div class="sheet-teams">
+          <div class="sheet-team">
+            <span class="sheet-team-flag">${flag(match.home_team)}</span>
+            <span class="sheet-team-name">${match.home_team}</span>
+          </div>
+          <div class="sheet-vs">VS</div>
+          <div class="sheet-team away">
+            <span class="sheet-team-flag">${flag(match.away_team)}</span>
+            <span class="sheet-team-name">${match.away_team}</span>
+          </div>
+        </div>
+        <div class="sheet-meta">${timeStr} Uhr${countdown ? ` · ⏱ ${countdown}` : ''}${match.group_name ? ` · ${match.group_name}` : ''}</div>
+      </div>
+      <div class="sheet-body">
+        ${scoreHtml}
+        ${allTipsHtml}
+      </div>`;
+
+    document.body.appendChild(backdrop);
+    document.body.appendChild(sheet);
+
+    /* Swipe-to-close */
+    let startY = 0;
+    sheet.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
+    sheet.addEventListener('touchend', e => { if (e.changedTouches[0].clientY - startY > 80) closeSheet(); });
+  };
+
+  function closeSheet() {
+    document.querySelector('.sheet-backdrop')?.remove();
+    document.getElementById('tip-sheet')?.remove();
+  }
+
+  window.chg = function(team, action) {
+    const el  = document.getElementById(`sh-${team}`);
+    let val = parseInt(el.textContent, 10);
+    if (action === 'up')   val = Math.min(val + 1, 20);
+    if (action === 'down') val = Math.max(val - 1, 0);
+    el.textContent = val;
+  };
+
+  window.saveSheet = async function(matchId) {
+    const btn  = document.getElementById('sh-save');
+    const home = parseInt(document.getElementById('sh-home').textContent, 10);
+    const away = parseInt(document.getElementById('sh-away').textContent, 10);
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loader-spinner"></span>';
+
+    try {
+      const { error } = await supabase.from('tips').upsert(
+        { user_id: userId, match_id: matchId, home_score_tip: home, away_score_tip: away },
+        { onConflict: 'user_id,match_id' }
+      );
+      if (error) throw error;
+      myTips[matchId] = { ...myTips[matchId], home_score_tip: home, away_score_tip: away };
+      showToast(`Tipp gespeichert: ${home} : ${away} ✓`, 'success');
+      closeSheet();
+      updateTipHeader();
+      renderMatches();
+    } catch {
+      showToast('Fehler beim Speichern.', 'danger');
+      btn.disabled = false;
+      btn.textContent = 'Tippen';
+    }
+  };
+
+  /* Filter */
+  document.getElementById('filter-toggle').addEventListener('click', e => {
+    const btn = e.target.closest('.filter-btn');
+    if (!btn) return;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    renderMatches();
+  });
+
+  /* ================================================ PROGNOSEN */
+  async function loadPrognosen() {
+    const [{ data: qs }, { data: ans }] = await Promise.all([
+      supabase.from('special_questions').select('*').order('sort_order'),
+      supabase.from('special_answers').select('*').eq('user_id', userId),
+    ]);
+    questions = qs ?? [];
+    myAnswers  = Object.fromEntries((ans ?? []).map(a => [a.question_id, a]));
+    updatePrognoseStatus();
+    renderPrognosen();
+  }
+
+  function updatePrognoseStatus() {
+    const answered = questions.filter(q => myAnswers[q.id]).length;
+    const el = document.getElementById('prognose-status');
+    if (!el || !questions.length) return;
+    el.innerHTML = answered === questions.length
+      ? `<span class="badge badge-green">Alle ${questions.length} abgegeben ✓</span>`
+      : `<span class="badge badge-gray">${answered} von ${questions.length} beantwortet</span>`;
+  }
+
+  function renderPrognosen() {
+    const container = document.getElementById('prognose-container');
+    if (!questions.length) {
+      container.innerHTML = `<div class="empty-state"><span class="empty-state-icon">📋</span><p class="empty-state-title">Noch keine Fragen</p></div>`;
+      return;
+    }
+    container.innerHTML = questions.map(renderPrognoseCard).join('');
+    attachNumberListeners();
+  }
+
+  function renderPrognoseCard(q) {
+    const answer     = myAnswers[q.id];
+    const isLocked   = new Date(q.deadline) < new Date() || q.is_resolved;
+    const isAnswered = !!answer;
+    const deadlineStr = new Date(q.deadline).toLocaleString('de-DE', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
+    const urgentClass = (new Date(q.deadline) - new Date()) / 3600000 < 24 && !isLocked ? 'urgent' : '';
+
+    let widget = '';
+    if (isLocked) {
+      widget = `<div class="prognose-result">
+        <div class="prognose-result-row"><span class="text-muted">Deine Antwort</span><strong>${answer?.answer_value ?? '–'}</strong></div>
+        ${q.is_resolved ? `
+          <div class="prognose-result-row"><span class="text-muted">Richtig</span><span style="color:var(--accent);font-weight:700">${q.correct_answer}</span></div>
+          <div class="prognose-result-row"><span class="text-muted">Punkte</span><strong style="color:var(--accent)">${answer?.points_earned ?? 0} / ${q.points_correct}</strong></div>` : ''}
+      </div>`;
+    } else if (q.answer_type === 'team') {
+      widget = `<select class="answer-select" id="ans-${q.id}">
+        <option value="" disabled ${!answer ? 'selected' : ''}>Team auswählen…</option>
+        ${WM_TEAMS.map(t => `<option value="${t}" ${t === answer?.answer_value ? 'selected' : ''}>${t}</option>`).join('')}
+      </select>`;
+    } else if (q.answer_type === 'player') {
+      widget = `<input class="answer-input" id="ans-${q.id}" type="text" placeholder="Spielername…" value="${answer?.answer_value ?? ''}" autocomplete="off">`;
+    } else if (q.answer_type === 'number') {
+      const val = parseInt(answer?.answer_value ?? '0', 10);
+      widget = `<div class="number-control">
+        <button class="number-btn" data-qid="${q.id}" data-action="down">−</button>
+        <div class="number-display" id="ans-${q.id}" data-value="${val}">${val}</div>
+        <button class="number-btn" data-qid="${q.id}" data-action="up">+</button>
+      </div>`;
+    }
+
+    return `<div class="prognose-card ${isAnswered?'answered':''} ${isLocked?'locked':''}" id="pcard-${q.id}">
+      <div class="prognose-header">
+        <div class="prognose-question">${q.question_text}</div>
+        <div class="prognose-pts">
+          <div class="prognose-pts-value">${q.points_correct}</div>
+          <div class="prognose-pts-label">Pkt</div>
+        </div>
+      </div>
+      ${widget}
+      <div class="prognose-footer">
+        <div class="prognose-deadline ${urgentClass}">
+          ${isLocked ? (q.is_resolved ? '✓ Aufgelöst' : '🔒 Gesperrt') : `Deadline: ${deadlineStr} Uhr`}
+        </div>
+        ${!isLocked ? `<button class="btn btn-primary btn-sm" id="save-pq-${q.id}"
+                onclick="savePrognose('${q.id}','${q.answer_type}')">${isAnswered ? 'Ändern' : 'Speichern'}</button>` : ''}
+      </div>
+    </div>`;
+  }
+
+  function attachNumberListeners() {
+    document.querySelectorAll('.number-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const el  = document.getElementById(`ans-${btn.dataset.qid}`);
+        let val = parseInt(el.dataset.value ?? '0', 10);
+        if (btn.dataset.action === 'up')   val = Math.min(val + 1, 999);
+        if (btn.dataset.action === 'down') val = Math.max(val - 1, 0);
+        el.dataset.value = val;
+        el.textContent   = val;
+      });
+    });
+  }
+
+  window.savePrognose = async function(questionId, answerType) {
+    const btn  = document.getElementById(`save-pq-${questionId}`);
+    const orig = btn.textContent;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loader-spinner"></span>';
+
+    const value = answerType === 'number'
+      ? document.getElementById(`ans-${questionId}`)?.dataset.value ?? '0'
+      : document.getElementById(`ans-${questionId}`)?.value?.trim() ?? '';
+
+    if (!value) {
+      showToast('Bitte eine Antwort eingeben.', 'warning');
+      btn.disabled = false; btn.textContent = orig; return;
+    }
+
+    try {
+      const { error } = await supabase.from('special_answers').upsert(
+        { user_id: userId, question_id: questionId, answer_value: value },
+        { onConflict: 'user_id,question_id' }
+      );
+      if (error) throw error;
+      myAnswers[questionId] = { ...myAnswers[questionId], answer_value: value };
+      showToast('Prognose gespeichert ✓', 'success');
+      btn.textContent = 'Ändern';
+      document.getElementById(`pcard-${questionId}`)?.classList.add('answered');
+      updatePrognoseStatus();
+    } catch {
+      showToast('Fehler.', 'danger');
+      btn.textContent = orig;
+    } finally {
+      btn.disabled = false;
+    }
+  };
+
+  /* Hilfsfunktionen */
+  async function getMyUsername() {
+    if (_myUsername) return _myUsername;
+    const { data } = await supabase.from('users').select('username').eq('id', userId).single();
+    _myUsername = data?.username ?? '';
+    return _myUsername;
+  }
+
+  function stageLabel(s) {
+    return { group:'Gruppenphase', round_of_16:'Achtelfinale', quarter:'Viertelfinale',
+             semi:'Halbfinale', third_place:'Spiel um Platz 3', final:'Finale' }[s] ?? s;
+  }
+
+  await Promise.all([loadTipps(), loadPrognosen()]);
+</script>
+</body>
+</html>

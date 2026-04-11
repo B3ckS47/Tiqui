@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tiqui – Quiz</title>
+  <link rel="manifest" href="../manifest.json">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <meta name="theme-color" content="#f0f2f5">
+  <style>
+
+    /* ---- Header-Kachel ---- */
+    .quiz-header { padding: var(--space-md); padding-bottom: 0; }
+
+    .quiz-header-tile {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      position: relative;
+      min-height: 72px;
+    }
+
+    .quiz-header-tile::after {
+      content: '';
+      position: absolute;
+      inset: -10px;
+      background-image: url('../icons/tile-quiz.png');
+      background-size: cover;
+      background-position: center;
+      filter: blur(3px);
+      z-index: 0;
+    }
+
+    .quiz-header-tile::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.60);
+      z-index: 1;
+    }
+
+    .quiz-header-inner {
+      position: relative;
+      z-index: 2;
+      padding: var(--space-md);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .quiz-header-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .quiz-header-sub {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.7);
+      margin-top: 2px;
+    }
+
+    .quiz-header-badge {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: var(--radius-full);
+      padding: 4px 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: white;
+    }
+
+    /* ---- Tab-Toggle ---- */
+    .tab-toggle {
+      display: flex;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 3px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 9px;
+      border: none;
+      background: transparent;
+      border-radius: var(--radius-md);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: var(--font-sans);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .tab-btn.active { background: var(--accent); color: white; box-shadow: var(--shadow-sm); }
+
+    /* ---- Session-Karte ---- */
+    .session-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      padding: var(--space-md);
+      margin-bottom: var(--space-sm);
+      cursor: pointer;
+      transition: all var(--transition);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .session-card:active { transform: scale(0.99); opacity: 0.85; }
+    .session-card.completed { border-color: var(--accent-border); }
+
+    .session-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-sm);
+    }
+
+    .session-card-title {
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+    }
+
+    .session-card-desc {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* ---- Quiz-Spielfläche ---- */
+    .quiz-play-wrap { display: none; }
+
+    /* Warnung wenn Tab gewechselt */
+    .tab-warning {
+      background: #fef3cd;
+      border: 1px solid #fcd34d;
+      border-radius: var(--radius-md);
+      padding: var(--space-sm) var(--space-md);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #92400e;
+      text-align: center;
+      margin-bottom: var(--space-md);
+      display: none;
+    }
+
+    /* Timer-Ring */
+    .timer-ring-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: var(--space-md);
+    }
+
+    .timer-ring {
+      position: relative;
+      width: 72px;
+      height: 72px;
+    }
+
+    .timer-ring svg { transform: rotate(-90deg); }
+
+    .timer-ring-track {
+      fill: none;
+      stroke: var(--border);
+      stroke-width: 6;
+    }
+
+    .timer-ring-fill {
+      fill: none;
+      stroke: var(--accent);
+      stroke-width: 6;
+      stroke-linecap: round;
+      stroke-dasharray: 188;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s linear, stroke 0.3s;
+    }
+
+    .timer-ring-fill.urgent { stroke: var(--danger); }
+
+    .timer-number {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      font-weight: 900;
+      color: var(--text-primary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Fortschritt */
+    .quiz-progress {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-sm);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* Fragen-Karte */
+    .question-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      padding: var(--space-lg);
+      margin-bottom: var(--space-md);
+    }
+
+    .question-category {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-bottom: var(--space-sm);
+    }
+
+    .question-text {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.5;
+      margin-bottom: var(--space-lg);
+    }
+
+    .question-image {
+      width: 100%;
+      max-height: 180px;
+      object-fit: cover;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      margin-bottom: var(--space-md);
+    }
+
+    /* Optionen */
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    .quiz-opt {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      cursor: pointer;
+      transition: all var(--transition);
+      font-weight: 600;
+      color: var(--text-primary);
+      width: 100%;
+      text-align: left;
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      box-shadow: var(--shadow-sm);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .quiz-opt:active:not(:disabled) { transform: scale(0.99); }
+    .quiz-opt:disabled { cursor: default; }
+
+    .opt-letter {
+      width: 28px; height: 28px;
+      border-radius: var(--radius-full);
+      background: var(--bg);
+      border: 1px solid var(--border-strong);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 700;
+      color: var(--text-muted);
+      flex-shrink: 0;
+      transition: all var(--transition);
+    }
+
+    .quiz-opt.selected { border-color: var(--accent); background: var(--accent-bg); color: var(--accent-dark); }
+    .quiz-opt.selected .opt-letter { background: var(--accent); color: white; border-color: var(--accent); }
+    .quiz-opt.correct  { border-color: var(--success); background: var(--accent-bg); color: var(--accent-dark); }
+    .quiz-opt.correct .opt-letter  { background: var(--accent); color: white; border-color: var(--accent); }
+    .quiz-opt.wrong    { border-color: var(--danger);  background: var(--danger-bg);  color: var(--danger); }
+    .quiz-opt.wrong .opt-letter    { background: var(--danger); color: white; border-color: var(--danger); }
+
+    /* Schätzfrage */
+    .estimate-control {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-lg);
+      margin-bottom: var(--space-lg);
+    }
+
+    .est-btn {
+      width: 48px; height: 48px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-strong);
+      background: var(--bg-card);
+      box-shadow: var(--shadow-sm);
+      font-size: 1.3rem; font-weight: 700;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all var(--transition);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .est-btn:active { transform: scale(0.92); }
+
+    .est-display {
+      min-width: 100px; height: 64px;
+      border-radius: var(--radius-md);
+      border: 2px solid var(--border-strong);
+      background: var(--bg-card);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; font-weight: 900;
+      color: var(--text-primary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Feedback */
+    .feedback-banner {
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      margin-bottom: var(--space-md);
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      border: 1px solid transparent;
+    }
+
+    .feedback-correct { background: var(--accent-bg); color: var(--accent-dark); border-color: var(--accent-border); }
+    .feedback-wrong   { background: var(--danger-bg);  color: var(--danger);       border-color: var(--danger-border); }
+    .feedback-timeout { background: var(--gold-bg);    color: var(--gold-dark);    border-color: #f9e08b; }
+
+    /* ---- Ergebnis-Screen ---- */
+    .quiz-result-wrap { display: none; }
+
+    .result-hero {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      padding: var(--space-xl);
+      text-align: center;
+      margin-bottom: var(--space-md);
+    }
+
+    .result-emoji { font-size: 3.5rem; display: block; margin-bottom: var(--space-md); }
+
+    .result-score {
+      font-size: 3rem;
+      font-weight: 900;
+      color: var(--accent);
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+
+    .result-label { font-size: 0.8rem; color: var(--text-muted); margin-top: var(--space-sm); }
+
+    .result-stats {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      margin-bottom: var(--space-md);
+    }
+
+    .result-stat-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-md);
+      border-bottom: 1px solid var(--border);
+      font-size: 0.88rem;
+    }
+
+    .result-stat-row:last-child { border-bottom: none; }
+
+    /* ---- Abgeschlossene Sessions — Bottom Sheet ---- */
+    .sheet-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 200;
+      animation: fadein 0.2s ease;
+    }
+
+    .sheet {
+      position: fixed; bottom: 0;
+      left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 480px;
+      background: var(--bg-card);
+      border-radius: 20px 20px 0 0;
+      box-shadow: 0 -4px 24px rgba(0,0,0,0.15);
+      z-index: 201;
+      animation: slideup 0.28s ease;
+      max-height: 88vh;
+      overflow-y: auto;
+      padding-bottom: env(safe-area-inset-bottom, 16px);
+    }
+
+    @keyframes fadein  { from{opacity:0} to{opacity:1} }
+    @keyframes slideup {
+      from { transform: translateX(-50%) translateY(100%); }
+      to   { transform: translateX(-50%) translateY(0); }
+    }
+
+    .sheet-handle {
+      width: 36px; height: 4px;
+      background: var(--border-strong);
+      border-radius: var(--radius-full);
+      margin: 12px auto var(--space-md);
+    }
+
+    .sheet-body { padding: var(--space-lg); }
+
+    .ranking-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-sm) 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.88rem;
+    }
+
+    .ranking-row:last-child { border-bottom: none; }
+
+    .ranking-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .ranking-pos {
+      font-size: 0.85rem;
+      font-weight: 800;
+      min-width: 22px;
+      color: var(--text-muted);
+    }
+
+    .ranking-pos.p1 { color: #c9a227; }
+    .ranking-pos.p2 { color: #9e9e9e; }
+    .ranking-pos.p3 { color: #a0522d; }
+
+    .ranking-name { font-weight: 600; color: var(--text-primary); }
+    .ranking-name.me { color: var(--accent); }
+    .ranking-pts  { font-weight: 800; color: var(--accent); }
+
+    /* ---- Abbruch-Modal ---- */
+    .quit-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 300;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-lg);
+      animation: fadein 0.2s ease;
+    }
+
+    .quit-modal {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      padding: var(--space-xl);
+      width: 100%;
+      max-width: 360px;
+      animation: scalein 0.2s ease;
+      text-align: center;
+    }
+
+    @keyframes scalein {
+      from { transform: scale(0.92); opacity: 0; }
+      to   { transform: scale(1);    opacity: 1; }
+    }
+
+    .quit-modal-icon {
+      font-size: 2.5rem;
+      display: block;
+      margin-bottom: var(--space-md);
+    }
+
+    .quit-modal-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: var(--space-sm);
+    }
+
+    .quit-modal-text {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: var(--space-lg);
+    }
+
+    .quit-modal-warning {
+      background: var(--danger-bg);
+      border: 1px solid var(--danger-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-sm) var(--space-md);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--danger);
+      margin-bottom: var(--space-lg);
+    }
+
+    .quit-modal-btns {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    /* ---- Loader ---- */
+    .loader-spinner {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.4); border-top-color: white;
+      border-radius: 50%; display: inline-block;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .skel {
+      background: #e9ecf0; border-radius: var(--radius-sm);
+      animation: pulse 1.4s ease-in-out infinite; display: block;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.45} }
+
+  </style>
+</head>
+<body>
+<div class="app-shell">
+
+  <!-- Header-Kachel -->
+  <div class="quiz-header">
+    <div class="quiz-header-tile">
+      <div class="quiz-header-inner">
+        <div>
+          <div class="quiz-header-title">Quiz 🧠</div>
+          <div class="quiz-header-sub" id="quiz-header-sub">Wissen testen</div>
+        </div>
+        <div class="quiz-header-badge hidden" id="quiz-header-badge"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content" style="padding-top:var(--space-md);">
+
+    <!-- ===== SESSION-AUSWAHL ===== -->
+    <div id="quiz-lobby">
+
+      <!-- Tab-Toggle -->
+      <div class="tab-toggle mb-md">
+        <button class="tab-btn active" id="tab-active" onclick="switchLobbyTab('active')">🟢 Aktiv</button>
+        <button class="tab-btn" id="tab-finished" onclick="switchLobbyTab('finished')">✓ Abgeschlossen</button>
+      </div>
+
+      <!-- Aktive Sessions -->
+      <div id="view-active">
+        <div id="active-list">
+          <div class="skel" style="height:100px;border-radius:12px;margin-bottom:8px;"></div>
+          <div class="skel" style="height:100px;border-radius:12px;"></div>
+        </div>
+      </div>
+
+      <!-- Abgeschlossene Sessions -->
+      <div id="view-finished" class="hidden">
+        <div id="finished-list">
+          <div class="skel" style="height:80px;border-radius:12px;margin-bottom:8px;"></div>
+          <div class="skel" style="height:80px;border-radius:12px;"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===== QUIZ SPIELFLÄCHE ===== -->
+    <div class="quiz-play-wrap" id="quiz-play-area">
+
+      <!-- Tab-Wechsel Warnung -->
+      <div class="tab-warning" id="tab-warning">
+        ⚠ Du hast die Seite verlassen — der Timer läuft weiter!
+      </div>
+
+      <!-- Fortschritt -->
+      <div class="quiz-progress">
+        <span id="q-progress-text">Frage 1 von 10</span>
+        <span id="q-points-so-far">0 Punkte</span>
+      </div>
+      <div class="progress-bar mb-md">
+        <div class="progress-fill" id="q-progress-bar" style="width:0%"></div>
+      </div>
+
+      <!-- Timer -->
+      <div class="timer-ring-wrap">
+        <div class="timer-ring">
+          <svg width="72" height="72" viewBox="0 0 72 72">
+            <circle class="timer-ring-track" cx="36" cy="36" r="30"/>
+            <circle class="timer-ring-fill" id="timer-fill" cx="36" cy="36" r="30"/>
+          </svg>
+          <div class="timer-number" id="timer-number">20</div>
+        </div>
+      </div>
+
+      <!-- Fragen-Karte -->
+      <div class="question-card">
+        <div class="question-category" id="q-category"></div>
+        <img class="question-image hidden" id="q-image" alt="Quiz-Bild">
+        <div class="question-text" id="q-text"></div>
+        <div class="options-list hidden" id="q-options"></div>
+        <div class="hidden" id="q-estimate">
+          <div class="estimate-control">
+            <button class="est-btn" onclick="changeEstimate(-10)">−−</button>
+            <button class="est-btn" onclick="changeEstimate(-1)">−</button>
+            <div class="est-display" id="est-val">0</div>
+            <button class="est-btn" onclick="changeEstimate(1)">+</button>
+            <button class="est-btn" onclick="changeEstimate(10)">++</button>
+          </div>
+          <button class="btn btn-primary btn-block" id="est-submit-btn" onclick="submitEstimate()">
+            Antwort abgeben
+          </button>
+        </div>
+      </div>
+
+      <!-- Feedback -->
+      <div id="q-feedback" class="hidden"></div>
+
+      <!-- Weiter -->
+      <button class="btn btn-primary btn-block btn-lg hidden" id="next-btn" onclick="nextQuestion()">
+        Weiter →
+      </button>
+
+    </div>
+
+    <!-- ===== ERGEBNIS ===== -->
+    <div class="quiz-result-wrap" id="quiz-result-area">
+
+      <div class="result-hero">
+        <span class="result-emoji" id="result-emoji">🎉</span>
+        <div class="result-score" id="result-score">0</div>
+        <div class="result-label">Punkte in diesem Quiz</div>
+      </div>
+
+      <div class="result-stats" id="result-stats"></div>
+
+      <button class="btn btn-primary btn-block mb-md" onclick="backToLobby()">
+        Zurück zur Übersicht
+      </button>
+
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+  import { requireAuth } from '../js/auth.js';
+  import { supabase }    from '../js/supabase.js';
+  import { initNav, getInitials } from '../js/router.js';
+  import { showToast, renderAvatar }   from '../js/ui.js';
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('../sw.js').catch(() => {});
+  }
+
+  const session = await requireAuth();
+  if (!session) throw new Error('Nicht eingeloggt');
+  const userId = session.user.id;
+
+  initNav();
+
+  /* ---- State ---- */
+  let allSessions   = [];
+  let myAnswers     = {};
+  let myCompletions = new Set();  // session_ids die der User abgeschlossen hat
+  let currentSess   = null;
+  let questions    = [];
+  let currentIdx   = 0;
+  let pointsSoFar  = 0;
+  let timerInterval = null;
+  let timeLeft     = 20;
+  let answered     = false;
+  let estimateVal  = 0;
+  let lobbyTab     = 'active';
+  let _myUsername  = null;
+
+  /* ================================================
+     LOBBY
+  ================================================ */
+  async function loadSessions() {
+    const [{ data: sess }, { data: ans }, { data: completions }] = await Promise.all([
+      supabase.from('quiz_sessions')
+        .select('*, quiz_questions(count)')
+        .in('status', ['active', 'finished'])
+        .order('created_at', { ascending: false }),
+      supabase.from('quiz_answers')
+        .select('question_id, points_earned')
+        .eq('user_id', userId),
+      supabase.from('quiz_user_completions')
+        .select('session_id')
+        .eq('user_id', userId),
+    ]);
+
+    allSessions    = sess ?? [];
+    myAnswers      = Object.fromEntries((ans ?? []).map(a => [a.question_id, a]));
+    myCompletions  = new Set((completions ?? []).map(c => c.session_id));
+
+    // Header Badge — aktive Sessions die der User noch nicht abgeschlossen hat
+    const openCount = allSessions.filter(s =>
+      s.status === 'active' && !myCompletions.has(s.id)
+    ).length;
+
+    const badge = document.getElementById('quiz-header-badge');
+    if (openCount > 0) {
+      badge.textContent = `${openCount} offen`;
+      badge.classList.remove('hidden');
+    } else {
+      badge.classList.add('hidden');
+    }
+
+    renderLobby();
+  }
+
+  window.switchLobbyTab = function(tab) {
+    lobbyTab = tab;
+    document.getElementById('view-active').classList.toggle('hidden', tab !== 'active');
+    document.getElementById('view-finished').classList.toggle('hidden', tab !== 'finished');
+    document.getElementById('tab-active').classList.toggle('active', tab === 'active');
+    document.getElementById('tab-finished').classList.toggle('active', tab !== 'active');
+    renderLobby();
+  };
+
+  function renderLobby() {
+    // Aktiv = Session aktiv UND User hat noch nicht abgeschlossen
+    const active = allSessions.filter(s =>
+      s.status === 'active' && !myCompletions.has(s.id)
+    );
+
+    // Abgeschlossen = User hat abgeschlossen ODER Session ist beendet
+    const finished = allSessions.filter(s =>
+      myCompletions.has(s.id) || s.status === 'finished'
+    );
+
+    /* ---- Aktive Sessions ---- */
+    const activeList = document.getElementById('active-list');
+    if (!active.length) {
+      activeList.innerHTML = `<div class="empty-state">
+        <span class="empty-state-icon">🧠</span>
+        <p class="empty-state-title">Kein Quiz offen</p>
+        <p class="text-sm">Der Admin startet bald eine neue Runde.</p>
+      </div>`;
+    } else {
+      activeList.innerHTML = active.map(s => {
+        const total = s.quiz_questions?.[0]?.count ?? 0;
+        return `
+          <div class="session-card" onclick="startQuiz('${s.id}')">
+            <div class="session-card-header">
+              <div>
+                <div class="session-card-title">${s.title}</div>
+                <div class="session-card-desc">${s.description ?? ''} · ${total} Fragen</div>
+              </div>
+              <span class="badge badge-blue">Starten →</span>
+            </div>
+            <div style="margin-top:6px;">
+              <span class="text-xs" style="color:var(--danger);font-weight:600;">
+                ⚠ Muss am Stück gespielt werden!
+              </span>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    /* ---- Abgeschlossene Sessions ---- */
+    const finishedList = document.getElementById('finished-list');
+    if (!finished.length) {
+      finishedList.innerHTML = `<div class="empty-state">
+        <span class="empty-state-icon">📋</span>
+        <p class="empty-state-title">Noch keine abgeschlossenen Quizzes</p>
+      </div>`;
+    } else {
+      finishedList.innerHTML = finished.map(s => {
+        const total = s.quiz_questions?.[0]?.count ?? 0;
+        const myPts = getMyPointsForSession(s.id);
+        const isUserDone = myCompletions.has(s.id);
+        return `
+          <div class="session-card" onclick="showSessionResult('${s.id}')">
+            <div class="session-card-header">
+              <div>
+                <div class="session-card-title">${s.title}</div>
+                <div class="session-card-desc">${s.description ?? ''} · ${total} Fragen</div>
+              </div>
+              ${isUserDone
+                ? '<span class="badge badge-green">Abgeschlossen ✓</span>'
+                : '<span class="badge badge-gray">Beendet</span>'}
+            </div>
+            <div style="font-size:0.78rem;color:var(--accent);font-weight:700;margin-top:4px;">
+              ${isUserDone ? `Deine Punkte: ${myPts} · ` : ''}Rangliste ansehen →
+            </div>
+          </div>`;
+      }).join('');
+    }
+  }
+
+  function getMyPointsForSession(sessionId) {
+    return Object.values(myAnswers)
+      .reduce((sum, a) => sum + (a.points_earned ?? 0), 0);
+  }
+
+  /* ================================================
+     QUIZ STARTEN
+  ================================================ */
+  window.startQuiz = async function(sessionId) {
+    const { data: qs } = await supabase
+      .from('quiz_questions')
+      .select('*, quiz_categories(name, icon)')
+      .eq('session_id', sessionId)
+      .order('sort_order', { ascending: true });
+
+    if (!qs?.length) { showToast('Diese Session hat noch keine Fragen.', 'warning'); return; }
+
+    currentSess = allSessions.find(s => s.id === sessionId);
+    questions   = qs.filter(q => !myAnswers[q.id]);
+    currentIdx  = 0;
+    pointsSoFar = 0;
+
+    if (!questions.length) {
+      showToast('Du hast alle Fragen bereits beantwortet!', 'info');
+      return;
+    }
+
+    setupAntiCheat();
+
+    document.getElementById('quiz-lobby').style.display      = 'none';
+    document.getElementById('quiz-play-area').style.display  = 'block';
+    document.getElementById('quiz-result-area').style.display = 'none';
+
+    showQuestion();
+  };
+
+  /* ================================================
+     ANTI-CHEAT
+     1. Nav-Links abfangen → Custom Modal
+     2. visibilitychange → Timer läuft weiter
+     3. sessionStorage → Frage-Endzeit persistieren
+  ================================================ */
+  let tabHiddenAt   = null;
+  let questionEndAt = null;
+  let navIntercepted = false;
+
+  function setupAntiCheat() {
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    interceptNavLinks();
+  }
+
+  function teardownAntiCheat() {
+    document.removeEventListener('visibilitychange', onVisibilityChange);
+    releaseNavLinks();
+    sessionStorage.removeItem('tiqui_quiz_state');
+  }
+
+  /* ---- Nav-Links abfangen ---- */
+  function interceptNavLinks() {
+    if (navIntercepted) return;
+    navIntercepted = true;
+    document.querySelectorAll('.nav-item, a[href]').forEach(link => {
+      link.addEventListener('click', onNavClick, true);
+    });
+  }
+
+  function releaseNavLinks() {
+    navIntercepted = false;
+    document.querySelectorAll('.nav-item, a[href]').forEach(link => {
+      link.removeEventListener('click', onNavClick, true);
+    });
+  }
+
+  function onNavClick(e) {
+    // Nur während aktivem Quiz und wenn Frage noch läuft
+    if (answered) return;
+    const href = e.currentTarget.href || e.currentTarget.getAttribute('href');
+    if (!href || href === '#') return;
+
+    e.preventDefault();
+    e.stopPropagation();
+    showQuitModal(href);
+  }
+
+  /* ---- Custom Abbruch-Modal ---- */
+  function showQuitModal(targetUrl) {
+    const backdrop = document.createElement('div');
+    backdrop.className = 'quit-modal-backdrop';
+    backdrop.id = 'quit-modal-backdrop';
+
+    backdrop.innerHTML = `
+      <div class="quit-modal">
+        <span class="quit-modal-icon">⚠️</span>
+        <div class="quit-modal-title">Quiz verlassen?</div>
+        <div class="quit-modal-text">
+          Du bist mitten in einer Frage. Der Timer läuft weiter.
+        </div>
+        <div class="quit-modal-warning">
+          Die aktuelle Frage wird als <strong>falsch gewertet</strong>
+          und mit 0 Punkten gespeichert.
+        </div>
+        <div class="quit-modal-btns">
+          <button class="btn btn-secondary btn-block" onclick="closeQuitModal()">
+            Weiterspielen
+          </button>
+          <button class="btn btn-block" style="background:var(--danger);color:white;border-color:var(--danger);"
+                  onclick="confirmQuit('${targetUrl}')">
+            Trotzdem verlassen
+          </button>
+        </div>
+      </div>`;
+
+    document.body.appendChild(backdrop);
+  }
+
+  window.closeQuitModal = function() {
+    document.getElementById('quit-modal-backdrop')?.remove();
+  };
+
+  window.confirmQuit = async function(targetUrl) {
+    // Aktuelle Frage als Timeout speichern
+    const q = questions[currentIdx];
+    if (q && !answered) {
+      await saveAnswer(q.id, null, false, 0);
+    }
+
+    clearInterval(timerInterval);
+    teardownAntiCheat();
+
+    // Quiz direkt als abgeschlossen markieren (Abbruch = fertig)
+    if (currentSess && !myCompletions.has(currentSess.id)) {
+      await supabase.from('quiz_user_completions').upsert(
+        { user_id: userId, session_id: currentSess.id },
+        { onConflict: 'user_id,session_id' }
+      );
+      myCompletions.add(currentSess.id);
+      await supabase.rpc('refresh_leaderboard');
+    }
+
+    document.getElementById('quit-modal-backdrop')?.remove();
+    window.location.href = targetUrl;
+  };
+
+  /* ---- Quiz als abgeschlossen markieren ---- */
+  async function checkAndCompleteQuiz() {
+    if (!currentSess) return;
+
+    // Bereits abgeschlossen?
+    if (myCompletions.has(currentSess.id)) return;
+
+    // Alle Fragen der Session laden
+    const { data: allQs } = await supabase
+      .from('quiz_questions')
+      .select('id')
+      .eq('session_id', currentSess.id);
+
+    if (!allQs?.length) return;
+
+    // Wie viele hat der User beantwortet?
+    const { count: answeredCount } = await supabase
+      .from('quiz_answers')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .in('question_id', allQs.map(q => q.id));
+
+    // Wenn alle beantwortet → als abgeschlossen markieren
+    if ((answeredCount ?? 0) >= allQs.length) {
+      await supabase.from('quiz_user_completions').upsert(
+        { user_id: userId, session_id: currentSess.id },
+        { onConflict: 'user_id,session_id' }
+      );
+      myCompletions.add(currentSess.id);
+      await supabase.rpc('refresh_leaderboard');
+    }
+  }
+
+  /* ---- sessionStorage State ---- */
+  function saveQuizState() {
+    if (!questions[currentIdx]) return;
+    const state = {
+      sessionId:   currentSess?.id,
+      questionId:  questions[currentIdx].id,
+      questionIdx: currentIdx,
+      pointsSoFar,
+      questionEndAt,
+    };
+    sessionStorage.setItem('tiqui_quiz_state', JSON.stringify(state));
+  }
+
+  function checkInterruptedQuiz() {
+    try {
+      const raw = sessionStorage.getItem('tiqui_quiz_state');
+      if (!raw) return;
+      const state = JSON.parse(raw);
+
+      if (state.questionEndAt && Date.now() > state.questionEndAt) {
+        // Frage abgelaufen → als Timeout in DB speichern
+        supabase.from('quiz_answers').upsert(
+          {
+            user_id:          userId,
+            question_id:      state.questionId,
+            given_answer:     JSON.stringify({}),
+            is_correct:       false,
+            response_time_ms: 0,
+            points_earned:    0,
+          },
+          { onConflict: 'user_id,question_id' }
+        ).then(() => supabase.rpc('refresh_leaderboard'));
+
+        showToast('Eine Frage wurde als abgelaufen gewertet.', 'warning');
+      }
+
+      sessionStorage.removeItem('tiqui_quiz_state');
+    } catch {}
+  }
+
+  /* ---- visibilitychange ---- */
+  function onVisibilityChange() {
+    if (document.hidden) {
+      tabHiddenAt = Date.now();
+      saveQuizState();
+    } else {
+      if (tabHiddenAt && !answered) {
+        const warn = document.getElementById('tab-warning');
+        if (warn) { warn.style.display = 'block'; setTimeout(() => { warn.style.display = 'none'; }, 4000); }
+        const remaining = Math.max(0, Math.ceil((questionEndAt - Date.now()) / 1000));
+        if (remaining <= 0 && !answered) {
+          clearInterval(timerInterval);
+          onTimeout();
+        }
+      }
+      tabHiddenAt = null;
+    }
+  }
+
+  /* ================================================
+     FRAGE ANZEIGEN
+  ================================================ */
+  function showQuestion() {
+    const q = questions[currentIdx];
+    if (!q) { showResult(); return; }
+
+    answered    = false;
+    estimateVal = 0;
+
+    // Fortschritt
+    const total = questions.length;
+    const pct   = Math.round(currentIdx / total * 100);
+    document.getElementById('q-progress-text').textContent  = `Frage ${currentIdx + 1} von ${total}`;
+    document.getElementById('q-points-so-far').textContent  = `${pointsSoFar} Punkte`;
+    document.getElementById('q-progress-bar').style.width   = pct + '%';
+
+    // Kategorie
+    const cat = q.quiz_categories;
+    document.getElementById('q-category').textContent = cat ? `${cat.icon ?? ''} ${cat.name}` : '';
+
+    // Bild
+    const imgEl = document.getElementById('q-image');
+    if (q.image_url) { imgEl.src = q.image_url; imgEl.classList.remove('hidden'); }
+    else             { imgEl.classList.add('hidden'); }
+
+    document.getElementById('q-text').textContent = q.question_text;
+    document.getElementById('q-feedback').classList.add('hidden');
+    document.getElementById('next-btn').classList.add('hidden');
+
+    const optionsEl  = document.getElementById('q-options');
+    const estimateEl = document.getElementById('q-estimate');
+
+    if (q.question_type === 'estimate') {
+      optionsEl.classList.add('hidden');
+      estimateEl.classList.remove('hidden');
+      document.getElementById('est-val').textContent = '0';
+      estimateVal = 0;
+    } else {
+      estimateEl.classList.add('hidden');
+      optionsEl.classList.remove('hidden');
+      const options = Array.isArray(q.options) ? q.options : JSON.parse(q.options ?? '[]');
+      const letters = ['A','B','C','D'];
+      optionsEl.innerHTML = options.map((opt, i) => `
+        <button class="quiz-opt" id="opt-${i}" onclick="selectOption(${i})">
+          <span class="opt-letter">${letters[i]}</span>
+          ${opt}
+        </button>`).join('');
+    }
+
+    startTimer(q.time_limit_sec);
+  }
+
+  /* ================================================
+     TIMER
+  ================================================ */
+  function startTimer(seconds) {
+    clearInterval(timerInterval);
+    timeLeft = seconds;
+    const circumference = 188;
+    const fillEl  = document.getElementById('timer-fill');
+    const numEl   = document.getElementById('timer-number');
+
+    fillEl.style.strokeDashoffset = '0';
+    fillEl.classList.remove('urgent');
+    numEl.textContent = seconds;
+
+    // Endzeit festhalten — Basis für Anti-Cheat
+    questionEndAt = Date.now() + seconds * 1000;
+    saveQuizState();
+
+    timerInterval = setInterval(() => {
+      timeLeft = Math.max(0, Math.ceil((questionEndAt - Date.now()) / 1000));
+      numEl.textContent = timeLeft;
+      const offset = circumference * (1 - timeLeft / seconds);
+      fillEl.style.strokeDashoffset = offset;
+      if (timeLeft <= 5) fillEl.classList.add('urgent');
+
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        if (!answered) onTimeout();
+      }
+    }, 250);
+  }
+
+  /* ================================================
+     ANTWORTEN
+  ================================================ */
+  window.selectOption = function(idx) {
+    if (answered) return;
+    answered = true;
+    clearInterval(timerInterval);
+
+    const q             = questions[currentIdx];
+    const correctAnswer = typeof q.correct_answer === 'string'
+      ? JSON.parse(q.correct_answer) : q.correct_answer;
+    const correctIdx    = correctAnswer.index;
+    const isCorrect     = idx === correctIdx;
+    const pts           = isCorrect ? q.points_value : 0;
+    if (isCorrect) pointsSoFar += pts;
+
+    document.querySelectorAll('.quiz-opt').forEach((btn, i) => {
+      btn.disabled = true;
+      if (i === correctIdx) btn.classList.add('correct');
+      if (i === idx && !isCorrect) btn.classList.add('wrong');
+    });
+
+    showFeedback(isCorrect, pts, correctAnswer, q);
+    saveAnswer(q.id, { index: idx }, isCorrect, pts);
+  };
+
+  window.submitEstimate = function() {
+    if (answered) return;
+    answered = true;
+    clearInterval(timerInterval);
+
+    const q             = questions[currentIdx];
+    const correctAnswer = typeof q.correct_answer === 'string'
+      ? JSON.parse(q.correct_answer) : q.correct_answer;
+    const diff      = Math.abs(estimateVal - correctAnswer.value);
+    const isCorrect = diff <= (correctAnswer.tolerance ?? 0);
+    const pts       = isCorrect ? q.points_value : 0;
+    if (isCorrect) pointsSoFar += pts;
+
+    document.getElementById('est-submit-btn').disabled = true;
+    showFeedback(isCorrect, pts, correctAnswer, q);
+    saveAnswer(q.id, { value: estimateVal }, isCorrect, pts);
+  };
+
+  window.changeEstimate = function(delta) {
+    if (answered) return;
+    estimateVal = Math.max(0, estimateVal + delta);
+    document.getElementById('est-val').textContent = estimateVal;
+  };
+
+  function onTimeout() {
+    answered = true;
+    const q  = questions[currentIdx];
+    document.querySelectorAll('.quiz-opt').forEach(btn => btn.disabled = true);
+    document.getElementById('est-submit-btn').disabled = true;
+
+    const correctAnswer = typeof q.correct_answer === 'string'
+      ? JSON.parse(q.correct_answer) : q.correct_answer;
+    if (correctAnswer.index !== undefined) {
+      document.getElementById(`opt-${correctAnswer.index}`)?.classList.add('correct');
+    }
+
+    const fb = document.getElementById('q-feedback');
+    fb.className = 'feedback-banner feedback-timeout';
+    fb.innerHTML = '⏰ Zeit abgelaufen! — 0 Punkte';
+    fb.classList.remove('hidden');
+
+    saveAnswer(q.id, null, false, 0);
+    document.getElementById('next-btn').classList.remove('hidden');
+  }
+
+  function showFeedback(isCorrect, pts, correctAnswer, q) {
+    const fb = document.getElementById('q-feedback');
+    fb.classList.remove('hidden');
+    if (isCorrect) {
+      fb.className = 'feedback-banner feedback-correct';
+      fb.innerHTML = `🎯 Richtig! +${pts} Punkte`;
+    } else {
+      fb.className = 'feedback-banner feedback-wrong';
+      let hint = '';
+      if (correctAnswer.index !== undefined) {
+        const opts = Array.isArray(q.options) ? q.options : JSON.parse(q.options ?? '[]');
+        hint = ` — Richtig: ${opts[correctAnswer.index] ?? ''}`;
+      } else if (correctAnswer.value !== undefined) {
+        hint = ` — Richtig: ${correctAnswer.value} (±${correctAnswer.tolerance ?? 0})`;
+      }
+      fb.innerHTML = `✕ Leider falsch${hint}`;
+    }
+    document.getElementById('next-btn').classList.remove('hidden');
+  }
+
+  async function saveAnswer(questionId, givenAnswer, isCorrect, pointsEarned) {
+    const q = questions[currentIdx];
+    await supabase.from('quiz_answers').upsert(
+      {
+        user_id:          userId,
+        question_id:      questionId,
+        given_answer:     givenAnswer ? JSON.stringify(givenAnswer) : JSON.stringify({}),
+        is_correct:       isCorrect,
+        response_time_ms: Math.max(0, (q?.time_limit_sec - timeLeft) * 1000),
+        points_earned:    pointsEarned,
+      },
+      { onConflict: 'user_id,question_id' }
+    );
+    myAnswers[questionId] = { points_earned: pointsEarned };
+
+    // Nach jeder Antwort prüfen ob alle Fragen beantwortet sind
+    await checkAndCompleteQuiz();
+  }
+
+  window.nextQuestion = function() {
+    currentIdx++;
+    if (currentIdx >= questions.length) showResult();
+    else showQuestion();
+  };
+
+  /* ================================================
+     ERGEBNIS
+  ================================================ */
+  async function showResult() {
+    clearInterval(timerInterval);
+    teardownAntiCheat();
+
+    document.getElementById('quiz-play-area').style.display  = 'none';
+    document.getElementById('quiz-result-area').style.display = 'block';
+
+    const total   = questions.length;
+    const correct = questions.filter(q => myAnswers[q.id]?.points_earned > 0).length;
+    const pct     = total > 0 ? Math.round(correct / total * 100) : 0;
+    const emoji   = pct >= 80 ? '🏆' : pct >= 50 ? '⚽' : '💪';
+
+    document.getElementById('result-emoji').textContent = emoji;
+    document.getElementById('result-score').textContent = pointsSoFar;
+
+    document.getElementById('result-stats').innerHTML = `
+      <div class="result-stat-row">
+        <span style="color:var(--text-secondary)">Fragen beantwortet</span>
+        <strong>${total}</strong>
+      </div>
+      <div class="result-stat-row">
+        <span style="color:var(--text-secondary)">Richtige Antworten</span>
+        <strong>${correct} von ${total} (${pct}%)</strong>
+      </div>
+      <div class="result-stat-row">
+        <span style="color:var(--text-secondary)">Punkte erzielt</span>
+        <strong style="color:var(--accent)">${pointsSoFar}</strong>
+      </div>`;
+
+    await checkAndCompleteQuiz();
+    await supabase.rpc('refresh_leaderboard');
+  }
+
+  window.backToLobby = async function() {
+    document.getElementById('quiz-result-area').style.display = 'none';
+    document.getElementById('quiz-lobby').style.display = 'block';
+    document.getElementById('quiz-play-area').style.display = 'none';
+    await loadSessions();
+  };
+
+  /* ================================================
+     ABGESCHLOSSENE SESSION RANGLISTE
+  ================================================ */
+  window.showSessionResult = async function(sessionId) {
+    const sess = allSessions.find(s => s.id === sessionId);
+    if (!sess) return;
+
+    // Alle Antworten für diese Session laden
+    const { data: qIds } = await supabase
+      .from('quiz_questions')
+      .select('id')
+      .eq('session_id', sessionId);
+
+    const ids = (qIds ?? []).map(q => q.id);
+    if (!ids.length) return;
+
+    const { data: answers } = await supabase
+      .from('quiz_answers')
+      .select('user_id, points_earned, users(username, avatar_url)')
+      .in('question_id', ids);
+
+    // Punkte pro User summieren
+    const userPts = {};
+    (answers ?? []).forEach(a => {
+      if (!userPts[a.user_id]) {
+        userPts[a.user_id] = {
+          username:   a.users?.username ?? '–',
+          avatar_url: a.users?.avatar_url ?? null,
+          pts: 0,
+        };
+      }
+      userPts[a.user_id].pts += a.points_earned ?? 0;
+    });
+
+    const sorted = Object.entries(userPts)
+      .sort((a, b) => b[1].pts - a[1].pts);
+
+    const myName = await getMyUsername();
+
+    const posClass = (i) => i === 0 ? 'p1' : i === 1 ? 'p2' : i === 2 ? 'p3' : '';
+    const medals   = ['🥇','🥈','🥉'];
+
+    const backdrop = document.createElement('div');
+    backdrop.className = 'sheet-backdrop';
+    backdrop.onclick   = () => { backdrop.remove(); document.getElementById('result-sheet')?.remove(); };
+
+    const sheet = document.createElement('div');
+    sheet.className = 'sheet';
+    sheet.id        = 'result-sheet';
+    sheet.innerHTML = `
+      <div class="sheet-handle"></div>
+      <div class="sheet-body">
+        <div style="font-weight:800;font-size:1rem;margin-bottom:4px;">${sess.title}</div>
+        <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:var(--space-md);">Endrangliste</div>
+        ${sorted.map(([uid, data], i) => `
+          <div class="ranking-row">
+            <div class="ranking-left">
+              <div class="ranking-pos ${posClass(i)}">${medals[i] ?? i + 1}</div>
+              ${renderAvatar(data.username, data.avatar_url, 'sm')}
+              <div class="ranking-name ${data.username === myName ? 'me' : ''}">
+                ${data.username}
+                ${data.username === myName ? ' (Du)' : ''}
+              </div>
+            </div>
+            <div class="ranking-pts">${data.pts} Pkt</div>
+          </div>`).join('')}
+      </div>`;
+
+    document.body.appendChild(backdrop);
+    document.body.appendChild(sheet);
+
+    let startY = 0;
+    sheet.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
+    sheet.addEventListener('touchend', e => {
+      if (e.changedTouches[0].clientY - startY > 80) {
+        backdrop.remove(); sheet.remove();
+      }
+    });
+  };
+
+  /* ---- Hilfsfunktionen ---- */
+  async function getMyUsername() {
+    if (_myUsername) return _myUsername;
+    const { data } = await supabase.from('users').select('username').eq('id', userId).single();
+    _myUsername = data?.username ?? '';
+    return _myUsername;
+  }
+
+  checkInterruptedQuiz();
+  await loadSessions();
+</script>
+</body>
+</html>

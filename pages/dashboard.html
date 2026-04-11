@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tiqui – Dashboard</title>
+  <link rel="manifest" href="../manifest.json">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <meta name="theme-color" content="#f0f2f5">
+  <style>
+
+    /* ---- Header-Kachel ---- */
+    .greeting-header {
+      padding: var(--space-md);
+      padding-bottom: 0;
+    }
+
+    .greeting-tile {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      padding: var(--space-md);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .greeting-text h1 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .greeting-text p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    .avatar-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-full);
+      background: var(--accent);
+      color: white;
+      font-weight: 800;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-sm);
+      flex-shrink: 0;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    /* ---- Top-Kacheln: Punkte + Platz — zentriert ---- */
+    .top-tiles {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-sm);
+    }
+
+    .top-tile {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      padding: var(--space-md) var(--space-md) var(--space-sm);
+      text-align: center;
+    }
+
+    .top-tile-value {
+      font-size: 2.2rem;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+
+    .top-tile-value.accent { color: var(--accent); }
+    .top-tile-value.dark   { color: var(--text-primary); }
+
+    .top-tile-label {
+      font-size: 0.62rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-muted);
+      margin-top: var(--space-xs);
+    }
+
+    /* ---- Sub-Kacheln — zentriert mit Hintergrundbild ---- */
+    .sub-tiles {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+
+    .sub-tile {
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border);
+      padding: var(--space-sm);
+      text-align: center;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      overflow: hidden;
+      min-height: 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sub-tile::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      border-radius: var(--radius-md);
+      z-index: 0;
+    }
+
+    .sub-tile-value,
+    .sub-tile-label {
+      position: relative;
+      z-index: 1;
+    }
+
+    .sub-tile-value {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    }
+
+    .sub-tile-label {
+      font-size: 0.58rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: rgba(255,255,255,0.9);
+      margin-top: 4px;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    }
+
+    .sub-tile-prognose { background-image: url('../icons/tile-prognose.png'); }
+    .sub-tile-tipps    { background-image: url('../icons/tile-tipps.png'); }
+    .sub-tile-quiz     { background-image: url('../icons/tile-quiz.png'); }
+
+    /* ---- Prognosen-Banner ---- */
+    .prognose-banner {
+      background: linear-gradient(135deg, #d4a820, #a07c0f);
+      border-radius: var(--radius-lg);
+      padding: var(--space-md) var(--space-lg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-md);
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity var(--transition);
+    }
+
+    .prognose-banner:active { opacity: 0.85; }
+
+    .prognose-banner-title {
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: white;
+      letter-spacing: 0.02em;
+    }
+
+    .prognose-banner-sub {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.8);
+      margin-top: 2px;
+    }
+
+    .prognose-banner-arrow {
+      color: white;
+      font-size: 1.5rem;
+      opacity: 0.7;
+    }
+
+    /* ---- Quiz-Live-Banner ---- */
+    .quiz-banner {
+      background: linear-gradient(135deg, #2196f3, #1565c0);
+      border-radius: var(--radius-lg);
+      padding: var(--space-md) var(--space-lg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-md);
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity var(--transition);
+    }
+
+    .quiz-banner:active { opacity: 0.85; }
+
+    .quiz-banner-title {
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: white;
+      letter-spacing: 0.02em;
+    }
+
+    .quiz-banner-live {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.85);
+      margin-top: 2px;
+    }
+
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #4cff7a;
+      animation: livepulse 1.2s ease-in-out infinite;
+    }
+
+    @keyframes livepulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(0.7); }
+    }
+
+    .quiz-banner-arrow {
+      color: white;
+      font-size: 1.5rem;
+      opacity: 0.7;
+    }
+
+    /* ---- Nächstes Spiel ---- */
+    .next-match-card {
+      border: 2px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      padding: var(--space-md);
+      margin-bottom: var(--space-md);
+      transition: border-color var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Hintergrundbild als eigenes Element — blur funktioniert so sauber */
+    .next-match-card::after {
+      content: '';
+      position: absolute;
+      inset: -10px;
+      background-image: url('../icons/tile-stadium.png');
+      background-size: cover;
+      background-position: center top;
+      filter: blur(4px);
+      z-index: 0;
+    }
+
+    /* Dunkles Overlay für Lesbarkeit */
+    .next-match-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.52);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Grüner Rahmen wenn getippt */
+    .next-match-card.tipped {
+      border-color: var(--accent);
+    }
+
+    /* Roter Rahmen wenn nicht getippt */
+    .next-match-card.open {
+      border-color: var(--danger);
+    }
+
+    /* Alle Inhalte über dem Overlay */
+    .next-match-card > * {
+      position: relative;
+      z-index: 2;
+    }
+
+    .next-match-label {
+      font-size: 0.62rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: var(--space-md);
+      text-align: center;
+    }
+
+    .next-match-teams {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      margin-bottom: var(--space-sm);
+    }
+
+    .next-match-team {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .flag-emoji {
+      width: 72px;
+      height: 48px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+    }
+
+    .next-match-vs {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.7);
+      padding: 0 var(--space-sm);
+    }
+
+    .next-match-countdown {
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: var(--space-md);
+      text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    }
+
+    .next-match-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: var(--space-sm);
+      border-top: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .next-match-time {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.75);
+    }
+
+    /* Getipptes Ergebnis anzeigen */
+    .tipped-result {
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: 0.05em;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    }
+
+    /* ---- Kommende Spiele — weiß, VS grau ---- */
+    .upcoming-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+
+    .upcoming-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      padding: var(--space-sm) var(--space-md);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      border-left: 3px solid transparent;
+      transition: all var(--transition);
+      cursor: pointer;
+    }
+
+    .upcoming-item.tipped { border-left-color: var(--accent); }
+    .upcoming-item.open   { border-left-color: var(--danger); }
+
+    .upcoming-flags {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .upcoming-flag {
+      font-size: 1.4rem;
+      line-height: 1;
+    }
+
+    .upcoming-vs {
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .upcoming-center {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2px;
+    }
+
+    .upcoming-tip-score {
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: var(--accent);
+      letter-spacing: 0.03em;
+    }
+
+    .upcoming-tip-open {
+      font-size: 0.72rem;
+      color: var(--danger);
+      font-weight: 600;
+    }
+
+    .upcoming-time {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    /* ---- Jetzt Tippen Banner (über nächstes Spiel) ---- */
+    .cta-today {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+      background: var(--danger);
+      color: white;
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-align: center;
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-lg);
+      text-decoration: none;
+      letter-spacing: 0.03em;
+      box-shadow: 0 3px 10px rgba(229,62,62,0.35);
+      margin-bottom: var(--space-sm);
+      transition: all var(--transition);
+    }
+
+    .cta-today:active {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
+
+    .cta-today-count {
+      background: rgba(255,255,255,0.25);
+      border-radius: var(--radius-full);
+      padding: 2px 8px;
+      font-size: 0.8rem;
+    }
+
+    /* ---- CTA unten ---- */
+    .cta-btn {
+      display: block;
+      width: 100%;
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-align: center;
+      padding: var(--space-md);
+      border-radius: var(--radius-lg);
+      text-decoration: none;
+      letter-spacing: 0.03em;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition);
+    }
+
+    .cta-btn:active {
+      transform: scale(0.98);
+    }
+
+    /* ---- Skeleton ---- */
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .skel {
+      background: #e9ecf0;
+      border-radius: var(--radius-sm);
+      animation: pulse 1.5s ease-in-out infinite;
+      display: block;
+    }
+
+    .upcoming-item.tipped   { border-left-color: var(--accent); }
+    .upcoming-item.open     { border-left-color: var(--danger); }
+    .upcoming-item.finished { border-left-color: transparent; opacity: 0.6; }
+
+    .upcoming-teams {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.01em;
+    }
+
+    .upcoming-time {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    /* ---- CTA-Button unten ---- */
+    .cta-btn {
+      display: block;
+      width: 100%;
+      background: linear-gradient(135deg, var(--accent-light), var(--accent-dark));
+      color: white;
+      font-size: 1rem;
+      font-weight: 800;
+      text-align: center;
+      padding: var(--space-md);
+      border-radius: var(--radius-lg);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      box-shadow: 0 4px 12px rgba(58,158,79,0.35);
+      transition: all var(--transition);
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-sans);
+    }
+
+    .cta-btn:active {
+      transform: scale(0.98);
+      box-shadow: 0 2px 6px rgba(58,158,79,0.25);
+    }
+
+    /* ---- Skeleton ---- */
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .skel {
+      background: #e9ecf0;
+      border-radius: var(--radius-sm);
+      animation: pulse 1.5s ease-in-out infinite;
+      display: block;
+    }
+
+  </style>
+</head>
+<body>
+<div class="app-shell">
+
+  <!-- Header als Kachel -->
+  <div class="greeting-header">
+    <div class="greeting-tile">
+      <div class="greeting-text">
+        <h1 id="greeting">Hallo! 👋</h1>
+        <p>WM 2026 · Tiqui</p>
+      </div>
+      <a href="../pages/profile.html" class="avatar-btn" id="user-avatar">?</a>
+    </div>
+  </div>
+
+  <div class="page-content">
+
+    <!-- Top-Kacheln -->
+    <div class="top-tiles">
+      <div class="top-tile">
+        <div class="top-tile-value accent" id="total-points">
+          <span class="skel" style="width:60px;height:32px;border-radius:6px;display:block;"></span>
+        </div>
+        <div class="top-tile-label">Gesamtpunkte</div>
+      </div>
+      <div class="top-tile">
+        <div class="top-tile-value dark" id="user-rank">
+          <span class="skel" style="width:40px;height:32px;border-radius:6px;display:block;"></span>
+        </div>
+        <div class="top-tile-label">Platzierung</div>
+      </div>
+    </div>
+
+    <!-- Sub-Kacheln -->
+    <div class="sub-tiles">
+      <div class="sub-tile sub-tile-prognose">
+        <div class="sub-tile-value" id="stat-special">–</div>
+        <div class="sub-tile-label">Prognose</div>
+      </div>
+      <div class="sub-tile sub-tile-tipps">
+        <div class="sub-tile-value" id="stat-tips">–</div>
+        <div class="sub-tile-label">Tipps</div>
+      </div>
+      <div class="sub-tile sub-tile-quiz">
+        <div class="sub-tile-value" id="stat-quiz">–</div>
+        <div class="sub-tile-label">Quiz</div>
+      </div>
+    </div>
+
+    <!-- Quiz-Live-Banner (nur wenn aktive Session) -->
+    <a href="../pages/quiz.html" class="quiz-banner hidden" id="quiz-banner">
+      <div>
+        <div class="quiz-banner-title">JETZT QUIZZEN!</div>
+        <div class="quiz-banner-live">
+          <span class="live-dot"></span>
+          LIVE
+        </div>
+      </div>
+      <div class="quiz-banner-arrow">›</div>
+    </a>
+
+    <!-- Prognosen-Banner (nur wenn noch offen & vor Deadline) -->
+    <a href="../pages/tips.html?tab=prognose" class="prognose-banner hidden" id="prognose-banner">
+      <div>
+        <div class="prognose-banner-title">PROGNOSEN ABGEBEN!</div>
+        <div class="prognose-banner-sub" id="prognose-banner-sub">Vor WM-Start tippen</div>
+      </div>
+      <div class="prognose-banner-arrow">›</div>
+    </a>
+
+    <!-- Jetzt Tippen Banner (nur bei heutigen offenen Spielen) -->
+    <a href="../pages/tips.html" class="cta-today hidden" id="cta-today">
+      JETZT TIPPEN <span id="cta-today-count"></span>
+    </a>
+
+    <!-- Nächstes Spiel -->
+    <div id="next-match-area">
+      <!-- wird per JS befüllt -->
+      <div class="next-match-card">
+        <div class="next-match-label">Nächstes Spiel</div>
+        <div style="display:flex;gap:var(--space-md);justify-content:center;margin-bottom:var(--space-md);">
+          <span class="skel" style="width:72px;height:48px;border-radius:6px;"></span>
+          <span class="skel" style="width:72px;height:48px;border-radius:6px;"></span>
+        </div>
+        <div class="skel" style="width:100px;height:14px;border-radius:4px;margin:0 auto var(--space-md);"></div>
+      </div>
+    </div>
+
+    <!-- Kommende Spiele -->
+    <div id="upcoming-area" class="hidden">
+      <div class="upcoming-list" id="upcoming-list"></div>
+    </div>
+
+    <!-- CTA unten: nur noch generischer Link zum Spielplan -->
+    <a href="../pages/tips.html" class="cta-btn" id="cta-btn">
+      ALLE SPIELE ANSEHEN
+    </a>
+
+  </div>
+</div>
+
+<script type="module">
+  import { requireAuth, getCurrentUser } from '../js/auth.js';
+  import { supabase }                    from '../js/supabase.js';
+  import { initNav, getInitials, showNavBadge } from '../js/router.js';
+  import { getCountdown, formatDateTime } from '../js/ui.js';
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('../sw.js').catch(() => {});
+  }
+
+  const session = await requireAuth();
+  if (!session) throw new Error('Nicht eingeloggt');
+  const userId = session.user.id;
+
+  initNav();
+
+  /* ---- Flag-Emojis ---- */
+  const FLAGS = {
+    'Deutschland': '🇩🇪', 'Frankreich': '🇫🇷', 'Spanien': '🇪🇸',
+    'England': '🏴󠁧󠁢󠁥󠁮󠁧󠁿', 'Italien': '🇮🇹', 'Portugal': '🇵🇹',
+    'Brasilien': '🇧🇷', 'Argentinien': '🇦🇷', 'Niederlande': '🇳🇱',
+    'Belgien': '🇧🇪', 'Kroatien': '🇭🇷', 'Dänemark': '🇩🇰',
+    'Schweiz': '🇨🇭', 'Österreich': '🇦🇹', 'Polen': '🇵🇱',
+    'USA': '🇺🇸', 'Mexiko': '🇲🇽', 'Kanada': '🇨🇦',
+    'Japan': '🇯🇵', 'Südkorea': '🇰🇷', 'Australien': '🇦🇺',
+    'Marokko': '🇲🇦', 'Senegal': '🇸🇳', 'Nigeria': '🇳🇬',
+    'Saudi-Arabien': '🇸🇦', 'Iran': '🇮🇷', 'Uruguay': '🇺🇾',
+    'Kolumbien': '🇨🇴', 'Ecuador': '🇪🇨', 'Türkei': '🇹🇷',
+  };
+  const flag = t => FLAGS[t] ?? '🏳';
+
+  /* ---- User & Punkte ---- */
+  async function loadUserData() {
+    const user = await getCurrentUser();
+    if (!user) return;
+
+    const hour  = new Date().getHours();
+    const greet = hour < 12 ? 'Guten Morgen' : hour < 18 ? 'Hallo' : 'Guten Abend';
+    document.getElementById('greeting').textContent = `${greet}, ${user.username}!`;
+
+    const av = document.getElementById('user-avatar');
+    if (user.avatar_url) {
+      av.innerHTML = `<img src="${user.avatar_url}" alt="Avatar"
+        style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+    } else {
+      av.textContent = getInitials(user.username);
+    }
+
+    const { data: lb } = await supabase
+      .from('leaderboard_cache')
+      .select('tip_points, special_points, quiz_points, total_points, rank')
+      .eq('user_id', user.id)
+      .single();
+
+    if (lb) {
+      document.getElementById('total-points').textContent  = lb.total_points  ?? 0;
+      document.getElementById('user-rank').textContent     = lb.rank          ?? '–';
+      document.getElementById('stat-quiz').textContent     = lb.quiz_points   ?? 0;
+      document.getElementById('stat-special').textContent  = lb.special_points ?? 0;
+      document.getElementById('stat-tips').textContent     = lb.tip_points    ?? 0;
+    }
+  }
+
+  /* ---- Prognosen-Banner ---- */
+  async function loadPrognosen() {
+    const [{ data: questions }, { data: answers }] = await Promise.all([
+      supabase
+        .from('special_questions')
+        .select('id, deadline')
+        .eq('is_resolved', false),
+      supabase
+        .from('special_answers')
+        .select('question_id')
+        .eq('user_id', userId),
+    ]);
+
+    if (!questions?.length) return;
+
+    const now        = new Date();
+    const openQ      = questions.filter(q => new Date(q.deadline) > now);
+    if (!openQ.length) return;
+
+    const answeredIds = new Set((answers ?? []).map(a => a.question_id));
+    const unanswered  = openQ.filter(q => !answeredIds.has(q.id));
+
+    if (unanswered.length > 0) {
+      const banner = document.getElementById('prognose-banner');
+      banner.classList.remove('hidden');
+      document.getElementById('prognose-banner-sub').textContent =
+        `${unanswered.length} von ${openQ.length} noch offen`;
+    }
+  }
+
+  /* ---- Quiz-Live-Banner ---- */
+  async function loadQuizBanner() {
+    // Aktive Session laden
+    const { data: sess } = await supabase
+      .from('quiz_sessions')
+      .select('id')
+      .eq('status', 'active')
+      .limit(1)
+      .maybeSingle();
+
+    if (!sess) return;
+
+    // Alle Fragen der Session zählen
+    const { count: totalQ } = await supabase
+      .from('quiz_questions')
+      .select('*', { count: 'exact', head: true })
+      .eq('session_id', sess.id);
+
+    // Bereits beantwortete Fragen des Users zählen
+    const { count: answeredQ } = await supabase
+      .from('quiz_answers')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .in('question_id',
+        (await supabase
+          .from('quiz_questions')
+          .select('id')
+          .eq('session_id', sess.id)
+        ).data?.map(q => q.id) ?? []
+      );
+
+    // Nur anzeigen wenn noch Fragen offen sind
+    if ((answeredQ ?? 0) < (totalQ ?? 0)) {
+      document.getElementById('quiz-banner').classList.remove('hidden');
+      showNavBadge('quiz');
+    }
+  }
+
+  /* ---- Spiele laden ---- */
+  async function loadMatches() {
+    const [{ data: matches }, { data: myTips }] = await Promise.all([
+      supabase
+        .from('matches')
+        .select('*')
+        .order('kickoff_at', { ascending: true })
+        .limit(10),
+      supabase
+        .from('tips')
+        .select('match_id, home_score_tip, away_score_tip')
+        .eq('user_id', userId),
+    ]);
+
+    if (!matches?.length) return;
+
+    // Tips als Map: match_id → tip-Objekt
+    const tipsMap = Object.fromEntries((myTips ?? []).map(t => [t.match_id, t]));
+    const tippedIds = new Set(Object.keys(tipsMap));
+
+    // Nächstes upcoming Spiel
+    const nextMatch = matches.find(m => m.status === 'upcoming');
+    if (nextMatch) await renderNextMatch(nextMatch, tipsMap[nextMatch.id]);
+
+    // Die nächsten 4 Spiele danach als Liste
+    const upcoming = matches
+      .filter(m => m.status === 'upcoming' && m.id !== nextMatch?.id)
+      .slice(0, 4);
+
+    if (upcoming.length > 0) {
+      document.getElementById('upcoming-area').classList.remove('hidden');
+      document.getElementById('upcoming-list').innerHTML = upcoming.map(m => {
+        const tip         = tipsMap[m.id];
+        const isTipped    = !!tip;
+        const statusClass = isTipped ? 'tipped' : 'open';
+        const timeStr     = formatDateTime(m.kickoff_at);
+        return `
+          <div class="upcoming-item ${statusClass}"
+               onclick="window.location.href='../pages/tips.html'">
+            <div class="upcoming-flags">
+              <span class="upcoming-flag">${flag(m.home_team)}</span>
+              <span class="upcoming-vs">vs</span>
+              <span class="upcoming-flag">${flag(m.away_team)}</span>
+            </div>
+            <div class="upcoming-center">
+              ${isTipped
+                ? `<span class="upcoming-tip-score">${tip.home_score_tip} : ${tip.away_score_tip}</span>`
+                : `<span class="upcoming-tip-open">Nicht getippt</span>`
+              }
+              <span class="upcoming-time">${timeStr}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Heutige offene Spiele zählen
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const todayEnd = new Date();
+    todayEnd.setHours(23, 59, 59, 999);
+
+    const todayOpen = matches.filter(m => {
+      const kickoff = new Date(m.kickoff_at);
+      return m.status === 'upcoming'
+        && !tippedIds.has(m.id)
+        && kickoff >= todayStart
+        && kickoff <= todayEnd;
+    });
+
+    if (todayOpen.length > 0) {
+      const banner = document.getElementById('cta-today');
+      banner.classList.remove('hidden');
+      banner.innerHTML = `JETZT TIPPEN <span style="background:rgba(255,255,255,0.25);border-radius:999px;padding:2px 8px;font-size:0.8rem;">(${todayOpen.length} offen)</span>`;
+      showNavBadge('tips');
+    }
+
+    // CTA unten — generisch
+    const openCount = matches.filter(m => m.status === 'upcoming' && !tippedIds.has(m.id)).length;
+    if (openCount === 0) {
+      document.getElementById('cta-btn').textContent = 'ALLE TIPPS ABGEGEBEN ✓';
+      document.getElementById('cta-btn').style.color = 'var(--accent)';
+    }
+  }
+
+  /* ---- Nächstes Spiel rendern ---- */
+  async function renderNextMatch(match, tip) {
+    const isTipped  = !!tip;
+    const countdown = getCountdown(match.kickoff_at);
+    const timeStr   = formatDateTime(match.kickoff_at);
+    const cardClass = isTipped ? 'tipped' : 'open';
+
+    document.getElementById('next-match-area').innerHTML = `
+      <div class="next-match-card ${cardClass}">
+        <div class="next-match-label">
+          Nächstes Spiel · ${match.group_name ?? match.stage}
+        </div>
+        <div class="next-match-teams">
+          <div class="next-match-team">
+            <div class="flag-emoji">${flag(match.home_team)}</div>
+          </div>
+          <div class="next-match-vs">VS</div>
+          <div class="next-match-team">
+            <div class="flag-emoji">${flag(match.away_team)}</div>
+          </div>
+        </div>
+        ${countdown
+          ? `<div class="next-match-countdown">IN ${countdown.toUpperCase()}</div>`
+          : ''
+        }
+        <div class="next-match-footer">
+          <span class="next-match-time">${timeStr}</span>
+          ${isTipped
+            ? `<span class="tipped-result">${tip.home_score_tip} : ${tip.away_score_tip}</span>`
+            : `<a href="../pages/tips.html" class="btn btn-sm"
+                  style="background:var(--danger);color:white;border-color:var(--danger);">
+                Jetzt tippen
+               </a>`
+          }
+        </div>
+      </div>
+    `;
+  }
+
+  /* ---- Alles parallel laden ---- */
+  await Promise.all([loadUserData(), loadQuizBanner(), loadPrognosen(), loadMatches()]);
+</script>
+</body>
+</html>

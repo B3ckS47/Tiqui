@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tiqui – Spielplan</title>
+  <link rel="manifest" href="../../manifest.json">
+  <link rel="stylesheet" href="../../css/base.css">
+  <link rel="stylesheet" href="../../css/layout.css">
+  <meta name="theme-color" content="#f0f2f5">
+  <style>
+    .match-row {
+      background: var(--bg);
+      box-shadow: var(--neu-raised-sm);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      margin-bottom: var(--space-sm);
+    }
+
+    .match-row-teams {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .match-row-name {
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .match-row-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .match-row-status {
+      flex-shrink: 0;
+    }
+
+    /* Formular */
+    .add-match-form {
+      background: var(--bg);
+      box-shadow: var(--neu-raised);
+      border-radius: var(--radius-xl);
+      padding: var(--space-lg);
+      margin-bottom: var(--space-lg);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-md);
+    }
+
+    .add-match-form h3 {
+      margin-bottom: var(--space-lg);
+      font-size: 1rem;
+    }
+
+    /* Loader */
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .skel {
+      background: var(--bg);
+      box-shadow: var(--neu-inset-sm);
+      border-radius: var(--radius-sm);
+      animation: pulse 1.5s ease-in-out infinite;
+      display: block;
+    }
+
+    .loader-spinner {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: white;
+      border-radius: 50%;
+      display: inline-block;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+<div class="app-shell">
+
+  <div class="page-header">
+    <div>
+      <div class="page-header-title">Spielplan 📅</div>
+      <div class="page-header-subtitle">Spiele hinzufügen & verwalten</div>
+    </div>
+    <a href="../../pages/admin/admin-dashboard.html" class="btn btn-secondary btn-sm">← Admin</a>
+  </div>
+
+  <div class="page-content">
+
+    <!-- Spiel hinzufügen -->
+    <div class="section-label">Neues Spiel</div>
+    <div class="add-match-form">
+      <div class="form-row">
+        <div class="input-group">
+          <label class="input-label">Heimteam</label>
+          <input class="input" id="home-team" type="text" placeholder="z.B. Deutschland" autocomplete="off">
+        </div>
+        <div class="input-group">
+          <label class="input-label">Auswärtsteam</label>
+          <input class="input" id="away-team" type="text" placeholder="z.B. Frankreich" autocomplete="off">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="input-group">
+          <label class="input-label">Gruppe</label>
+          <input class="input" id="group-name" type="text" placeholder="z.B. Gruppe A">
+        </div>
+        <div class="input-group">
+          <label class="input-label">Phase</label>
+          <select class="input" id="stage">
+            <option value="group">Gruppenphase</option>
+            <option value="round_of_16">Achtelfinale</option>
+            <option value="quarter">Viertelfinale</option>
+            <option value="semi">Halbfinale</option>
+            <option value="third_place">Platz 3</option>
+            <option value="final">Finale</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">Anstoß (lokale Zeit)</label>
+        <input class="input" id="kickoff" type="datetime-local">
+      </div>
+
+      <button class="btn btn-primary btn-block" id="add-btn" onclick="addMatch()">
+        Spiel hinzufügen
+      </button>
+    </div>
+
+    <!-- Spielliste -->
+    <div class="section-label">Alle Spiele (<span id="match-count">…</span>)</div>
+    <div id="matches-list">
+      <div class="skel" style="height:64px;border-radius:12px;margin-bottom:8px;"></div>
+      <div class="skel" style="height:64px;border-radius:12px;margin-bottom:8px;"></div>
+      <div class="skel" style="height:64px;border-radius:12px;"></div>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+  import { requireAdmin } from '../../js/auth.js';
+  import { supabase }     from '../../js/supabase.js';
+  import { showToast, showConfirm, formatDateTime } from '../../js/ui.js';
+
+  await requireAdmin();
+
+  let matches = [];
+
+  async function loadMatches() {
+    const { data } = await supabase
+      .from('matches')
+      .select('*')
+      .order('kickoff_at', { ascending: true });
+
+    matches = data ?? [];
+    document.getElementById('match-count').textContent = matches.length;
+    renderList();
+  }
+
+  function renderList() {
+    const statusLabel = {
+      upcoming: '<span class="badge badge-gray">Geplant</span>',
+      live:     '<span class="badge badge-green">Live</span>',
+      finished: '<span class="badge badge-gold">Beendet</span>',
+      cancelled:'<span class="badge badge-danger">Abgesagt</span>',
+    };
+
+    document.getElementById('matches-list').innerHTML = matches.map(m => `
+      <div class="match-row">
+        <div class="match-row-teams">
+          <div class="match-row-name">${m.home_team} vs ${m.away_team}</div>
+          <div class="match-row-meta">
+            ${formatDateTime(m.kickoff_at)} Uhr · ${m.group_name ?? stageLabel(m.stage)}
+            ${m.home_score !== null ? ` · ${m.home_score}:${m.away_score}` : ''}
+          </div>
+        </div>
+        <div class="match-row-status">${statusLabel[m.status] ?? ''}</div>
+        <button
+          class="btn btn-secondary btn-sm"
+          onclick="deleteMatch('${m.id}', '${m.home_team} vs ${m.away_team}')"
+          style="color:var(--danger)"
+        >✕</button>
+      </div>
+    `).join('') || '<p class="text-muted text-sm">Noch keine Spiele.</p>';
+  }
+
+  /* ---- Spiel hinzufügen ---- */
+  window.addMatch = async function() {
+    const homeTeam  = document.getElementById('home-team').value.trim();
+    const awayTeam  = document.getElementById('away-team').value.trim();
+    const groupName = document.getElementById('group-name').value.trim();
+    const stage     = document.getElementById('stage').value;
+    const kickoff   = document.getElementById('kickoff').value;
+
+    if (!homeTeam || !awayTeam || !kickoff) {
+      showToast('Bitte Heimteam, Auswärtsteam und Anstoßzeit angeben.', 'warning');
+      return;
+    }
+
+    const btn = document.getElementById('add-btn');
+    btn.disabled  = true;
+    btn.innerHTML = '<span class="loader-spinner"></span>';
+
+    const { error } = await supabase.from('matches').insert({
+      home_team:  homeTeam,
+      away_team:  awayTeam,
+      group_name: groupName || null,
+      stage,
+      kickoff_at: new Date(kickoff).toISOString(),
+      status:     'upcoming',
+    });
+
+    btn.disabled  = false;
+    btn.textContent = 'Spiel hinzufügen';
+
+    if (error) {
+      showToast('Fehler beim Hinzufügen.', 'danger');
+    } else {
+      showToast('Spiel hinzugefügt ✓', 'success');
+      document.getElementById('home-team').value  = '';
+      document.getElementById('away-team').value  = '';
+      document.getElementById('group-name').value = '';
+      document.getElementById('kickoff').value    = '';
+      await loadMatches();
+    }
+  };
+
+  /* ---- Spiel löschen ---- */
+  window.deleteMatch = async function(matchId, label) {
+    const ok = await showConfirm(`"${label}" wirklich löschen?\nAlle Tipps für dieses Spiel werden ebenfalls gelöscht.`);
+    if (!ok) return;
+
+    const { error } = await supabase.from('matches').delete().eq('id', matchId);
+    if (error) {
+      showToast('Fehler beim Löschen.', 'danger');
+    } else {
+      showToast('Spiel gelöscht.', 'success');
+      await loadMatches();
+    }
+  };
+
+  function stageLabel(stage) {
+    const labels = {
+      group: 'Gruppenphase', round_of_16: 'Achtelfinale',
+      quarter: 'Viertelfinale', semi: 'Halbfinale',
+      third_place: 'Platz 3', final: 'Finale',
+    };
+    return labels[stage] ?? stage;
+  }
+
+  await loadMatches();
+</script>
+</body>
+</html>
