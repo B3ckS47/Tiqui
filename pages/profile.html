@@ -746,7 +746,8 @@
 
       if (error) throw error;
 
-      currentInviteLink = `${window.location.origin}/pages/register.html?token=${data.token}`;
+      const base = window.location.href.replace(/pages\/profile\.html.*$/, '');
+      currentInviteLink = `${base}pages/register.html?token=${data.token}`;
       document.getElementById('invite-link-text').textContent = currentInviteLink;
       document.getElementById('invite-link-area').classList.remove('hidden');
       showToast('Einladungslink erstellt!', 'success');

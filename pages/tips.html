@@ -532,8 +532,8 @@
         <button class="filter-btn active" data-filter="today">Heute</button>
         <button class="filter-btn" data-filter="tomorrow">Morgen</button>
         <button class="filter-btn" data-filter="open">Offen</button>
+        <button class="filter-btn" data-filter="tipped">Getippt</button>
         <button class="filter-btn" data-filter="finished">Beendet</button>
-        <button class="filter-btn" data-filter="all">Alle</button>
       </div>
 
       <div id="matches-container">
@@ -674,15 +674,22 @@
     const container = document.getElementById('matches-container');
     let filtered = allMatches;
 
-    if      (currentFilter === 'open')     filtered = allMatches.filter(m => m.status === 'upcoming' && !myTips[m.id]);
-    else if (currentFilter === 'today')    filtered = allMatches.filter(m => isToday(m.kickoff_at));
+    if      (currentFilter === 'today')    filtered = allMatches.filter(m => isToday(m.kickoff_at));
     else if (currentFilter === 'tomorrow') filtered = allMatches.filter(m => isTomorrow(m.kickoff_at));
+    else if (currentFilter === 'open')     filtered = allMatches.filter(m => m.status === 'upcoming' && !myTips[m.id]);
+    else if (currentFilter === 'tipped')   filtered = allMatches.filter(m => m.status === 'upcoming' && !!myTips[m.id]);
     else if (currentFilter === 'finished') filtered = allMatches.filter(m => m.status === 'finished');
 
     if (!filtered.length) {
       container.innerHTML = `<div class="empty-state">
         <span class="empty-state-icon">✓</span>
-        <p class="empty-state-title">${currentFilter === 'open' ? 'Alle Tipps abgegeben!' : 'Keine Spiele in dieser Kategorie.'}</p>
+        <p class="empty-state-title">${
+          currentFilter === 'open'     ? 'Alle Tipps abgegeben!' :
+          currentFilter === 'tipped'   ? 'Noch keine Tipps abgegeben.' :
+          currentFilter === 'today'    ? 'Heute keine Spiele.' :
+          currentFilter === 'tomorrow' ? 'Morgen keine Spiele.' :
+          'Keine Spiele in dieser Kategorie.'
+        }</p>
       </div>`;
       return;
     }

@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tiqui – Registrieren</title>
-  <link rel="manifest" href="/manifest.json">
-  <link rel="stylesheet" href="/css/base.css">
-  <link rel="stylesheet" href="/css/layout.css">
-  <meta name="theme-color" content="#e0e5ec">
+  <link rel="manifest" href="../manifest.json">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <meta name="theme-color" content="#f0f2f5">
   <style>
     body {
       display: flex;
@@ -222,15 +222,15 @@
     </div>
 
     <p class="back-link">
-      Bereits ein Konto? <a href="/pages/login.html">Anmelden</a>
+      Bereits ein Konto? <a href="../pages/login.html">Anmelden</a>
     </p>
 
   </div>
 
   <script type="module">
-    import { supabase }         from '/js/supabase.js';
-    import { redirectIfLoggedIn } from '/js/auth.js';
-    import { showToast, setLoading, setFieldError, clearFieldError } from '/js/ui.js';
+    import { supabase }         from '../js/supabase.js';
+    import { redirectIfLoggedIn } from '../js/auth.js';
+    import { showToast, setLoading, setFieldError, clearFieldError } from '../js/ui.js';
 
     // Bereits eingeloggt → weiterleiten
     await redirectIfLoggedIn();
@@ -389,7 +389,8 @@
 
         showToast('Konto erstellt! Du wirst weitergeleitet…', 'success');
         setTimeout(() => {
-          window.location.href = '/pages/dashboard.html';
+          const base = window.location.href.replace(/pages\/register\.html.*$/, '');
+          window.location.href = base + 'pages/dashboard.html';
         }, 1500);
 
       } catch (err) {
