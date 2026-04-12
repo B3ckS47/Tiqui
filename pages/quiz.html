@@ -12,7 +12,6 @@
 
     /* ---- Header-Kachel ---- */
     .quiz-header { padding: var(--space-md); padding-bottom: 0; }
-
     .quiz-header-tile {
       background: var(--bg-card);
       border: 1px solid var(--border);
@@ -22,7 +21,6 @@
       position: relative;
       min-height: 72px;
     }
-
     .quiz-header-tile::after {
       content: '';
       position: absolute;
@@ -33,7 +31,6 @@
       filter: blur(1.5px);
       z-index: 0;
     }
-
     .quiz-header-tile::before {
       content: '';
       position: absolute;
@@ -41,7 +38,6 @@
       background: rgba(0,0,0,0.5);
       z-index: 1;
     }
-
     .quiz-header-inner {
       position: relative;
       z-index: 2;
@@ -50,19 +46,8 @@
       align-items: center;
       justify-content: space-between;
     }
-
-    .quiz-header-title {
-      font-size: 1.2rem;
-      font-weight: 800;
-      color: #ffffff;
-    }
-
-    .quiz-header-sub {
-      font-size: 0.75rem;
-      color: rgba(255,255,255,0.7);
-      margin-top: 2px;
-    }
-
+    .quiz-header-title { font-size: 1.2rem; font-weight: 800; color: #ffffff; }
+    .quiz-header-sub { font-size: 0.75rem; color: rgba(255,255,255,0.7); margin-top: 2px; }
     .quiz-header-badge {
       background: rgba(255,255,255,0.15);
       border: 1px solid rgba(255,255,255,0.3);
@@ -82,7 +67,6 @@
       padding: 3px;
       box-shadow: var(--shadow-sm);
     }
-
     .tab-btn {
       flex: 1;
       padding: 9px;
@@ -97,49 +81,85 @@
       font-family: var(--font-sans);
       -webkit-tap-highlight-color: transparent;
     }
-
     .tab-btn.active { background: var(--accent); color: white; box-shadow: var(--shadow-sm); }
 
-    /* ---- Session-Karte ---- */
+    /* ---- Session-Karte (Option A Design) ---- */
     .session-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow-sm);
-      padding: var(--space-md);
       margin-bottom: var(--space-sm);
+      overflow: hidden;
       cursor: pointer;
       transition: all var(--transition);
       -webkit-tap-highlight-color: transparent;
     }
-
     .session-card:active { transform: scale(0.99); opacity: 0.85; }
-    .session-card.completed { border-color: var(--accent-border); }
 
-    .session-card-header {
+    .session-card-top {
+      padding: 12px 16px;
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       justify-content: space-between;
-      gap: var(--space-sm);
-      margin-bottom: var(--space-sm);
+    }
+    .session-card-top.active-bg  { background: #2e7d32; }
+    .session-card-top.done-bg    { background: #455a64; }
+
+    .session-card-title { font-size: 0.95rem; font-weight: 700; color: #fff; }
+    .session-card-desc  { font-size: 0.75rem; color: rgba(255,255,255,0.8); margin-top: 2px; }
+
+    .session-card-badge {
+      background: rgba(255,255,255,0.2);
+      border-radius: var(--radius-full);
+      padding: 4px 10px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #fff;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
-    .session-card-title {
-      font-weight: 800;
-      font-size: 0.95rem;
+    .session-card-bottom {
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .session-card-warn {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--danger);
+    }
+
+    .session-card-pts {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .session-card-btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 7px 14px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: var(--font-sans);
+    }
+
+    .session-card-btn.secondary {
+      background: var(--bg-card);
       color: var(--text-primary);
-    }
-
-    .session-card-desc {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      margin-top: 2px;
+      border: 1px solid var(--border-strong);
     }
 
     /* ---- Quiz-Spielfläche ---- */
     .quiz-play-wrap { display: none; }
 
-    /* Warnung wenn Tab gewechselt */
     .tab-warning {
       background: #fef3cd;
       border: 1px solid #fcd34d;
@@ -153,27 +173,11 @@
       display: none;
     }
 
-    /* Timer-Ring */
-    .timer-ring-wrap {
-      display: flex;
-      justify-content: center;
-      margin-bottom: var(--space-md);
-    }
-
-    .timer-ring {
-      position: relative;
-      width: 72px;
-      height: 72px;
-    }
-
+    /* Timer */
+    .timer-ring-wrap { display: flex; justify-content: center; margin-bottom: var(--space-md); }
+    .timer-ring { position: relative; width: 72px; height: 72px; }
     .timer-ring svg { transform: rotate(-90deg); }
-
-    .timer-ring-track {
-      fill: none;
-      stroke: var(--border);
-      stroke-width: 6;
-    }
-
+    .timer-ring-track { fill: none; stroke: var(--border); stroke-width: 6; }
     .timer-ring-fill {
       fill: none;
       stroke: var(--accent);
@@ -183,17 +187,11 @@
       stroke-dashoffset: 0;
       transition: stroke-dashoffset 1s linear, stroke 0.3s;
     }
-
     .timer-ring-fill.urgent { stroke: var(--danger); }
-
     .timer-number {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-      font-weight: 900;
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; font-weight: 900;
       color: var(--text-primary);
       font-variant-numeric: tabular-nums;
     }
@@ -218,40 +216,24 @@
       padding: var(--space-lg);
       margin-bottom: var(--space-md);
     }
-
     .question-category {
-      font-size: 0.68rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--accent);
-      margin-bottom: var(--space-sm);
+      font-size: 0.68rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--accent); margin-bottom: var(--space-sm);
     }
-
     .question-text {
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      line-height: 1.5;
+      font-size: 1rem; font-weight: 700;
+      color: var(--text-primary); line-height: 1.5;
       margin-bottom: var(--space-lg);
     }
-
     .question-image {
-      width: 100%;
-      max-height: 180px;
-      object-fit: cover;
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border);
+      width: 100%; max-height: 180px; object-fit: cover;
+      border-radius: var(--radius-md); border: 1px solid var(--border);
       margin-bottom: var(--space-md);
     }
 
     /* Optionen */
-    .options-list {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-sm);
-    }
-
+    .options-list { display: flex; flex-direction: column; gap: var(--space-sm); }
     .quiz-opt {
       background: var(--bg-card);
       border: 1.5px solid var(--border-strong);
@@ -261,20 +243,15 @@
       transition: all var(--transition);
       font-weight: 600;
       color: var(--text-primary);
-      width: 100%;
-      text-align: left;
+      width: 100%; text-align: left;
       font-family: var(--font-sans);
       font-size: 0.95rem;
-      display: flex;
-      align-items: center;
-      gap: var(--space-md);
+      display: flex; align-items: center; gap: var(--space-md);
       box-shadow: var(--shadow-sm);
       -webkit-tap-highlight-color: transparent;
     }
-
     .quiz-opt:active:not(:disabled) { transform: scale(0.99); }
     .quiz-opt:disabled { cursor: default; }
-
     .opt-letter {
       width: 28px; height: 28px;
       border-radius: var(--radius-full);
@@ -282,53 +259,30 @@
       border: 1px solid var(--border-strong);
       display: flex; align-items: center; justify-content: center;
       font-size: 0.75rem; font-weight: 700;
-      color: var(--text-muted);
-      flex-shrink: 0;
+      color: var(--text-muted); flex-shrink: 0;
       transition: all var(--transition);
     }
-
     .quiz-opt.selected { border-color: var(--accent); background: var(--accent-bg); color: var(--accent-dark); }
     .quiz-opt.selected .opt-letter { background: var(--accent); color: white; border-color: var(--accent); }
-    .quiz-opt.correct  { border-color: var(--success); background: var(--accent-bg); color: var(--accent-dark); }
+    .quiz-opt.correct  { border-color: var(--accent); background: var(--accent-bg); color: var(--accent-dark); }
     .quiz-opt.correct .opt-letter  { background: var(--accent); color: white; border-color: var(--accent); }
-    .quiz-opt.wrong    { border-color: var(--danger);  background: var(--danger-bg);  color: var(--danger); }
+    .quiz-opt.wrong    { border-color: var(--danger); background: var(--danger-bg); color: var(--danger); }
     .quiz-opt.wrong .opt-letter    { background: var(--danger); color: white; border-color: var(--danger); }
 
     /* Schätzfrage */
-    .estimate-control {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: var(--space-lg);
-      margin-bottom: var(--space-lg);
-    }
-
     .est-btn {
-      width: 48px; height: 48px;
-      border-radius: var(--radius-full);
+      padding: 8px 12px;
+      border-radius: var(--radius-md);
       border: 1px solid var(--border-strong);
       background: var(--bg-card);
       box-shadow: var(--shadow-sm);
-      font-size: 1.3rem; font-weight: 700;
+      font-size: 0.82rem; font-weight: 700;
       color: var(--text-secondary);
       cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
       transition: all var(--transition);
       -webkit-tap-highlight-color: transparent;
     }
-
     .est-btn:active { transform: scale(0.92); }
-
-    .est-display {
-      min-width: 100px; height: 64px;
-      border-radius: var(--radius-md);
-      border: 2px solid var(--border-strong);
-      background: var(--bg-card);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 2rem; font-weight: 900;
-      color: var(--text-primary);
-      font-variant-numeric: tabular-nums;
-    }
 
     /* Feedback */
     .feedback-banner {
@@ -337,19 +291,52 @@
       margin-bottom: var(--space-md);
       font-weight: 700;
       font-size: 0.95rem;
-      display: flex;
-      align-items: center;
-      gap: var(--space-sm);
+      display: flex; align-items: center; gap: var(--space-sm);
       border: 1px solid transparent;
     }
-
     .feedback-correct { background: var(--accent-bg); color: var(--accent-dark); border-color: var(--accent-border); }
-    .feedback-wrong   { background: var(--danger-bg);  color: var(--danger);       border-color: var(--danger-border); }
-    .feedback-timeout { background: var(--gold-bg);    color: var(--gold-dark);    border-color: #f9e08b; }
+    .feedback-wrong   { background: var(--danger-bg); color: var(--danger); border-color: var(--danger-border); }
+    .feedback-timeout { background: var(--gold-bg); color: var(--gold-dark); border-color: #f9e08b; }
+
+    /* ---- Antwort-Verteilung ---- */
+    .dist-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      margin-bottom: var(--space-md);
+    }
+    .dist-title {
+      font-size: 0.7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.07em;
+      color: var(--text-muted); margin-bottom: var(--space-sm);
+    }
+    .dist-row {
+      display: flex; align-items: center; gap: var(--space-sm);
+      margin-bottom: 6px;
+    }
+    .dist-label {
+      width: 20px; font-size: 0.72rem; font-weight: 700;
+      color: var(--text-muted); flex-shrink: 0; text-align: center;
+    }
+    .dist-bar-wrap {
+      flex: 1; height: 20px;
+      background: var(--bg); border-radius: var(--radius-sm);
+      overflow: hidden; position: relative;
+    }
+    .dist-bar {
+      height: 100%; border-radius: var(--radius-sm);
+      transition: width 0.5s ease;
+    }
+    .dist-bar.correct-bar { background: var(--accent); }
+    .dist-bar.wrong-bar   { background: var(--border-strong); }
+    .dist-pct {
+      font-size: 0.7rem; font-weight: 700;
+      color: var(--text-muted); min-width: 30px; text-align: right;
+    }
 
     /* ---- Ergebnis-Screen ---- */
     .quiz-result-wrap { display: none; }
-
     .result-hero {
       background: var(--bg-card);
       border: 1px solid var(--border);
@@ -359,47 +346,30 @@
       text-align: center;
       margin-bottom: var(--space-md);
     }
-
     .result-emoji { font-size: 3.5rem; display: block; margin-bottom: var(--space-md); }
-
     .result-score {
-      font-size: 3rem;
-      font-weight: 900;
-      color: var(--accent);
-      line-height: 1;
-      letter-spacing: -0.03em;
+      font-size: 3rem; font-weight: 900;
+      color: var(--accent); line-height: 1; letter-spacing: -0.03em;
     }
-
     .result-label { font-size: 0.8rem; color: var(--text-muted); margin-top: var(--space-sm); }
-
     .result-stats {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-sm);
-      overflow: hidden;
-      margin-bottom: var(--space-md);
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);
+      overflow: hidden; margin-bottom: var(--space-md);
     }
-
     .result-stat-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: var(--space-md);
-      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: var(--space-md); border-bottom: 1px solid var(--border);
       font-size: 0.88rem;
     }
-
     .result-stat-row:last-child { border-bottom: none; }
 
-    /* ---- Abgeschlossene Sessions — Bottom Sheet ---- */
+    /* ---- Bottom Sheet ---- */
     .sheet-backdrop {
       position: fixed; inset: 0;
       background: rgba(0,0,0,0.45);
-      z-index: 200;
-      animation: fadein 0.2s ease;
+      z-index: 200; animation: fadein 0.2s ease;
     }
-
     .sheet {
       position: fixed; bottom: 0;
       left: 50%; transform: translateX(-50%);
@@ -407,126 +377,78 @@
       background: var(--bg-card);
       border-radius: 20px 20px 0 0;
       box-shadow: 0 -4px 24px rgba(0,0,0,0.15);
-      z-index: 201;
-      animation: slideup 0.28s ease;
-      max-height: 88vh;
-      overflow-y: auto;
+      z-index: 201; animation: slideup 0.28s ease;
+      max-height: 88vh; overflow-y: auto;
       padding-bottom: env(safe-area-inset-bottom, 16px);
     }
-
     @keyframes fadein  { from{opacity:0} to{opacity:1} }
     @keyframes slideup {
       from { transform: translateX(-50%) translateY(100%); }
       to   { transform: translateX(-50%) translateY(0); }
     }
-
     .sheet-handle {
       width: 36px; height: 4px;
       background: var(--border-strong);
       border-radius: var(--radius-full);
       margin: 12px auto var(--space-md);
     }
-
     .sheet-body { padding: var(--space-lg); }
 
+    /* Rangliste im Sheet */
     .ranking-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: var(--space-sm) 0;
-      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: var(--space-sm) 0; border-bottom: 1px solid var(--border);
       font-size: 0.88rem;
     }
-
     .ranking-row:last-child { border-bottom: none; }
-
-    .ranking-left {
-      display: flex;
-      align-items: center;
-      gap: var(--space-sm);
-    }
-
-    .ranking-pos {
-      font-size: 0.85rem;
-      font-weight: 800;
-      min-width: 22px;
-      color: var(--text-muted);
-    }
-
+    .ranking-left { display: flex; align-items: center; gap: var(--space-sm); }
+    .ranking-pos { font-size: 0.85rem; font-weight: 800; min-width: 22px; color: var(--text-muted); }
     .ranking-pos.p1 { color: #c9a227; }
     .ranking-pos.p2 { color: #9e9e9e; }
     .ranking-pos.p3 { color: #a0522d; }
-
     .ranking-name { font-weight: 600; color: var(--text-primary); }
     .ranking-name.me { color: var(--accent); }
     .ranking-pts  { font-weight: 800; color: var(--accent); }
 
-    /* ---- Abbruch-Modal ---- */
-    .quit-modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      z-index: 300;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: var(--space-lg);
-      animation: fadein 0.2s ease;
-    }
-
-    .quit-modal {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-xl);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-      padding: var(--space-xl);
-      width: 100%;
-      max-width: 360px;
-      animation: scalein 0.2s ease;
-      text-align: center;
-    }
-
-    @keyframes scalein {
-      from { transform: scale(0.92); opacity: 0; }
-      to   { transform: scale(1);    opacity: 1; }
-    }
-
-    .quit-modal-icon {
-      font-size: 2.5rem;
-      display: block;
+    /* Review-Modus */
+    .review-q-nav {
+      display: flex; align-items: center; justify-content: space-between;
       margin-bottom: var(--space-md);
     }
-
-    .quit-modal-title {
-      font-size: 1.1rem;
-      font-weight: 800;
-      color: var(--text-primary);
-      margin-bottom: var(--space-sm);
+    .review-answer-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 6px 0; border-bottom: 1px solid var(--border);
+      font-size: 0.82rem;
     }
+    .review-answer-row:last-child { border-bottom: none; }
+    .review-answer-me { color: var(--accent); font-weight: 700; }
 
-    .quit-modal-text {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-      line-height: 1.6;
-      margin-bottom: var(--space-lg);
+    /* ---- Abbruch-Modal ---- */
+    .quit-modal-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 300;
+      display: flex; align-items: center; justify-content: center;
+      padding: var(--space-lg); animation: fadein 0.2s ease;
     }
-
+    .quit-modal {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      padding: var(--space-xl); width: 100%; max-width: 360px;
+      animation: scalein 0.2s ease; text-align: center;
+    }
+    @keyframes scalein { from{transform:scale(0.92);opacity:0} to{transform:scale(1);opacity:1} }
+    .quit-modal-icon { font-size: 2.5rem; display: block; margin-bottom: var(--space-md); }
+    .quit-modal-title { font-size: 1.1rem; font-weight: 800; color: var(--text-primary); margin-bottom: var(--space-sm); }
+    .quit-modal-text { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: var(--space-lg); }
     .quit-modal-warning {
-      background: var(--danger-bg);
-      border: 1px solid var(--danger-border);
-      border-radius: var(--radius-md);
-      padding: var(--space-sm) var(--space-md);
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--danger);
+      background: var(--danger-bg); border: 1px solid var(--danger-border);
+      border-radius: var(--radius-md); padding: var(--space-sm) var(--space-md);
+      font-size: 0.8rem; font-weight: 600; color: var(--danger);
       margin-bottom: var(--space-lg);
     }
-
-    .quit-modal-btns {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-sm);
-    }
+    .quit-modal-btns { display: flex; flex-direction: column; gap: var(--space-sm); }
 
     /* ---- Loader ---- */
     .loader-spinner {
@@ -536,7 +458,6 @@
       animation: spin 0.7s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-
     .skel {
       background: #e9ecf0; border-radius: var(--radius-sm);
       animation: pulse 1.4s ease-in-out infinite; display: block;
@@ -553,7 +474,7 @@
     <div class="quiz-header-tile">
       <div class="quiz-header-inner">
         <div>
-          <div class="quiz-header-title">Quiz</div>
+          <div class="quiz-header-title">Quiz 🧠</div>
           <div class="quiz-header-sub" id="quiz-header-sub">Wissen testen</div>
         </div>
         <div class="quiz-header-badge hidden" id="quiz-header-badge"></div>
@@ -565,40 +486,27 @@
 
     <!-- ===== SESSION-AUSWAHL ===== -->
     <div id="quiz-lobby">
-
-      <!-- Tab-Toggle -->
       <div class="tab-toggle mb-md">
         <button class="tab-btn active" id="tab-active" onclick="switchLobbyTab('active')">🟢 Aktiv</button>
         <button class="tab-btn" id="tab-finished" onclick="switchLobbyTab('finished')">✓ Abgeschlossen</button>
       </div>
-
-      <!-- Aktive Sessions -->
       <div id="view-active">
         <div id="active-list">
           <div class="skel" style="height:100px;border-radius:12px;margin-bottom:8px;"></div>
           <div class="skel" style="height:100px;border-radius:12px;"></div>
         </div>
       </div>
-
-      <!-- Abgeschlossene Sessions -->
       <div id="view-finished" class="hidden">
         <div id="finished-list">
           <div class="skel" style="height:80px;border-radius:12px;margin-bottom:8px;"></div>
-          <div class="skel" style="height:80px;border-radius:12px;"></div>
         </div>
       </div>
-
     </div>
 
     <!-- ===== QUIZ SPIELFLÄCHE ===== -->
     <div class="quiz-play-wrap" id="quiz-play-area">
+      <div class="tab-warning" id="tab-warning">⚠ Du hast die Seite verlassen — der Timer läuft weiter!</div>
 
-      <!-- Tab-Wechsel Warnung -->
-      <div class="tab-warning" id="tab-warning">
-        ⚠ Du hast die Seite verlassen — der Timer läuft weiter!
-      </div>
-
-      <!-- Fortschritt -->
       <div class="quiz-progress">
         <span id="q-progress-text">Frage 1 von 10</span>
         <span id="q-points-so-far">0 Punkte</span>
@@ -607,7 +515,6 @@
         <div class="progress-fill" id="q-progress-bar" style="width:0%"></div>
       </div>
 
-      <!-- Timer -->
       <div class="timer-ring-wrap">
         <div class="timer-ring">
           <svg width="72" height="72" viewBox="0 0 72 72">
@@ -618,7 +525,6 @@
         </div>
       </div>
 
-      <!-- Fragen-Karte -->
       <div class="question-card">
         <div class="question-category" id="q-category"></div>
         <img class="question-image hidden" id="q-image" alt="Quiz-Bild">
@@ -627,12 +533,20 @@
         <div class="question-text" id="q-text"></div>
         <div class="options-list hidden" id="q-options"></div>
         <div class="hidden" id="q-estimate">
-          <div class="estimate-control">
-            <button class="est-btn" onclick="changeEstimate(-10)">−−</button>
-            <button class="est-btn" onclick="changeEstimate(-1)">−</button>
-            <div class="est-display" id="est-val">0</div>
-            <button class="est-btn" onclick="changeEstimate(1)">+</button>
-            <button class="est-btn" onclick="changeEstimate(10)">++</button>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:var(--space-md);margin-bottom:var(--space-lg);">
+            <input type="number" id="est-val" placeholder="Zahl eingeben…" inputmode="numeric"
+              style="width:100%;max-width:200px;text-align:center;font-size:2rem;font-weight:900;
+                     padding:var(--space-md);border:2px solid var(--border-strong);
+                     border-radius:var(--radius-md);background:var(--bg-card);
+                     color:var(--text-primary);font-family:var(--font-sans);outline:none;">
+            <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;">
+              <button class="est-btn" onclick="adjustEstimate(-100)">−100</button>
+              <button class="est-btn" onclick="adjustEstimate(-10)">−10</button>
+              <button class="est-btn" onclick="adjustEstimate(-1)">−1</button>
+              <button class="est-btn" onclick="adjustEstimate(1)">+1</button>
+              <button class="est-btn" onclick="adjustEstimate(10)">+10</button>
+              <button class="est-btn" onclick="adjustEstimate(100)">+100</button>
+            </div>
           </div>
           <button class="btn btn-primary btn-block" id="est-submit-btn" onclick="submitEstimate()">
             Antwort abgeben
@@ -640,31 +554,25 @@
         </div>
       </div>
 
-      <!-- Feedback -->
       <div id="q-feedback" class="hidden"></div>
+      <div id="q-distribution" class="hidden"></div>
 
-      <!-- Weiter -->
       <button class="btn btn-primary btn-block btn-lg hidden" id="next-btn" onclick="nextQuestion()">
         Weiter →
       </button>
-
     </div>
 
     <!-- ===== ERGEBNIS ===== -->
     <div class="quiz-result-wrap" id="quiz-result-area">
-
       <div class="result-hero">
         <span class="result-emoji" id="result-emoji">🎉</span>
         <div class="result-score" id="result-score">0</div>
         <div class="result-label">Punkte in diesem Quiz</div>
       </div>
-
       <div class="result-stats" id="result-stats"></div>
-
       <button class="btn btn-primary btn-block mb-md" onclick="backToLobby()">
         Zurück zur Übersicht
       </button>
-
     </div>
 
   </div>
@@ -674,7 +582,7 @@
   import { requireAuth } from '../js/auth.js';
   import { supabase }    from '../js/supabase.js';
   import { initNav, getInitials } from '../js/router.js';
-  import { showToast, renderAvatar }   from '../js/ui.js';
+  import { showToast, renderAvatar } from '../js/ui.js';
 
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('../sw.js').catch(() => {});
@@ -683,23 +591,22 @@
   const session = await requireAuth();
   if (!session) throw new Error('Nicht eingeloggt');
   const userId = session.user.id;
-
   initNav();
 
-  /* ---- State ---- */
   let allSessions   = [];
-  let myAnswers     = {};
-  let myCompletions = new Set();  // session_ids die der User abgeschlossen hat
+  let myAnswers     = {};       // question_id → { points_earned, given_answer }
+  let myCompletions = new Set();
+  let sessionQPts   = {};       // session_id → meine Punkte in dieser Session
   let currentSess   = null;
-  let questions    = [];
-  let currentIdx   = 0;
-  let pointsSoFar  = 0;
+  let questions     = [];
+  let currentIdx    = 0;
+  let pointsSoFar   = 0;
   let timerInterval = null;
-  let timeLeft     = 20;
-  let answered     = false;
-  let estimateVal  = 0;
-  let lobbyTab     = 'active';
-  let _myUsername  = null;
+  let timeLeft      = 20;
+  let answered      = false;
+  let estimateVal   = 0;
+  let lobbyTab      = 'active';
+  let _myUsername   = null;
 
   /* ================================================
      LOBBY
@@ -711,18 +618,25 @@
         .in('status', ['active', 'finished'])
         .order('created_at', { ascending: false }),
       supabase.from('quiz_answers')
-        .select('question_id, points_earned')
+        .select('question_id, points_earned, given_answer, quiz_questions(session_id)')
         .eq('user_id', userId),
       supabase.from('quiz_user_completions')
         .select('session_id')
         .eq('user_id', userId),
     ]);
 
-    allSessions    = sess ?? [];
-    myAnswers      = Object.fromEntries((ans ?? []).map(a => [a.question_id, a]));
-    myCompletions  = new Set((completions ?? []).map(c => c.session_id));
+    allSessions   = sess ?? [];
+    myCompletions = new Set((completions ?? []).map(c => c.session_id));
 
-    // Header Badge — aktive Sessions die der User noch nicht abgeschlossen hat
+    // Antworten indexieren
+    myAnswers   = {};
+    sessionQPts = {};
+    (ans ?? []).forEach(a => {
+      myAnswers[a.question_id] = { points_earned: a.points_earned ?? 0, given_answer: a.given_answer };
+      const sid = a.quiz_questions?.session_id;
+      if (sid) sessionQPts[sid] = (sessionQPts[sid] ?? 0) + (a.points_earned ?? 0);
+    });
+
     const openCount = allSessions.filter(s =>
       s.status === 'active' && !myCompletions.has(s.id)
     ).length;
@@ -748,15 +662,8 @@
   };
 
   function renderLobby() {
-    // Aktiv = Session aktiv UND User hat noch nicht abgeschlossen
-    const active = allSessions.filter(s =>
-      s.status === 'active' && !myCompletions.has(s.id)
-    );
-
-    // Abgeschlossen = User hat abgeschlossen ODER Session ist beendet
-    const finished = allSessions.filter(s =>
-      myCompletions.has(s.id) || s.status === 'finished'
-    );
+    const active   = allSessions.filter(s => s.status === 'active' && !myCompletions.has(s.id));
+    const finished = allSessions.filter(s => myCompletions.has(s.id) || s.status === 'finished');
 
     /* ---- Aktive Sessions ---- */
     const activeList = document.getElementById('active-list');
@@ -771,17 +678,16 @@
         const total = s.quiz_questions?.[0]?.count ?? 0;
         return `
           <div class="session-card" onclick="startQuiz('${s.id}')">
-            <div class="session-card-header">
+            <div class="session-card-top active-bg">
               <div>
                 <div class="session-card-title">${s.title}</div>
-                <div class="session-card-desc">${s.description ?? ''} · ${total} Fragen</div>
+                <div class="session-card-desc">${s.description ? s.description + ' · ' : ''}${total} Fragen</div>
               </div>
-              <span class="badge badge-blue">Starten →</span>
+              <span class="session-card-badge">Aktiv</span>
             </div>
-            <div style="margin-top:6px;">
-              <span class="text-xs" style="color:var(--danger);font-weight:600;">
-                ⚠ Muss am Stück gespielt werden!
-              </span>
+            <div class="session-card-bottom">
+              <span class="session-card-warn">⚠ Muss am Stück gespielt werden!</span>
+              <button class="session-card-btn" onclick="event.stopPropagation();startQuiz('${s.id}')">Starten →</button>
             </div>
           </div>`;
       }).join('');
@@ -796,31 +702,30 @@
       </div>`;
     } else {
       finishedList.innerHTML = finished.map(s => {
-        const total = s.quiz_questions?.[0]?.count ?? 0;
-        const myPts = getMyPointsForSession(s.id);
+        const total      = s.quiz_questions?.[0]?.count ?? 0;
         const isUserDone = myCompletions.has(s.id);
+        const myPts      = sessionQPts[s.id] ?? 0;
         return `
-          <div class="session-card" onclick="showSessionResult('${s.id}')">
-            <div class="session-card-header">
+          <div class="session-card">
+            <div class="session-card-top done-bg">
               <div>
                 <div class="session-card-title">${s.title}</div>
-                <div class="session-card-desc">${s.description ?? ''} · ${total} Fragen</div>
+                <div class="session-card-desc">${s.description ? s.description + ' · ' : ''}${total} Fragen</div>
               </div>
-              ${isUserDone
-                ? '<span class="badge badge-green">Abgeschlossen ✓</span>'
-                : '<span class="badge badge-gray">Beendet</span>'}
+              <span class="session-card-badge">${isUserDone ? '✓ Fertig' : 'Beendet'}</span>
             </div>
-            <div style="font-size:0.78rem;color:var(--accent);font-weight:700;margin-top:4px;">
-              ${isUserDone ? `Deine Punkte: ${myPts} · ` : ''}Rangliste ansehen →
+            <div class="session-card-bottom">
+              ${isUserDone
+                ? `<span class="session-card-pts">${myPts} Punkte erzielt</span>`
+                : `<span style="font-size:0.78rem;color:var(--text-muted);">Nicht gespielt</span>`}
+              <div style="display:flex;gap:6px;">
+                <button class="session-card-btn secondary" onclick="showSessionResult('${s.id}')">Rangliste</button>
+                ${isUserDone ? `<button class="session-card-btn" onclick="startReview('${s.id}')">Review</button>` : ''}
+              </div>
             </div>
           </div>`;
       }).join('');
     }
-  }
-
-  function getMyPointsForSession(sessionId) {
-    return Object.values(myAnswers)
-      .reduce((sum, a) => sum + (a.points_earned ?? 0), 0);
   }
 
   /* ================================================
@@ -840,25 +745,17 @@
     currentIdx  = 0;
     pointsSoFar = 0;
 
-    if (!questions.length) {
-      showToast('Du hast alle Fragen bereits beantwortet!', 'info');
-      return;
-    }
+    if (!questions.length) { showToast('Du hast alle Fragen bereits beantwortet!', 'info'); return; }
 
     setupAntiCheat();
-
-    document.getElementById('quiz-lobby').style.display      = 'none';
-    document.getElementById('quiz-play-area').style.display  = 'block';
+    document.getElementById('quiz-lobby').style.display       = 'none';
+    document.getElementById('quiz-play-area').style.display   = 'block';
     document.getElementById('quiz-result-area').style.display = 'none';
-
     showQuestion();
   };
 
   /* ================================================
      ANTI-CHEAT
-     1. Nav-Links abfangen → Custom Modal
-     2. visibilitychange → Timer läuft weiter
-     3. sessionStorage → Frage-Endzeit persistieren
   ================================================ */
   let tabHiddenAt   = null;
   let questionEndAt = null;
@@ -875,7 +772,6 @@
     sessionStorage.removeItem('tiqui_quiz_state');
   }
 
-  /* ---- Nav-Links abfangen ---- */
   function interceptNavLinks() {
     if (navIntercepted) return;
     navIntercepted = true;
@@ -892,62 +788,39 @@
   }
 
   function onNavClick(e) {
-    // Nur während aktivem Quiz und wenn Frage noch läuft
     if (answered) return;
     const href = e.currentTarget.href || e.currentTarget.getAttribute('href');
     if (!href || href === '#') return;
-
-    e.preventDefault();
-    e.stopPropagation();
+    e.preventDefault(); e.stopPropagation();
     showQuitModal(href);
   }
 
-  /* ---- Custom Abbruch-Modal ---- */
   function showQuitModal(targetUrl) {
     const backdrop = document.createElement('div');
     backdrop.className = 'quit-modal-backdrop';
     backdrop.id = 'quit-modal-backdrop';
-
     backdrop.innerHTML = `
       <div class="quit-modal">
         <span class="quit-modal-icon">⚠️</span>
         <div class="quit-modal-title">Quiz verlassen?</div>
-        <div class="quit-modal-text">
-          Du bist mitten in einer Frage. Der Timer läuft weiter.
-        </div>
-        <div class="quit-modal-warning">
-          Die aktuelle Frage wird als <strong>falsch gewertet</strong>
-          und mit 0 Punkten gespeichert.
-        </div>
+        <div class="quit-modal-text">Du bist mitten in einer Frage. Der Timer läuft weiter.</div>
+        <div class="quit-modal-warning">Die aktuelle Frage wird als <strong>falsch gewertet</strong>.</div>
         <div class="quit-modal-btns">
-          <button class="btn btn-secondary btn-block" onclick="closeQuitModal()">
-            Weiterspielen
-          </button>
+          <button class="btn btn-secondary btn-block" onclick="closeQuitModal()">Weiterspielen</button>
           <button class="btn btn-block" style="background:var(--danger);color:white;border-color:var(--danger);"
-                  onclick="confirmQuit('${targetUrl}')">
-            Trotzdem verlassen
-          </button>
+                  onclick="confirmQuit('${targetUrl}')">Trotzdem verlassen</button>
         </div>
       </div>`;
-
     document.body.appendChild(backdrop);
   }
 
-  window.closeQuitModal = function() {
-    document.getElementById('quit-modal-backdrop')?.remove();
-  };
+  window.closeQuitModal = function() { document.getElementById('quit-modal-backdrop')?.remove(); };
 
   window.confirmQuit = async function(targetUrl) {
-    // Aktuelle Frage als Timeout speichern
     const q = questions[currentIdx];
-    if (q && !answered) {
-      await saveAnswer(q.id, null, false, 0);
-    }
-
+    if (q && !answered) await saveAnswer(q.id, null, false, 0);
     clearInterval(timerInterval);
     teardownAntiCheat();
-
-    // Quiz direkt als abgeschlossen markieren (Abbruch = fertig)
     if (currentSess && !myCompletions.has(currentSess.id)) {
       await supabase.from('quiz_user_completions').upsert(
         { user_id: userId, session_id: currentSess.id },
@@ -956,34 +829,20 @@
       myCompletions.add(currentSess.id);
       await supabase.rpc('refresh_leaderboard');
     }
-
     document.getElementById('quit-modal-backdrop')?.remove();
     window.location.href = targetUrl;
   };
 
-  /* ---- Quiz als abgeschlossen markieren ---- */
   async function checkAndCompleteQuiz() {
-    if (!currentSess) return;
-
-    // Bereits abgeschlossen?
-    if (myCompletions.has(currentSess.id)) return;
-
-    // Alle Fragen der Session laden
+    if (!currentSess || myCompletions.has(currentSess.id)) return;
     const { data: allQs } = await supabase
-      .from('quiz_questions')
-      .select('id')
-      .eq('session_id', currentSess.id);
-
+      .from('quiz_questions').select('id').eq('session_id', currentSess.id);
     if (!allQs?.length) return;
-
-    // Wie viele hat der User beantwortet?
     const { count: answeredCount } = await supabase
       .from('quiz_answers')
       .select('*', { count: 'exact', head: true })
       .eq('user_id', userId)
       .in('question_id', allQs.map(q => q.id));
-
-    // Wenn alle beantwortet → als abgeschlossen markieren
     if ((answeredCount ?? 0) >= allQs.length) {
       await supabase.from('quiz_user_completions').upsert(
         { user_id: userId, session_id: currentSess.id },
@@ -994,17 +853,12 @@
     }
   }
 
-  /* ---- sessionStorage State ---- */
   function saveQuizState() {
     if (!questions[currentIdx]) return;
-    const state = {
-      sessionId:   currentSess?.id,
-      questionId:  questions[currentIdx].id,
-      questionIdx: currentIdx,
-      pointsSoFar,
-      questionEndAt,
-    };
-    sessionStorage.setItem('tiqui_quiz_state', JSON.stringify(state));
+    sessionStorage.setItem('tiqui_quiz_state', JSON.stringify({
+      sessionId: currentSess?.id, questionId: questions[currentIdx].id,
+      questionIdx: currentIdx, pointsSoFar, questionEndAt,
+    }));
   }
 
   function checkInterruptedQuiz() {
@@ -1012,42 +866,28 @@
       const raw = sessionStorage.getItem('tiqui_quiz_state');
       if (!raw) return;
       const state = JSON.parse(raw);
-
       if (state.questionEndAt && Date.now() > state.questionEndAt) {
-        // Frage abgelaufen → als Timeout in DB speichern
         supabase.from('quiz_answers').upsert(
-          {
-            user_id:          userId,
-            question_id:      state.questionId,
-            given_answer:     JSON.stringify({}),
-            is_correct:       false,
-            response_time_ms: 0,
-            points_earned:    0,
-          },
+          { user_id: userId, question_id: state.questionId,
+            given_answer: JSON.stringify({}), is_correct: false,
+            response_time_ms: 0, points_earned: 0 },
           { onConflict: 'user_id,question_id' }
         ).then(() => supabase.rpc('refresh_leaderboard'));
-
         showToast('Eine Frage wurde als abgelaufen gewertet.', 'warning');
       }
-
       sessionStorage.removeItem('tiqui_quiz_state');
     } catch {}
   }
 
-  /* ---- visibilitychange ---- */
   function onVisibilityChange() {
     if (document.hidden) {
-      tabHiddenAt = Date.now();
-      saveQuizState();
+      tabHiddenAt = Date.now(); saveQuizState();
     } else {
       if (tabHiddenAt && !answered) {
         const warn = document.getElementById('tab-warning');
         if (warn) { warn.style.display = 'block'; setTimeout(() => { warn.style.display = 'none'; }, 4000); }
         const remaining = Math.max(0, Math.ceil((questionEndAt - Date.now()) / 1000));
-        if (remaining <= 0 && !answered) {
-          clearInterval(timerInterval);
-          onTimeout();
-        }
+        if (remaining <= 0 && !answered) { clearInterval(timerInterval); onTimeout(); }
       }
       tabHiddenAt = null;
     }
@@ -1060,40 +900,32 @@
     const q = questions[currentIdx];
     if (!q) { showResult(); return; }
 
-    answered    = false;
-    estimateVal = 0;
+    answered = false; estimateVal = 0;
 
-    // Fortschritt
     const total = questions.length;
-    const pct   = Math.round(currentIdx / total * 100);
-    document.getElementById('q-progress-text').textContent  = `Frage ${currentIdx + 1} von ${total}`;
-    document.getElementById('q-points-so-far').textContent  = `${pointsSoFar} Punkte`;
-    document.getElementById('q-progress-bar').style.width   = pct + '%';
+    document.getElementById('q-progress-text').textContent = `Frage ${currentIdx + 1} von ${total}`;
+    document.getElementById('q-points-so-far').textContent = `${pointsSoFar} Punkte`;
+    document.getElementById('q-progress-bar').style.width  = Math.round(currentIdx / total * 100) + '%';
 
-    // Kategorie
     const cat = q.quiz_categories;
     document.getElementById('q-category').textContent = cat ? `${cat.icon ?? ''} ${cat.name}` : '';
 
-    // Bild
     const imgEl   = document.getElementById('q-image');
     const audioEl = document.getElementById('q-audio');
-
     if (q.question_type === 'audio_quiz' && q.image_url) {
       imgEl.classList.add('hidden');
-      audioEl.src = q.image_url;
-      audioEl.classList.remove('hidden');
+      audioEl.src = q.image_url; audioEl.classList.remove('hidden');
       audioEl.play().catch(() => {});
     } else if (q.image_url) {
       audioEl.classList.add('hidden');
-      imgEl.src = q.image_url;
-      imgEl.classList.remove('hidden');
+      imgEl.src = q.image_url; imgEl.classList.remove('hidden');
     } else {
-      imgEl.classList.add('hidden');
-      audioEl.classList.add('hidden');
+      imgEl.classList.add('hidden'); audioEl.classList.add('hidden');
     }
 
     document.getElementById('q-text').textContent = q.question_text;
     document.getElementById('q-feedback').classList.add('hidden');
+    document.getElementById('q-distribution').classList.add('hidden');
     document.getElementById('next-btn').classList.add('hidden');
 
     const optionsEl  = document.getElementById('q-options');
@@ -1102,7 +934,8 @@
     if (q.question_type === 'estimate') {
       optionsEl.classList.add('hidden');
       estimateEl.classList.remove('hidden');
-      document.getElementById('est-val').textContent = '0';
+      const estInput = document.getElementById('est-val');
+      estInput.value = ''; estInput.style.borderColor = '';
       estimateVal = 0;
     } else {
       estimateEl.classList.add('hidden');
@@ -1111,8 +944,7 @@
       const letters = ['A','B','C','D'];
       optionsEl.innerHTML = options.map((opt, i) => `
         <button class="quiz-opt" id="opt-${i}" onclick="selectOption(${i})">
-          <span class="opt-letter">${letters[i]}</span>
-          ${opt}
+          <span class="opt-letter">${letters[i]}</span>${opt}
         </button>`).join('');
     }
 
@@ -1125,29 +957,20 @@
   function startTimer(seconds) {
     clearInterval(timerInterval);
     timeLeft = seconds;
-    const circumference = 188;
-    const fillEl  = document.getElementById('timer-fill');
-    const numEl   = document.getElementById('timer-number');
-
+    const fillEl = document.getElementById('timer-fill');
+    const numEl  = document.getElementById('timer-number');
     fillEl.style.strokeDashoffset = '0';
     fillEl.classList.remove('urgent');
     numEl.textContent = seconds;
-
-    // Endzeit festhalten — Basis für Anti-Cheat
     questionEndAt = Date.now() + seconds * 1000;
     saveQuizState();
 
     timerInterval = setInterval(() => {
       timeLeft = Math.max(0, Math.ceil((questionEndAt - Date.now()) / 1000));
       numEl.textContent = timeLeft;
-      const offset = circumference * (1 - timeLeft / seconds);
-      fillEl.style.strokeDashoffset = offset;
+      fillEl.style.strokeDashoffset = 188 * (1 - timeLeft / seconds);
       if (timeLeft <= 5) fillEl.classList.add('urgent');
-
-      if (timeLeft <= 0) {
-        clearInterval(timerInterval);
-        if (!answered) onTimeout();
-      }
+      if (timeLeft <= 0) { clearInterval(timerInterval); if (!answered) onTimeout(); }
     }, 250);
   }
 
@@ -1175,10 +998,15 @@
 
     showFeedback(isCorrect, pts, correctAnswer, q);
     saveAnswer(q.id, { index: idx }, isCorrect, pts);
+    showDistribution(q.id, correctIdx);
   };
 
   window.submitEstimate = function() {
     if (answered) return;
+    const input = document.getElementById('est-val');
+    const val   = parseInt(input.value, 10);
+    if (isNaN(val)) { input.style.borderColor = 'var(--danger)'; return; }
+    estimateVal = val;
     answered = true;
     clearInterval(timerInterval);
 
@@ -1195,17 +1023,20 @@
     saveAnswer(q.id, { value: estimateVal }, isCorrect, pts);
   };
 
-  window.changeEstimate = function(delta) {
+  window.adjustEstimate = function(delta) {
     if (answered) return;
-    estimateVal = Math.max(0, estimateVal + delta);
-    document.getElementById('est-val').textContent = estimateVal;
+    const input = document.getElementById('est-val');
+    const current = parseInt(input.value, 10) || 0;
+    input.value = current + delta;
+    input.focus();
   };
 
   function onTimeout() {
     answered = true;
-    const q  = questions[currentIdx];
+    const q = questions[currentIdx];
     document.querySelectorAll('.quiz-opt').forEach(btn => btn.disabled = true);
-    document.getElementById('est-submit-btn').disabled = true;
+    const estSubmit = document.getElementById('est-submit-btn');
+    if (estSubmit) estSubmit.disabled = true;
 
     const correctAnswer = typeof q.correct_answer === 'string'
       ? JSON.parse(q.correct_answer) : q.correct_answer;
@@ -1219,6 +1050,7 @@
     fb.classList.remove('hidden');
 
     saveAnswer(q.id, null, false, 0);
+    if (correctAnswer.index !== undefined) showDistribution(q.id, correctAnswer.index);
     document.getElementById('next-btn').classList.remove('hidden');
   }
 
@@ -1242,22 +1074,70 @@
     document.getElementById('next-btn').classList.remove('hidden');
   }
 
+  /* ================================================
+     ANTWORT-VERTEILUNG
+  ================================================ */
+  async function showDistribution(questionId, correctIdx) {
+    const distEl = document.getElementById('q-distribution');
+    distEl.classList.remove('hidden');
+    distEl.innerHTML = `<div class="dist-panel"><div class="dist-title">Wie andere gespielt haben…</div>
+      <div class="skel" style="height:80px;border-radius:8px;"></div></div>`;
+
+    // Alle Antworten für diese Frage laden
+    const { data: answers } = await supabase
+      .from('quiz_answers')
+      .select('given_answer')
+      .eq('question_id', questionId);
+
+    if (!answers?.length) { distEl.classList.add('hidden'); return; }
+
+    const q = questions[currentIdx];
+    const options = Array.isArray(q.options) ? q.options : JSON.parse(q.options ?? '[]');
+    const letters = ['A','B','C','D'];
+
+    // Zählen
+    const counts = new Array(options.length).fill(0);
+    answers.forEach(a => {
+      try {
+        const ga = typeof a.given_answer === 'string' ? JSON.parse(a.given_answer) : a.given_answer;
+        if (ga?.index !== undefined && ga.index < counts.length) counts[ga.index]++;
+      } catch {}
+    });
+
+    const total = counts.reduce((s, c) => s + c, 0) || 1;
+
+    distEl.innerHTML = `
+      <div class="dist-panel">
+        <div class="dist-title">So haben ${answers.length} Spieler geantwortet</div>
+        ${counts.map((c, i) => {
+          const pct = Math.round(c / total * 100);
+          const isCorrect = i === correctIdx;
+          return `
+            <div class="dist-row">
+              <div class="dist-label">${letters[i]}</div>
+              <div class="dist-bar-wrap">
+                <div class="dist-bar ${isCorrect ? 'correct-bar' : 'wrong-bar'}"
+                     style="width:${pct}%"></div>
+              </div>
+              <div class="dist-pct">${pct}%</div>
+            </div>`;
+        }).join('')}
+      </div>`;
+  }
+
   async function saveAnswer(questionId, givenAnswer, isCorrect, pointsEarned) {
     const q = questions[currentIdx];
     await supabase.from('quiz_answers').upsert(
       {
-        user_id:          userId,
-        question_id:      questionId,
-        given_answer:     givenAnswer ? JSON.stringify(givenAnswer) : JSON.stringify({}),
-        is_correct:       isCorrect,
-        response_time_ms: Math.max(0, (q?.time_limit_sec - timeLeft) * 1000),
-        points_earned:    pointsEarned,
+        user_id: userId, question_id: questionId,
+        given_answer: givenAnswer ? JSON.stringify(givenAnswer) : JSON.stringify({}),
+        is_correct: isCorrect,
+        response_time_ms: Math.max(0, ((q?.time_limit_sec ?? 20) - timeLeft) * 1000),
+        points_earned: pointsEarned,
       },
       { onConflict: 'user_id,question_id' }
     );
     myAnswers[questionId] = { points_earned: pointsEarned };
-
-    // Nach jeder Antwort prüfen ob alle Fragen beantwortet sind
     await checkAndCompleteQuiz();
   }
 
@@ -1273,8 +1153,7 @@
   async function showResult() {
     clearInterval(timerInterval);
     teardownAntiCheat();
-
-    document.getElementById('quiz-play-area').style.display  = 'none';
+    document.getElementById('quiz-play-area').style.display   = 'none';
     document.getElementById('quiz-result-area').style.display = 'block';
 
     const total   = questions.length;
@@ -1284,11 +1163,9 @@
 
     document.getElementById('result-emoji').textContent = emoji;
     document.getElementById('result-score').textContent = pointsSoFar;
-
     document.getElementById('result-stats').innerHTML = `
       <div class="result-stat-row">
-        <span style="color:var(--text-secondary)">Fragen beantwortet</span>
-        <strong>${total}</strong>
+        <span style="color:var(--text-secondary)">Fragen beantwortet</span><strong>${total}</strong>
       </div>
       <div class="result-stat-row">
         <span style="color:var(--text-secondary)">Richtige Antworten</span>
@@ -1305,24 +1182,20 @@
 
   window.backToLobby = async function() {
     document.getElementById('quiz-result-area').style.display = 'none';
-    document.getElementById('quiz-lobby').style.display = 'block';
-    document.getElementById('quiz-play-area').style.display = 'none';
+    document.getElementById('quiz-lobby').style.display       = 'block';
+    document.getElementById('quiz-play-area').style.display   = 'none';
     await loadSessions();
   };
 
   /* ================================================
-     ABGESCHLOSSENE SESSION RANGLISTE
+     RANGLISTE (Bottom Sheet)
   ================================================ */
   window.showSessionResult = async function(sessionId) {
     const sess = allSessions.find(s => s.id === sessionId);
     if (!sess) return;
 
-    // Alle Antworten für diese Session laden
     const { data: qIds } = await supabase
-      .from('quiz_questions')
-      .select('id')
-      .eq('session_id', sessionId);
-
+      .from('quiz_questions').select('id').eq('session_id', sessionId);
     const ids = (qIds ?? []).map(q => q.id);
     if (!ids.length) return;
 
@@ -1331,52 +1204,230 @@
       .select('user_id, points_earned, users(username, avatar_url)')
       .in('question_id', ids);
 
-    // Punkte pro User summieren
     const userPts = {};
     (answers ?? []).forEach(a => {
       if (!userPts[a.user_id]) {
-        userPts[a.user_id] = {
-          username:   a.users?.username ?? '–',
-          avatar_url: a.users?.avatar_url ?? null,
-          pts: 0,
-        };
+        userPts[a.user_id] = { username: a.users?.username ?? '–', avatar_url: a.users?.avatar_url ?? null, pts: 0 };
       }
       userPts[a.user_id].pts += a.points_earned ?? 0;
     });
 
-    const sorted = Object.entries(userPts)
-      .sort((a, b) => b[1].pts - a[1].pts);
+    const sorted  = Object.entries(userPts).sort((a, b) => b[1].pts - a[1].pts);
+    const myName  = await getMyUsername();
+    const medals  = ['🥇','🥈','🥉'];
+    const posClass = i => i === 0 ? 'p1' : i === 1 ? 'p2' : i === 2 ? 'p3' : '';
 
-    const myName = await getMyUsername();
+    openSheet(`
+      <div style="font-weight:800;font-size:1rem;margin-bottom:4px;">${sess.title}</div>
+      <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:var(--space-md);">Endrangliste</div>
+      ${sorted.map(([uid, data], i) => `
+        <div class="ranking-row">
+          <div class="ranking-left">
+            <div class="ranking-pos ${posClass(i)}">${medals[i] ?? i + 1}</div>
+            ${renderAvatar(data.username, data.avatar_url, 'sm')}
+            <div class="ranking-name ${data.username === myName ? 'me' : ''}">
+              ${data.username}${data.username === myName ? ' (Du)' : ''}
+            </div>
+          </div>
+          <div class="ranking-pts">${data.pts} Pkt</div>
+        </div>`).join('')}
+    `);
+  };
 
-    const posClass = (i) => i === 0 ? 'p1' : i === 1 ? 'p2' : i === 2 ? 'p3' : '';
-    const medals   = ['🥇','🥈','🥉'];
+  /* ================================================
+     REVIEW-MODUS
+  ================================================ */
+  window.startReview = async function(sessionId) {
+    const sess = allSessions.find(s => s.id === sessionId);
+    if (!sess) return;
+
+    // Alle Fragen + alle Antworten laden
+    const { data: qs } = await supabase
+      .from('quiz_questions')
+      .select('*, quiz_categories(name, icon)')
+      .eq('session_id', sessionId)
+      .order('sort_order', { ascending: true });
+
+    if (!qs?.length) return;
+
+    const { data: allAnswers } = await supabase
+      .from('quiz_answers')
+      .select('user_id, question_id, given_answer, is_correct, points_earned, users(username)')
+      .in('question_id', qs.map(q => q.id));
+
+    // Antworten nach Frage gruppieren
+    const answersByQ = {};
+    (allAnswers ?? []).forEach(a => {
+      if (!answersByQ[a.question_id]) answersByQ[a.question_id] = [];
+      answersByQ[a.question_id].push(a);
+    });
+
+    let reviewIdx = 0;
+    const myName  = await getMyUsername();
+
+    function renderReviewQ() {
+      const q       = qs[reviewIdx];
+      const answers = answersByQ[q.id] ?? [];
+      const options = Array.isArray(q.options) ? q.options : JSON.parse(q.options ?? '[]');
+      const letters = ['A','B','C','D'];
+      const correctAnswer = typeof q.correct_answer === 'string'
+        ? JSON.parse(q.correct_answer) : q.correct_answer;
+
+      // Meine Antwort
+      const myAns = answers.find(a => a.users?.username === myName);
+      let myGiven = null;
+      try { myGiven = myAns ? (typeof myAns.given_answer === 'string' ? JSON.parse(myAns.given_answer) : myAns.given_answer) : null; } catch {}
+
+      // Antwort-Verteilung zählen
+      const counts = new Array(Math.max(options.length, 1)).fill(0);
+      answers.forEach(a => {
+        try {
+          const ga = typeof a.given_answer === 'string' ? JSON.parse(a.given_answer) : a.given_answer;
+          if (ga?.index !== undefined && ga.index < counts.length) counts[ga.index]++;
+        } catch {}
+      });
+      const totalAns = counts.reduce((s, c) => s + c, 0) || 1;
+
+      let optionsHtml = '';
+      if (options.length > 0) {
+        optionsHtml = options.map((opt, i) => {
+          const isCorrect = i === correctAnswer.index;
+          const isMine    = myGiven?.index === i;
+          const pct       = Math.round(counts[i] / totalAns * 100);
+          let cls = 'quiz-opt'; let style = '';
+          if (isCorrect) { cls += ' correct'; }
+          if (isMine && !isCorrect) { cls += ' wrong'; }
+          return `
+            <div class="${cls}" style="cursor:default;margin-bottom:6px;">
+              <span class="opt-letter" style="flex-shrink:0">${letters[i]}</span>
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:0.88rem;">${opt}</div>
+                <div style="height:6px;background:var(--bg);border-radius:4px;margin-top:4px;overflow:hidden;">
+                  <div style="height:100%;width:${pct}%;background:${isCorrect ? 'var(--accent)' : 'var(--border-strong)'};border-radius:4px;"></div>
+                </div>
+              </div>
+              <div style="font-size:0.72rem;color:var(--text-muted);min-width:30px;text-align:right;">
+                ${pct}%${isMine ? ' ✎' : ''}
+              </div>
+            </div>`;
+        }).join('');
+      } else if (correctAnswer.value !== undefined) {
+        // Schätzfrage
+        const myVal = myGiven?.value ?? '–';
+        optionsHtml = `
+          <div style="text-align:center;padding:var(--space-lg);">
+            <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:4px;">Deine Schätzung</div>
+            <div style="font-size:2rem;font-weight:900;color:var(--accent);">${myVal}</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);margin-top:8px;">Richtige Antwort: <strong>${correctAnswer.value}</strong> (±${correctAnswer.tolerance ?? 0})</div>
+          </div>`;
+      }
+
+      // Alle Antworten der Spieler
+      // Alle Antworten der Spieler — sortiert
+      let sortedAnswers = answers.filter(a => a.users?.username);
+
+      if (correctAnswer.index !== undefined) {
+        // Multiple Choice: richtige oben, falsche unten
+        sortedAnswers.sort((a, b) => {
+          const aCorrect = a.is_correct ? 1 : 0;
+          const bCorrect = b.is_correct ? 1 : 0;
+          return bCorrect - aCorrect;
+        });
+      } else if (correctAnswer.value !== undefined) {
+        // Schätzfrage: nach Nähe zum richtigen Wert sortieren
+        sortedAnswers.sort((a, b) => {
+          let aVal, bVal;
+          try { aVal = JSON.parse(typeof a.given_answer === 'string' ? a.given_answer : JSON.stringify(a.given_answer))?.value ?? Infinity; } catch { aVal = Infinity; }
+          try { bVal = JSON.parse(typeof b.given_answer === 'string' ? b.given_answer : JSON.stringify(b.given_answer))?.value ?? Infinity; } catch { bVal = Infinity; }
+          return Math.abs(aVal - correctAnswer.value) - Math.abs(bVal - correctAnswer.value);
+        });
+      }
+
+      const playerRows = sortedAnswers.map(a => {
+          const isMe = a.users.username === myName;
+          let givenDisplay = '–';
+          try {
+            const ga = typeof a.given_answer === 'string' ? JSON.parse(a.given_answer) : a.given_answer;
+            if (ga?.index !== undefined) {
+              givenDisplay = letters[ga.index] ?? '–';  // Nur Buchstabe
+            } else if (ga?.value !== undefined) {
+              givenDisplay = ga.value;
+            }
+          } catch {}
+          return `
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:6px 4px;font-size:0.8rem;font-weight:${isMe ? '700' : '400'};
+                         color:${isMe ? 'var(--accent)' : 'var(--text-primary)'};max-width:90px;
+                         overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                ${a.users.username}${isMe ? ' (Du)' : ''}
+              </td>
+              <td style="padding:6px 4px;font-size:0.8rem;text-align:center;
+                         color:${a.is_correct ? 'var(--accent)' : 'var(--danger)'};font-weight:700;">
+                ${givenDisplay}
+              </td>
+              <td style="padding:6px 4px;font-size:0.8rem;text-align:right;
+                         color:${a.is_correct ? 'var(--accent)' : 'var(--danger)'};font-weight:700;">
+                ${a.is_correct ? '+' : ''}${a.points_earned ?? 0}
+              </td>
+            </tr>`;
+        }).join('');
+
+      return `
+        <div style="font-weight:800;font-size:0.95rem;margin-bottom:2px;">${sess.title} · Review</div>
+        <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:var(--space-md);">
+          Frage ${reviewIdx + 1} von ${qs.length}
+        </div>
+
+        <div class="review-q-nav">
+          <button class="btn btn-secondary btn-sm" onclick="reviewNav(-1)" ${reviewIdx === 0 ? 'disabled' : ''}>← Zurück</button>
+          <span style="font-size:0.8rem;color:var(--text-muted);">${reviewIdx + 1} / ${qs.length}</span>
+          <button class="btn btn-secondary btn-sm" onclick="reviewNav(1)" ${reviewIdx === qs.length - 1 ? 'disabled' : ''}>Weiter →</button>
+        </div>
+
+        <div style="font-size:0.88rem;font-weight:700;color:var(--text-primary);margin-bottom:var(--space-md);line-height:1.5;">
+          ${q.question_text}
+        </div>
+
+        ${optionsHtml}
+
+        ${playerRows ? `
+          <div style="margin-top:var(--space-md);border-top:1px solid var(--border);padding-top:var(--space-md);">
+            <div class="dist-title">Alle Spieler</div>
+            <table style="width:100%;border-collapse:collapse;">
+              <thead>
+                <tr>
+                  <th style="font-size:0.68rem;font-weight:700;color:var(--text-muted);text-align:left;padding:4px 4px 8px;text-transform:uppercase;letter-spacing:0.06em;">Spieler</th>
+                  <th style="font-size:0.68rem;font-weight:700;color:var(--text-muted);text-align:center;padding:4px 4px 8px;text-transform:uppercase;letter-spacing:0.06em;">Antwort</th>
+                  <th style="font-size:0.68rem;font-weight:700;color:var(--text-muted);text-align:right;padding:4px 4px 8px;text-transform:uppercase;letter-spacing:0.06em;">Punkte</th>
+                </tr>
+              </thead>
+              <tbody>${playerRows}</tbody>
+            </table>
+          </div>` : ''}`;
+    }
+
+    window.reviewNav = function(dir) {
+      reviewIdx = Math.max(0, Math.min(qs.length - 1, reviewIdx + dir));
+      const sheet = document.getElementById('result-sheet');
+      if (sheet) sheet.querySelector('.sheet-body').innerHTML = renderReviewQ();
+    };
+
+    openSheet(renderReviewQ());
+  };
+
+  /* ---- Sheet Hilfsfunktion ---- */
+  function openSheet(html) {
+    document.querySelector('.sheet-backdrop')?.remove();
+    document.getElementById('result-sheet')?.remove();
 
     const backdrop = document.createElement('div');
     backdrop.className = 'sheet-backdrop';
-    backdrop.onclick   = () => { backdrop.remove(); document.getElementById('result-sheet')?.remove(); };
+    backdrop.onclick = closeSheet;
 
     const sheet = document.createElement('div');
     sheet.className = 'sheet';
-    sheet.id        = 'result-sheet';
-    sheet.innerHTML = `
-      <div class="sheet-handle"></div>
-      <div class="sheet-body">
-        <div style="font-weight:800;font-size:1rem;margin-bottom:4px;">${sess.title}</div>
-        <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:var(--space-md);">Endrangliste</div>
-        ${sorted.map(([uid, data], i) => `
-          <div class="ranking-row">
-            <div class="ranking-left">
-              <div class="ranking-pos ${posClass(i)}">${medals[i] ?? i + 1}</div>
-              ${renderAvatar(data.username, data.avatar_url, 'sm')}
-              <div class="ranking-name ${data.username === myName ? 'me' : ''}">
-                ${data.username}
-                ${data.username === myName ? ' (Du)' : ''}
-              </div>
-            </div>
-            <div class="ranking-pts">${data.pts} Pkt</div>
-          </div>`).join('')}
-      </div>`;
+    sheet.id = 'result-sheet';
+    sheet.innerHTML = `<div class="sheet-handle"></div><div class="sheet-body">${html}</div>`;
 
     document.body.appendChild(backdrop);
     document.body.appendChild(sheet);
@@ -1384,11 +1435,14 @@
     let startY = 0;
     sheet.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
     sheet.addEventListener('touchend', e => {
-      if (e.changedTouches[0].clientY - startY > 80) {
-        backdrop.remove(); sheet.remove();
-      }
+      if (e.changedTouches[0].clientY - startY > 80) closeSheet();
     });
-  };
+  }
+
+  function closeSheet() {
+    document.querySelector('.sheet-backdrop')?.remove();
+    document.getElementById('result-sheet')?.remove();
+  }
 
   /* ---- Hilfsfunktionen ---- */
   async function getMyUsername() {

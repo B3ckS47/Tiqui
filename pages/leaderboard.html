@@ -30,7 +30,7 @@
       background-image: url('../icons/tile-rangliste.png');
       background-size: cover;
       background-position: center;
-      filter: blur(1.5px);
+      filter: blur(3px);
       z-index: 0;
     }
 
@@ -443,8 +443,12 @@
      PODEST
   ================================================ */
   function renderPodium() {
-    const top3  = leaderboard.slice(0, 3);
     const podEl = document.getElementById('podium');
+
+    // Nach aktuellem View sortieren — gleiche Logik wie die Liste
+    const key    = { total:'total_points', tips:'tip_points', quiz:'quiz_points', special:'special_points' }[currentView];
+    const sorted = [...leaderboard].sort((a, b) => (b[key] ?? 0) - (a[key] ?? 0));
+    const top3   = sorted.slice(0, 3);
 
     if (!top3.length) {
       podEl.innerHTML = `<p class="text-muted text-sm">Noch keine Punkte vergeben.</p>`;
@@ -470,7 +474,7 @@
             ${avatarHtml}
           </div>
           <div class="podium-name">${isMe ? 'Du' : player.username}</div>
-          <div class="podium-points">${pointsFor(player)} Pkt</div>
+          <div class="podium-points">${player[key] ?? 0} Pkt</div>
           <div class="podium-block">${medals[i]}</div>
         </div>`;
     }).join('');
