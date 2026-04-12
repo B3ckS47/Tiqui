@@ -83,7 +83,7 @@ html {
 body {
   font-family: var(--font-sans);
   background-color: var(--bg);
-  background-image: url("./icons/bg-hexagon.png");
+  background-image: url("../icons/bg-hexagon.png");
   background-size: 400px auto;
   background-repeat: repeat;
   color: var(--text-primary);

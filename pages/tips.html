@@ -622,8 +622,7 @@
     document.getElementById('tab-prognose').classList.toggle('active', tab === 'prognose');
 
     // Hintergrundbild tauschen
-    const tile = document.querySelector('.tips-header-tile::after');
-    const img  = tab === 'tipps' ? '/icons/tile-tipps.png' : '/icons/tile-prognose.png';
+    const img = tab === 'tipps' ? '../icons/tile-tipps.png' : '../icons/tile-prognose.png';
     document.documentElement.style.setProperty('--header-bg', `url('${img}')`);
 
     if (tab === 'tipps') {
