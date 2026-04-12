@@ -10,9 +10,10 @@
   <meta name="theme-color" content="#f0f2f5">
   <style>
     .user-card {
-      background: var(--bg);
-      box-shadow: var(--neu-raised-sm);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
       border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
       padding: var(--space-md);
       display: flex;
       align-items: center;
@@ -42,23 +43,73 @@
 
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
     .skel {
-      background: var(--bg);
-      box-shadow: var(--neu-inset-sm);
+      background: #e9ecf0;
       border-radius: var(--radius-sm);
       animation: pulse 1.5s ease-in-out infinite;
       display: block;
     }
+
+    /* ---- Admin Header-Kachel ---- */
+    .admin-header { padding: var(--space-md); padding-bottom: 0; }
+
+    .admin-header-tile {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      position: relative;
+      min-height: 72px;
+    }
+
+    .admin-header-tile::after {
+      content: "";
+      position: absolute;
+      inset: -10px;
+      background-image: url("../../icons/tile-admin.png");
+      background-size: cover;
+      background-position: center;
+      filter: blur(3px);
+      z-index: 0;
+    }
+
+    .admin-header-tile::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(60,0,0,0.62);
+      z-index: 1;
+    }
+
+    .admin-header-inner {
+      position: relative;
+      z-index: 2;
+      padding: var(--space-md);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .admin-header-title { font-size: 1.2rem; font-weight: 800; color: #ffffff; }
+    .admin-header-sub { font-size: 0.75rem; color: rgba(255,255,255,0.7); margin-top: 2px; }
   </style>
 </head>
 <body>
 <div class="app-shell">
 
-  <div class="page-header">
-    <div>
-      <div class="page-header-title">User 👥</div>
-      <div class="page-header-subtitle">Konten verwalten</div>
+  <div class="admin-header">
+    <div class="admin-header-tile">
+      <div class="admin-header-inner">
+        <div>
+          <div class="admin-header-title">User</div>
+          <div class="admin-header-sub">Spieler verwalten</div>
+        </div>
+        <a href="../../pages/admin/admin-dashboard.html" class="btn btn-sm"
+           style="background:rgba(255,255,255,0.15);color:white;border-color:rgba(255,255,255,0.3);">
+          ← Admin
+        </a>
+      </div>
     </div>
-    <a href="../../pages/admin/admin-dashboard.html" class="btn btn-secondary btn-sm">← Admin</a>
   </div>
 
   <div class="page-content">
@@ -89,8 +140,8 @@
 <script type="module">
   import { requireAdmin, getCurrentUser } from '../../js/auth.js';
   import { supabase }                    from '../../js/supabase.js';
-  import { showToast, showConfirm, getInitials } from '../../js/ui.js';
-  import { getInitials as navInitials }  from '../../js/router.js';
+  import { showToast, showConfirm }      from '../../js/ui.js';
+  import { getInitials }                 from '../../js/router.js';
 
   const adminUser = await requireAdmin();
   if (!adminUser) throw new Error('Kein Admin');
@@ -99,17 +150,21 @@
   let filteredUsers = [];
 
   async function loadUsers() {
-    const [{ data: users }, { data: lb }] = await Promise.all([
+    const [{ data: users }, { data: invites }] = await Promise.all([
       supabase.from('users').select('*').order('created_at', { ascending: true }),
-      supabase.from('leaderboard_cache').select('user_id, total_points, rank'),
+      supabase.from('invitations').select('used_by, invited_by, users!invitations_invited_by_fkey(username)'),
     ]);
 
-    const lbMap = Object.fromEntries((lb ?? []).map(l => [l.user_id, l]));
+    // Map: user_id → eingeladen von (username)
+    const inviteMap = Object.fromEntries(
+      (invites ?? [])
+        .filter(i => i.used_by)
+        .map(i => [i.used_by, i.users?.username ?? '–'])
+    );
 
     allUsers = (users ?? []).map(u => ({
       ...u,
-      total_points: lbMap[u.id]?.total_points ?? 0,
-      rank:         lbMap[u.id]?.rank ?? null,
+      invited_by_name: inviteMap[u.id] ?? null,
     }));
 
     filteredUsers = allUsers;
@@ -141,7 +196,7 @@
 
       return `
         <div class="user-card">
-          <div class="avatar-placeholder avatar-sm">${navInitials(u.username)}</div>
+          <div class="avatar-placeholder avatar-sm">${getInitials(u.username)}</div>
           <div class="user-card-info">
             <div class="user-card-name">
               ${u.username}
@@ -149,8 +204,8 @@
               ${isMe ? '<span class="badge badge-gray" style="font-size:0.65rem">Du</span>' : ''}
             </div>
             <div class="user-card-meta">
-              Beigetreten: ${joined} · ${u.total_points} Punkte
-              ${u.rank ? ` · Platz #${u.rank}` : ''}
+              Beigetreten: ${joined}
+              ${u.invited_by_name ? ` · Eingeladen von: ${u.invited_by_name}` : ''}
             </div>
           </div>
           <div class="user-card-actions">

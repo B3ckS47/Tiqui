@@ -132,17 +132,69 @@
       animation: spin 0.7s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ---- Admin Header-Kachel ---- */
+    .admin-header { padding: var(--space-md); padding-bottom: 0; }
+
+    .admin-header-tile {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      position: relative;
+      min-height: 72px;
+    }
+
+    .admin-header-tile::after {
+      content: "";
+      position: absolute;
+      inset: -10px;
+      background-image: url("../../icons/tile-admin.png");
+      background-size: cover;
+      background-position: center;
+      filter: blur(3px);
+      z-index: 0;
+    }
+
+    .admin-header-tile::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(60,0,0,0.62);
+      z-index: 1;
+    }
+
+    .admin-header-inner {
+      position: relative;
+      z-index: 2;
+      padding: var(--space-md);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .admin-header-title { font-size: 1.2rem; font-weight: 800; color: #ffffff; }
+    .admin-header-sub { font-size: 0.75rem; color: rgba(255,255,255,0.7); margin-top: 2px; }
   </style>
 </head>
 <body>
 <div class="app-shell">
 
-  <div class="page-header">
-    <div>
-      <div class="page-header-title">Prognosen 🏆</div>
-      <div class="page-header-subtitle">Fragen erstellen & auflösen</div>
+  <div class="admin-header">
+    <div class="admin-header-tile">
+      <div class="admin-header-inner">
+        <div>
+          <div class="admin-header-title">Prognosen</div>
+          <div class="admin-header-sub">Fragen verwalten</div>
+        </div>
+        <a href="../../pages/admin/admin-dashboard.html" class="btn btn-sm"
+           style="background:rgba(255,255,255,0.15);color:white;border-color:rgba(255,255,255,0.3);">
+          ← Admin
+        </a>
+      </div>
     </div>
-    <a href="../../pages/admin/admin-dashboard.html" class="btn btn-secondary btn-sm">← Admin</a>
+  </div>
   </div>
 
   <div class="page-content">
