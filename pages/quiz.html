@@ -30,7 +30,7 @@
       background-image: url('../icons/tile-quiz.png');
       background-size: cover;
       background-position: center;
-      filter: blur(3px);
+      filter: blur(1.5px);
       z-index: 0;
     }
 
@@ -38,7 +38,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: rgba(0,0,0,0.60);
+      background: rgba(0,0,0,0.5);
       z-index: 1;
     }
 
@@ -553,7 +553,7 @@
     <div class="quiz-header-tile">
       <div class="quiz-header-inner">
         <div>
-          <div class="quiz-header-title">Quiz 🧠</div>
+          <div class="quiz-header-title">Quiz</div>
           <div class="quiz-header-sub" id="quiz-header-sub">Wissen testen</div>
         </div>
         <div class="quiz-header-badge hidden" id="quiz-header-badge"></div>
@@ -622,6 +622,8 @@
       <div class="question-card">
         <div class="question-category" id="q-category"></div>
         <img class="question-image hidden" id="q-image" alt="Quiz-Bild">
+        <audio id="q-audio" controls class="hidden"
+               style="width:100%;margin-bottom:var(--space-md);border-radius:var(--radius-md);"></audio>
         <div class="question-text" id="q-text"></div>
         <div class="options-list hidden" id="q-options"></div>
         <div class="hidden" id="q-estimate">
@@ -1073,9 +1075,22 @@
     document.getElementById('q-category').textContent = cat ? `${cat.icon ?? ''} ${cat.name}` : '';
 
     // Bild
-    const imgEl = document.getElementById('q-image');
-    if (q.image_url) { imgEl.src = q.image_url; imgEl.classList.remove('hidden'); }
-    else             { imgEl.classList.add('hidden'); }
+    const imgEl   = document.getElementById('q-image');
+    const audioEl = document.getElementById('q-audio');
+
+    if (q.question_type === 'audio_quiz' && q.image_url) {
+      imgEl.classList.add('hidden');
+      audioEl.src = q.image_url;
+      audioEl.classList.remove('hidden');
+      audioEl.play().catch(() => {});
+    } else if (q.image_url) {
+      audioEl.classList.add('hidden');
+      imgEl.src = q.image_url;
+      imgEl.classList.remove('hidden');
+    } else {
+      imgEl.classList.add('hidden');
+      audioEl.classList.add('hidden');
+    }
 
     document.getElementById('q-text').textContent = q.question_text;
     document.getElementById('q-feedback').classList.add('hidden');

@@ -30,7 +30,7 @@
       background-image: var(--header-bg, url('../icons/tile-tipps.png'));
       background-size: cover;
       background-position: center;
-      filter: blur(3px);
+      filter: blur(0.5px);
       z-index: 0;
     }
 
@@ -38,7 +38,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: rgba(0,0,0,0.58);
+      background: rgba(0,0,0,0.7);
       z-index: 1;
     }
 
@@ -509,7 +509,7 @@
     <div class="tips-header-tile">
       <div class="tips-header-inner">
         <div>
-          <div class="tips-header-title" id="page-title">Tipps ⚽</div>
+          <div class="tips-header-title" id="page-title">Tipps</div>
           <div class="tips-header-sub" id="page-subtitle">Wird geladen…</div>
         </div>
         <div class="tips-header-badge hidden" id="header-badge"></div>
@@ -521,8 +521,8 @@
 
     <!-- Tab-Toggle -->
     <div class="tab-toggle mb-md">
-      <button class="tab-btn active" id="tab-tipps" onclick="switchTab('tipps')">⚽ Spieltipps</button>
-      <button class="tab-btn" id="tab-prognose" onclick="switchTab('prognose')">🏆 Prognosen</button>
+      <button class="tab-btn active" id="tab-tipps" onclick="switchTab('tipps')">Spieltipps</button>
+      <button class="tab-btn" id="tab-prognose" onclick="switchTab('prognose')">Prognosen</button>
     </div>
 
     <!-- ===== TIPPS ===== -->
@@ -549,7 +549,7 @@
     <div id="view-prognose" class="hidden">
 
       <div class="prognose-intro mb-md">
-        <div style="font-weight:800;font-size:0.95rem;color:var(--text-primary);margin-bottom:4px;">Vor-WM-Prognosen 🏆</div>
+        <div style="font-weight:800;font-size:0.95rem;color:var(--text-primary);margin-bottom:4px;">Vor-WM-Prognosen</div>
         <div style="font-size:0.8rem;color:var(--text-secondary);line-height:1.5;">
           Beantworte diese Fragen vor WM-Start — richtige Prognosen bringen Bonuspunkte.
         </div>
@@ -626,10 +626,10 @@
     document.documentElement.style.setProperty('--header-bg', `url('${img}')`);
 
     if (tab === 'tipps') {
-      document.getElementById('page-title').textContent = 'Tipps ⚽';
+      document.getElementById('page-title').textContent = 'Tipps';
       updateTipHeader();
     } else {
-      document.getElementById('page-title').textContent = 'Prognosen 🏆';
+      document.getElementById('page-title').textContent = 'Prognosen';
       document.getElementById('page-subtitle').textContent = 'Vor-WM-Tipps';
       document.getElementById('header-badge').classList.add('hidden');
     }

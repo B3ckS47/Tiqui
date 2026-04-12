@@ -9,219 +9,6 @@
   <link rel="stylesheet" href="../../css/layout.css">
   <meta name="theme-color" content="#f0f2f5">
   <style>
-    .result-card {
-      background: var(--bg);
-      box-shadow: var(--neu-raised);
-      border-radius: var(--radius-xl);
-      padding: var(--space-lg);
-      margin-bottom: var(--space-md);
-    }
-
-    .result-card.done {
-      box-shadow: var(--neu-raised-sm);
-      opacity: 0.75;
-    }
-
-    .result-teams {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: var(--space-sm);
-      margin-bottom: var(--space-lg);
-    }
-
-    .result-team {
-      flex: 1;
-      text-align: center;
-    }
-
-    .result-team-flag { font-size: 1.8rem; display: block; }
-    .result-team-name { font-size: 0.85rem; font-weight: 700; color: var(--text-primary); margin-top: 4px; }
-    .result-vs        { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); }
-
-    /* Score-Eingabe */
-    .result-score-area {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: var(--space-md);
-      margin-bottom: var(--space-lg);
-    }
-
-    .score-control {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: var(--space-sm);
-    }
-
-    .score-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: var(--radius-full);
-      border: none;
-      background: var(--bg);
-      box-shadow: var(--neu-raised-sm);
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: var(--text-secondary);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all var(--transition);
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .score-btn:active {
-      box-shadow: var(--neu-inset-sm);
-      transform: scale(0.92);
-    }
-
-    .score-display {
-      width: 72px;
-      height: 72px;
-      border-radius: var(--radius-md);
-      box-shadow: var(--neu-inset);
-      background: var(--bg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
-      font-weight: 900;
-      color: var(--text-primary);
-      font-variant-numeric: tabular-nums;
-    }
-
-    .score-sep {
-      font-size: 1.75rem;
-      font-weight: 900;
-      color: var(--text-muted);
-      padding-top: 36px;
-    }
-
-    /* Bereits eingetragenes Ergebnis */
-    .existing-result {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: var(--space-md);
-      background: var(--bg);
-      box-shadow: var(--neu-inset-sm);
-      border-radius: var(--radius-md);
-      padding: var(--space-md);
-      margin-bottom: var(--space-md);
-    }
-
-    .existing-score {
-      font-size: 2rem;
-      font-weight: 900;
-      color: var(--accent);
-      font-variant-numeric: tabular-nums;
-    }
-
-    .existing-sep {
-      font-size: 1.5rem;
-      color: var(--text-muted);
-      font-weight: 900;
-    }
-
-    /* Footer */
-    .result-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: var(--space-sm);
-      padding-top: var(--space-md);
-      border-top: 1px solid rgba(0,0,0,0.06);
-    }
-
-    @media (prefers-color-scheme: dark) {
-      .result-footer { border-color: rgba(255,255,255,0.06); }
-    }
-
-    /* Tip-Übersicht (nach Speichern) */
-    .tip-summary {
-      background: var(--bg);
-      box-shadow: var(--neu-inset-sm);
-      border-radius: var(--radius-md);
-      padding: var(--space-md);
-      margin-top: var(--space-md);
-    }
-
-    .tip-summary-title {
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--text-muted);
-      margin-bottom: var(--space-sm);
-    }
-
-    .tip-summary-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 5px 0;
-      font-size: 0.8rem;
-      border-bottom: 1px solid rgba(0,0,0,0.04);
-    }
-
-    .tip-summary-row:last-child { border-bottom: none; }
-
-    @media (prefers-color-scheme: dark) {
-      .tip-summary-row { border-color: rgba(255,255,255,0.04); }
-    }
-
-    /* Filter-Tabs */
-    .filter-tabs {
-      display: flex;
-      gap: var(--space-sm);
-      margin-bottom: var(--space-lg);
-    }
-
-    .filter-tab {
-      flex: 1;
-      padding: 10px;
-      border-radius: var(--radius-full);
-      font-size: 0.8rem;
-      font-weight: 600;
-      cursor: pointer;
-      border: none;
-      font-family: var(--font-sans);
-      background: var(--bg);
-      color: var(--text-secondary);
-      box-shadow: var(--neu-raised-sm);
-      transition: all var(--transition);
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .filter-tab.active {
-      box-shadow: var(--neu-inset-sm);
-      color: var(--accent);
-    }
-
-    /* Loader */
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-    .skel {
-      background: var(--bg);
-      box-shadow: var(--neu-inset-sm);
-      border-radius: var(--radius-sm);
-      animation: pulse 1.5s ease-in-out infinite;
-      display: block;
-    }
-
-    .loader-spinner {
-      width: 16px;
-      height: 16px;
-      border: 2px solid rgba(255,255,255,0.4);
-      border-top-color: white;
-      border-radius: 50%;
-      display: inline-block;
-      animation: spin 0.7s linear infinite;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
 
     /* ---- Admin Header-Kachel ---- */
     .admin-header { padding: var(--space-md); padding-bottom: 0; }
@@ -243,7 +30,7 @@
       background-image: url("../../icons/tile-admin.png");
       background-size: cover;
       background-position: center;
-      filter: blur(3px);
+      filter: blur(1.5px);
       z-index: 0;
     }
 
@@ -266,17 +53,283 @@
 
     .admin-header-title { font-size: 1.2rem; font-weight: 800; color: #ffffff; }
     .admin-header-sub { font-size: 0.75rem; color: rgba(255,255,255,0.7); margin-top: 2px; }
+
+    /* ---- Filter-Toggle ---- */
+    .filter-toggle {
+      display: flex;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 3px;
+      box-shadow: var(--shadow-sm);
+      gap: 2px;
+    }
+
+    .filter-btn {
+      flex: 1;
+      padding: 7px 4px;
+      border: none;
+      background: transparent;
+      border-radius: var(--radius-md);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: var(--font-sans);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .filter-btn.active { background: var(--accent); color: white; box-shadow: var(--shadow-sm); }
+
+    /* ---- Gruppenüberschrift ---- */
+    .group-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin: var(--space-md) 0 var(--space-xs);
+    }
+
+    .group-header-line { flex: 1; height: 1px; background: var(--border); }
+
+    /* ---- Kompakte Match-Zeile ---- */
+    .match-row {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 3px solid transparent;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      padding: var(--space-sm) var(--space-md);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-bottom: 6px;
+      cursor: pointer;
+      transition: all var(--transition);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .match-row:active { opacity: 0.8; transform: scale(0.99); }
+    .match-row.pending  { border-left-color: var(--danger); }
+    .match-row.done     { border-left-color: var(--accent); opacity: 0.75; }
+
+    .match-row-flags {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .match-row-vs { font-size: 0.58rem; color: var(--text-muted); font-weight: 600; }
+
+    .match-row-info { flex: 1; min-width: 0; }
+
+    .match-row-teams {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .match-row-meta { font-size: 0.68rem; color: var(--text-muted); margin-top: 1px; }
+
+    .match-row-right {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2px;
+    }
+
+    .match-row-score {
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .row-badge {
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      border: 1px solid transparent;
+    }
+
+    .rb-pending { background: var(--danger-bg); color: var(--danger); border-color: var(--danger-border); }
+    .rb-done    { background: var(--accent-bg); color: var(--accent-dark); border-color: var(--accent-border); }
+
+    /* ---- Bottom Sheet ---- */
+    .sheet-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 200;
+      animation: fadein 0.2s ease;
+    }
+
+    .sheet {
+      position: fixed; bottom: 0;
+      left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 480px;
+      background: var(--bg-card);
+      border-radius: 20px 20px 0 0;
+      box-shadow: 0 -4px 24px rgba(0,0,0,0.15);
+      z-index: 201;
+      animation: slideup 0.28s ease;
+      max-height: 88vh;
+      overflow-y: auto;
+      padding-bottom: env(safe-area-inset-bottom, 16px);
+    }
+
+    @keyframes fadein  { from{opacity:0} to{opacity:1} }
+    @keyframes slideup {
+      from { transform: translateX(-50%) translateY(100%); }
+      to   { transform: translateX(-50%) translateY(0); }
+    }
+
+    .sheet-handle {
+      width: 36px; height: 4px;
+      background: var(--border-strong);
+      border-radius: var(--radius-full);
+      margin: 12px auto var(--space-md);
+    }
+
+    .sheet-header {
+      padding: 0 var(--space-lg) var(--space-md);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sheet-teams {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      margin-bottom: 6px;
+    }
+
+    .sheet-team { flex: 1; display: flex; align-items: center; gap: var(--space-sm); }
+    .sheet-team.away { flex-direction: row-reverse; text-align: right; }
+    .sheet-team-flag { font-size: 1.8rem; }
+    .sheet-team-name { font-size: 0.9rem; font-weight: 700; color: var(--text-primary); }
+    .sheet-vs { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); }
+    .sheet-meta { font-size: 0.75rem; color: var(--text-muted); text-align: center; }
+
+    .sheet-body { padding: var(--space-lg); }
+
+    /* Score-Eingabe */
+    .sheet-score-area {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-xl);
+      margin-bottom: var(--space-lg);
+    }
+
+    .score-ctrl { display: flex; flex-direction: column; align-items: center; gap: var(--space-sm); }
+
+    .score-btn {
+      width: 36px; height: 36px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-strong);
+      background: var(--bg-card);
+      box-shadow: var(--shadow-sm);
+      font-size: 1.1rem; font-weight: 700;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all var(--transition);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .score-btn:active { transform: scale(0.88); }
+
+    .score-disp {
+      width: 72px; height: 72px;
+      border-radius: var(--radius-md);
+      border: 2px solid var(--border-strong);
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; font-weight: 900;
+      color: var(--text-primary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .score-sep {
+      font-size: 2rem; font-weight: 900;
+      color: var(--text-muted);
+      padding-top: 36px;
+    }
+
+    /* Bereits eingetragenes Ergebnis */
+    .sheet-result {
+      text-align: center;
+      margin-bottom: var(--space-lg);
+    }
+
+    .sheet-result-score {
+      font-size: 3rem; font-weight: 900;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.05em;
+    }
+
+    .sheet-result-sub { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
+
+    /* Tipp-Zusammenfassung */
+    .tip-summary {
+      border-top: 1px solid var(--border);
+      padding-top: var(--space-md);
+      margin-top: var(--space-md);
+    }
+
+    .tip-summary-title {
+      font-size: 0.7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.07em;
+      color: var(--text-muted);
+      margin-bottom: var(--space-sm);
+    }
+
+    .tip-summary-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 0;
+      font-size: 0.82rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tip-summary-row:last-child { border-bottom: none; }
+
+    /* ---- Loader ---- */
+    .loader-spinner {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.4); border-top-color: white;
+      border-radius: 50%; display: inline-block;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .skel {
+      background: #e9ecf0; border-radius: var(--radius-sm);
+      animation: pulse 1.4s ease-in-out infinite; display: block;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.45} }
+
   </style>
 </head>
 <body>
 <div class="app-shell">
 
+  <!-- Header -->
   <div class="admin-header">
     <div class="admin-header-tile">
       <div class="admin-header-inner">
         <div>
           <div class="admin-header-title">Ergebnisse</div>
-          <div class="admin-header-sub">Punkte berechnen</div>
+          <div class="admin-header-sub" id="results-sub">Wird geladen…</div>
         </div>
         <a href="../../pages/admin/admin-dashboard.html" class="btn btn-sm"
            style="background:rgba(255,255,255,0.15);color:white;border-color:rgba(255,255,255,0.3);">
@@ -285,21 +338,21 @@
       </div>
     </div>
   </div>
-  </div>
 
-  <div class="page-content">
+  <div class="page-content" style="padding-top:var(--space-md);">
 
     <!-- Filter -->
-    <div class="filter-tabs">
-      <button class="filter-tab active" data-filter="pending">Ausstehend</button>
-      <button class="filter-tab" data-filter="all">Alle</button>
-      <button class="filter-tab" data-filter="done">Erledigt</button>
+    <div class="filter-toggle mb-md">
+      <button class="filter-btn active" data-filter="pending">Ausstehend</button>
+      <button class="filter-btn" data-filter="all">Alle</button>
+      <button class="filter-btn" data-filter="done">Eingetragen</button>
     </div>
 
-    <!-- Matches -->
+    <!-- Spielliste -->
     <div id="matches-container">
-      <div class="skel" style="height:200px;border-radius:20px;margin-bottom:12px;"></div>
-      <div class="skel" style="height:200px;border-radius:20px;"></div>
+      <div class="skel" style="height:54px;border-radius:8px;margin-bottom:6px;"></div>
+      <div class="skel" style="height:54px;border-radius:8px;margin-bottom:6px;"></div>
+      <div class="skel" style="height:54px;border-radius:8px;"></div>
     </div>
 
   </div>
@@ -310,286 +363,308 @@
   import { supabase }     from '../../js/supabase.js';
   import { showToast, showConfirm, formatDateTime } from '../../js/ui.js';
 
-  await requireAdmin();
+  const adminUser = await requireAdmin();
+  if (!adminUser) throw new Error('Kein Admin');
 
   let allMatches    = [];
   let currentFilter = 'pending';
+
+  const FLAGS = {
+    'Deutschland':'🇩🇪','Frankreich':'🇫🇷','Spanien':'🇪🇸','England':'🏴󠁧󠁢󠁥󠁮󠁧󠁿',
+    'Italien':'🇮🇹','Portugal':'🇵🇹','Brasilien':'🇧🇷','Argentinien':'🇦🇷',
+    'Niederlande':'🇳🇱','Belgien':'🇧🇪','Kroatien':'🇭🇷','Dänemark':'🇩🇰',
+    'Schweiz':'🇨🇭','Österreich':'🇦🇹','Polen':'🇵🇱','USA':'🇺🇸',
+    'Mexiko':'🇲🇽','Kanada':'🇨🇦','Japan':'🇯🇵','Südkorea':'🇰🇷',
+    'Australien':'🇦🇺','Marokko':'🇲🇦','Senegal':'🇸🇳','Nigeria':'🇳🇬',
+    'Saudi-Arabien':'🇸🇦','Iran':'🇮🇷','Uruguay':'🇺🇾','Kolumbien':'🇨🇴',
+    'Ecuador':'🇪🇨','Türkei':'🇹🇷',
+  };
+  const flag = t => FLAGS[t] ?? '🏳';
 
   /* ---- Daten laden ---- */
   async function loadMatches() {
     const { data, error } = await supabase
       .from('matches')
       .select('*')
-      .order('kickoff_at', { ascending: false });
+      .order('kickoff_at', { ascending: true });
 
     if (error) { showToast('Fehler beim Laden.', 'danger'); return; }
     allMatches = data ?? [];
+
+    const pending = allMatches.filter(m =>
+      (m.status !== 'upcoming') && (m.home_score === null || m.away_score === null)
+      || (m.status === 'upcoming' && new Date(m.kickoff_at) < new Date())
+    ).length;
+
+    document.getElementById('results-sub').textContent =
+      pending > 0 ? `${pending} Ergebnis${pending !== 1 ? 'se' : ''} ausstehend` : 'Alle Ergebnisse eingetragen ✓';
+
     renderMatches();
   }
 
   /* ---- Matches rendern ---- */
   function renderMatches() {
     const container = document.getElementById('matches-container');
-    let filtered    = allMatches;
+    const now = new Date();
 
+    let filtered = allMatches;
     if (currentFilter === 'pending') {
       filtered = allMatches.filter(m =>
-        m.status === 'finished' && (m.home_score === null || m.away_score === null)
-        || m.status === 'live'
+        (m.status === 'live') ||
+        (m.status === 'finished' && (m.home_score === null || m.away_score === null)) ||
+        (m.status === 'upcoming' && new Date(m.kickoff_at) < now)
       );
-      // Auch upcoming die bereits vorbei sind
-      const now = new Date();
-      const overdue = allMatches.filter(m =>
-        m.status === 'upcoming' && new Date(m.kickoff_at) < now
-      );
-      filtered = [...filtered, ...overdue];
     } else if (currentFilter === 'done') {
-      filtered = allMatches.filter(m =>
-        m.status === 'finished' && m.home_score !== null
-      );
+      filtered = allMatches.filter(m => m.status === 'finished' && m.home_score !== null);
     }
 
-    if (filtered.length === 0) {
-      container.innerHTML = `
-        <div class="empty-state">
-          <span class="empty-state-icon">✓</span>
-          <p class="empty-state-title">Alles erledigt!</p>
-        </div>
-      `;
+    if (!filtered.length) {
+      container.innerHTML = `<div class="empty-state">
+        <span class="empty-state-icon">✓</span>
+        <p class="empty-state-title">Alles erledigt!</p>
+      </div>`;
       return;
     }
 
-    container.innerHTML = filtered.map(m => renderCard(m)).join('');
-    attachScoreListeners();
+    // Gruppieren
+    const groups = {};
+    filtered.forEach(m => {
+      const key = m.group_name ?? stageLabel(m.stage);
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(m);
+    });
+
+    container.innerHTML = Object.entries(groups).map(([group, matches]) => `
+      <div class="group-header">
+        <span class="section-label" style="margin:0">${group}</span>
+        <div class="group-header-line"></div>
+      </div>
+      ${matches.map(renderMatchRow).join('')}
+    `).join('');
   }
 
-  /* ---- Einzelne Karte ---- */
-  function renderCard(m) {
-    const isDone     = m.status === 'finished' && m.home_score !== null;
-    const kickoffStr = formatDateTime(m.kickoff_at);
+  function renderMatchRow(m) {
+    const isDone    = m.status === 'finished' && m.home_score !== null;
+    const timeStr   = formatDateTime(m.kickoff_at);
+    const rowClass  = isDone ? 'done' : 'pending';
 
-    const scoreArea = isDone
-      ? `
-        <div class="existing-result">
-          <span class="existing-score">${m.home_score}</span>
-          <span class="existing-sep">:</span>
-          <span class="existing-score">${m.away_score}</span>
-        </div>
-        <p class="text-xs text-muted text-center mb-md">Ergebnis bereits eingetragen · Punkte berechnet</p>
-      `
-      : `
-        <div class="result-score-area">
-          <div class="score-control">
-            <button class="score-btn" data-match="${m.id}" data-team="home" data-action="up">+</button>
-            <div class="score-display" id="res-home-${m.id}">0</div>
-            <button class="score-btn" data-match="${m.id}" data-team="home" data-action="down">−</button>
-          </div>
-          <div class="score-sep">:</div>
-          <div class="score-control">
-            <button class="score-btn" data-match="${m.id}" data-team="away" data-action="up">+</button>
-            <div class="score-display" id="res-away-${m.id}">0</div>
-            <button class="score-btn" data-match="${m.id}" data-team="away" data-action="down">−</button>
-          </div>
-        </div>
-      `;
+    const rightHtml = isDone
+      ? `<div class="match-row-score">${m.home_score}:${m.away_score}</div>
+         <span class="row-badge rb-done">✓</span>`
+      : `<span class="row-badge rb-pending">Offen</span>`;
 
     return `
-      <div class="result-card ${isDone ? 'done' : ''}" id="rcard-${m.id}">
+      <div class="match-row ${rowClass}" onclick="openSheet('${m.id}')">
+        <div class="match-row-flags">
+          ${flag(m.home_team)}
+          <span class="match-row-vs">vs</span>
+          ${flag(m.away_team)}
+        </div>
+        <div class="match-row-info">
+          <div class="match-row-teams">${m.home_team} – ${m.away_team}</div>
+          <div class="match-row-meta">${timeStr} Uhr</div>
+        </div>
+        <div class="match-row-right">${rightHtml}</div>
+      </div>`;
+  }
 
-        <div class="result-teams">
-          <div class="result-team">
-            <span class="result-team-flag">${getFlagEmoji(m.home_team)}</span>
-            <div class="result-team-name">${m.home_team}</div>
+  /* ---- Bottom Sheet ---- */
+  window.openSheet = async function(matchId) {
+    const m = allMatches.find(x => x.id === matchId);
+    if (!m) return;
+
+    const isDone  = m.status === 'finished' && m.home_score !== null;
+    const timeStr = formatDateTime(m.kickoff_at);
+
+    let scoreHtml = '';
+    if (isDone) {
+      scoreHtml = `
+        <div class="sheet-result">
+          <div class="sheet-result-score">${m.home_score} : ${m.away_score}</div>
+          <div class="sheet-result-sub">Ergebnis eingetragen</div>
+        </div>
+        <button class="btn btn-secondary btn-block mb-md" onclick="editResult('${m.id}')">
+          Ergebnis korrigieren
+        </button>`;
+    } else {
+      scoreHtml = `
+        <div class="sheet-score-area">
+          <div class="score-ctrl">
+            <button class="score-btn" onclick="chg('home','up')">+</button>
+            <div class="score-disp" id="sh-home">0</div>
+            <button class="score-btn" onclick="chg('home','down')">−</button>
           </div>
-          <div class="result-vs">VS</div>
-          <div class="result-team">
-            <span class="result-team-flag">${getFlagEmoji(m.away_team)}</span>
-            <div class="result-team-name">${m.away_team}</div>
+          <div class="score-sep">:</div>
+          <div class="score-ctrl">
+            <button class="score-btn" onclick="chg('away','up')">+</button>
+            <div class="score-disp" id="sh-away">0</div>
+            <button class="score-btn" onclick="chg('away','down')">−</button>
           </div>
         </div>
+        <button class="btn btn-primary btn-block mb-md" id="sh-save"
+                onclick="saveResult('${m.id}')">
+          Speichern & Punkte berechnen
+        </button>`;
+    }
 
-        ${scoreArea}
+    // Tipp-Zusammenfassung laden
+    let tipHtml = '';
+    if (isDone) {
+      const { data: tips } = await supabase
+        .from('tips')
+        .select('home_score_tip, away_score_tip, points_earned, point_reason, users(username)')
+        .eq('match_id', matchId)
+        .order('points_earned', { ascending: false });
 
-        <div class="result-footer">
-          <div class="text-xs text-muted">
-            ${kickoffStr} Uhr<br>
-            ${m.group_name ?? stageLabel(m.stage)}
+      if (tips?.length) {
+        const icons = { exact:'🎯', diff:'✓', tendency:'~', wrong:'✕' };
+        tipHtml = `
+          <div class="tip-summary">
+            <div class="tip-summary-title">Tipps (${tips.length})</div>
+            ${tips.map(t => `
+              <div class="tip-summary-row">
+                <span>${t.users?.username ?? '–'}</span>
+                <span style="color:var(--text-muted)">${t.home_score_tip}:${t.away_score_tip}</span>
+                <span>${icons[t.point_reason] ?? '–'}</span>
+                <strong style="color:var(--accent)">${t.points_earned} Pkt</strong>
+              </div>`).join('')}
+          </div>`;
+      }
+    }
+
+    closeSheet();
+    const backdrop = document.createElement('div');
+    backdrop.className = 'sheet-backdrop';
+    backdrop.onclick   = closeSheet;
+
+    const sheet = document.createElement('div');
+    sheet.className = 'sheet';
+    sheet.id        = 'result-sheet';
+    sheet.innerHTML = `
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <div class="sheet-teams">
+          <div class="sheet-team">
+            <span class="sheet-team-flag">${flag(m.home_team)}</span>
+            <span class="sheet-team-name">${m.home_team}</span>
           </div>
-          ${!isDone ? `
-            <button
-              class="btn btn-primary btn-sm"
-              id="save-res-${m.id}"
-              onclick="saveResult('${m.id}')"
-            >
-              Speichern & Punkte berechnen
-            </button>
-          ` : `
-            <button
-              class="btn btn-secondary btn-sm"
-              onclick="recalculate('${m.id}')"
-            >
-              Neu berechnen
-            </button>
-          `}
+          <div class="sheet-vs">VS</div>
+          <div class="sheet-team away">
+            <span class="sheet-team-flag">${flag(m.away_team)}</span>
+            <span class="sheet-team-name">${m.away_team}</span>
+          </div>
         </div>
-
-        <div id="tip-summary-${m.id}"></div>
-
+        <div class="sheet-meta">${timeStr} Uhr · ${m.group_name ?? stageLabel(m.stage)}</div>
       </div>
-    `;
-  }
+      <div class="sheet-body">
+        ${scoreHtml}
+        ${tipHtml}
+      </div>`;
 
-  /* ---- Score-Stepper ---- */
-  function attachScoreListeners() {
-    document.querySelectorAll('.score-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const matchId = btn.dataset.match;
-        const team    = btn.dataset.team;
-        const action  = btn.dataset.action;
-        const display = document.getElementById(`res-${team}-${matchId}`);
-        let val = parseInt(display.textContent, 10);
-        if (action === 'up')   val = Math.min(val + 1, 20);
-        if (action === 'down') val = Math.max(val - 1, 0);
-        display.textContent = val;
-      });
+    document.body.appendChild(backdrop);
+    document.body.appendChild(sheet);
+
+    let startY = 0;
+    sheet.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
+    sheet.addEventListener('touchend', e => {
+      if (e.changedTouches[0].clientY - startY > 80) closeSheet();
     });
+  };
+
+  function closeSheet() {
+    document.querySelector('.sheet-backdrop')?.remove();
+    document.getElementById('result-sheet')?.remove();
   }
 
-  /* ---- Ergebnis speichern ---- */
-  window.saveResult = async function(matchId) {
-    const homeScore = parseInt(document.getElementById(`res-home-${matchId}`).textContent, 10);
-    const awayScore = parseInt(document.getElementById(`res-away-${matchId}`).textContent, 10);
+  window.chg = function(team, action) {
+    const el  = document.getElementById(`sh-${team}`);
+    let val = parseInt(el.textContent, 10);
+    if (action === 'up')   val = Math.min(val + 1, 20);
+    if (action === 'down') val = Math.max(val - 1, 0);
+    el.textContent = val;
+  };
 
-    const ok = await showConfirm(
-      `Ergebnis speichern: ${homeScore} : ${awayScore}?\nDanach werden alle Tipps bewertet.`
-    );
+  window.saveResult = async function(matchId) {
+    const home = parseInt(document.getElementById('sh-home').textContent, 10);
+    const away = parseInt(document.getElementById('sh-away').textContent, 10);
+    const btn  = document.getElementById('sh-save');
+
+    const ok = await showConfirm(`Ergebnis speichern: ${home} : ${away}?\nAlle Tipps werden bewertet.`);
     if (!ok) return;
 
-    const btn = document.getElementById(`save-res-${matchId}`);
-    btn.disabled  = true;
+    btn.disabled = true;
     btn.innerHTML = '<span class="loader-spinner"></span>';
 
     try {
-      // 1. Match-Status und Ergebnis setzen
-      const { error: matchError } = await supabase
+      const { error: matchErr } = await supabase
         .from('matches')
-        .update({
-          home_score: homeScore,
-          away_score: awayScore,
-          status:     'finished',
-        })
+        .update({ home_score: home, away_score: away, status: 'finished' })
         .eq('id', matchId);
+      if (matchErr) throw matchErr;
 
-      if (matchError) throw matchError;
-
-      // 2. Tipps bewerten (DB-Funktion)
-      const { error: evalError } = await supabase
+      const { error: evalErr } = await supabase
         .rpc('evaluate_tips', { p_match_id: matchId });
+      if (evalErr) throw evalErr;
 
-      if (evalError) throw evalError;
-
-      // 3. Tipp-Übersicht laden und anzeigen
-      await showTipSummary(matchId, homeScore, awayScore);
-
-      showToast('Ergebnis gespeichert & Punkte berechnet ✓', 'success');
-
-      // Karte aktualisieren
       allMatches = allMatches.map(m =>
         m.id === matchId
-          ? { ...m, home_score: homeScore, away_score: awayScore, status: 'finished' }
+          ? { ...m, home_score: home, away_score: away, status: 'finished' }
           : m
       );
 
-      setTimeout(() => renderMatches(), 1500);
-
+      showToast('Ergebnis gespeichert & Punkte berechnet ✓', 'success');
+      closeSheet();
+      renderMatches();
     } catch (err) {
       showToast(`Fehler: ${err.message}`, 'danger');
-      btn.disabled  = false;
+      btn.disabled = false;
       btn.textContent = 'Speichern & Punkte berechnen';
     }
   };
 
-  /* ---- Tipps neu berechnen (bei Korrektur) ---- */
-  window.recalculate = async function(matchId) {
-    const ok = await showConfirm('Punkte für dieses Spiel neu berechnen?');
-    if (!ok) return;
+  window.editResult = async function(matchId) {
+    const m    = allMatches.find(x => x.id === matchId);
+    const home = m.home_score ?? 0;
+    const away = m.away_score ?? 0;
 
-    const { error } = await supabase.rpc('evaluate_tips', { p_match_id: matchId });
-    if (error) {
-      showToast('Fehler beim Neu-Berechnen.', 'danger');
-    } else {
-      showToast('Punkte neu berechnet ✓', 'success');
-      await showTipSummary(matchId);
-    }
+    // Sheet neu aufbauen mit Eingabe
+    const body = document.querySelector('#result-sheet .sheet-body');
+    if (!body) return;
+
+    body.innerHTML = `
+      <div class="sheet-score-area">
+        <div class="score-ctrl">
+          <button class="score-btn" onclick="chg('home','up')">+</button>
+          <div class="score-disp" id="sh-home">${home}</div>
+          <button class="score-btn" onclick="chg('home','down')">−</button>
+        </div>
+        <div class="score-sep">:</div>
+        <div class="score-ctrl">
+          <button class="score-btn" onclick="chg('away','up')">+</button>
+          <div class="score-disp" id="sh-away">${away}</div>
+          <button class="score-btn" onclick="chg('away','down')">−</button>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-block mb-md" id="sh-save"
+              onclick="saveResult('${matchId}')">
+        Korrigieren & neu berechnen
+      </button>`;
   };
 
-  /* ---- Tipp-Übersicht nach Berechnung ---- */
-  async function showTipSummary(matchId, home, away) {
-    const { data: tips } = await supabase
-      .from('tips')
-      .select('home_score_tip, away_score_tip, points_earned, point_reason, users(username)')
-      .eq('match_id', matchId)
-      .order('points_earned', { ascending: false });
-
-    const summaryEl = document.getElementById(`tip-summary-${matchId}`);
-    if (!summaryEl || !tips?.length) return;
-
-    const reasonLabel = {
-      exact:    '🎯 Exakt',
-      diff:     '✓ Differenz',
-      tendency: '~ Tendenz',
-      wrong:    '✕ Daneben',
-    };
-
-    summaryEl.innerHTML = `
-      <div class="tip-summary">
-        <div class="tip-summary-title">${tips.length} Tipps bewertet</div>
-        ${tips.map(t => `
-          <div class="tip-summary-row">
-            <span>${t.users?.username ?? '–'}</span>
-            <span class="text-muted">${t.home_score_tip}:${t.away_score_tip}</span>
-            <span>${reasonLabel[t.point_reason] ?? '–'}</span>
-            <strong style="color:var(--accent)">${t.points_earned} Pkt</strong>
-          </div>
-        `).join('')}
-      </div>
-    `;
-  }
-
-  /* ---- Filter-Tabs ---- */
-  document.querySelectorAll('.filter-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      currentFilter = tab.dataset.filter;
-      renderMatches();
-    });
+  /* ---- Filter ---- */
+  document.querySelector('.filter-toggle').addEventListener('click', e => {
+    const btn = e.target.closest('.filter-btn');
+    if (!btn) return;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    renderMatches();
   });
 
   /* ---- Hilfsfunktionen ---- */
-  function stageLabel(stage) {
-    const labels = {
-      group: 'Gruppenphase', round_of_16: 'Achtelfinale',
-      quarter: 'Viertelfinale', semi: 'Halbfinale',
-      third_place: 'Spiel um Platz 3', final: 'Finale',
-    };
-    return labels[stage] ?? stage;
-  }
-
-  function getFlagEmoji(teamName) {
-    const flags = {
-      'Deutschland': '🇩🇪', 'Frankreich': '🇫🇷', 'Spanien': '🇪🇸',
-      'England': '🏴󠁧󠁢󠁥󠁮󠁧󠁿', 'Italien': '🇮🇹', 'Portugal': '🇵🇹',
-      'Brasilien': '🇧🇷', 'Argentinien': '🇦🇷', 'Niederlande': '🇳🇱',
-      'Belgien': '🇧🇪', 'Kroatien': '🇭🇷', 'Dänemark': '🇩🇰',
-      'Schweiz': '🇨🇭', 'Österreich': '🇦🇹', 'Polen': '🇵🇱',
-      'USA': '🇺🇸', 'Mexiko': '🇲🇽', 'Kanada': '🇨🇦',
-      'Japan': '🇯🇵', 'Südkorea': '🇰🇷', 'Australien': '🇦🇺',
-      'Marokko': '🇲🇦', 'Senegal': '🇸🇳', 'Nigeria': '🇳🇬',
-      'Saudi-Arabien': '🇸🇦', 'Iran': '🇮🇷', 'Uruguay': '🇺🇾',
-      'Kolumbien': '🇨🇴', 'Ecuador': '🇪🇨', 'Türkei': '🇹🇷',
-    };
-    return flags[teamName] ?? '🏳';
+  function stageLabel(s) {
+    return { group:'Gruppenphase', round_of_16:'Achtelfinale', quarter:'Viertelfinale',
+             semi:'Halbfinale', third_place:'Spiel um Platz 3', final:'Finale' }[s] ?? s;
   }
 
   await loadMatches();

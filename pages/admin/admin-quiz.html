@@ -220,7 +220,7 @@
       background-image: url("../../icons/tile-admin.png");
       background-size: cover;
       background-position: center;
-      filter: blur(3px);
+      filter: blur(1.5px);
       z-index: 0;
     }
 
@@ -262,9 +262,8 @@
       </div>
     </div>
   </div>
-  </div>
 
-  <div class="page-content">
+  <div class="page-content" style="padding-top:var(--space-md);">
 
     <!-- Neue Session -->
     <div class="section-label">Neue Quiz-Session</div>
@@ -370,7 +369,7 @@
             ` : ''}
             <button class="btn btn-secondary btn-sm"
                     onclick="toggleSession('${s.id}')">
-              ${isOpen ? 'Einklappen ▲' : 'Fragen ▼ (${qs.length})'}
+              ${isOpen ? 'Einklappen ▲' : `Fragen ▼ (${qs.length})`}
             </button>
             <button class="btn btn-secondary btn-sm" style="color:var(--danger)"
                     onclick="deleteSession('${s.id}', '${s.title}')">✕</button>
@@ -403,6 +402,7 @@
                       <option value="true_false">Wahr / Falsch</option>
                       <option value="estimate">Schätzfrage</option>
                       <option value="image_quiz">Bildquiz</option>
+                      <option value="audio_quiz">Audioquiz</option>
                     </select>
                   </div>
                   <div class="input-group">
@@ -461,9 +461,13 @@
                 <!-- Bildquiz -->
                 <div id="img-options-${s.id}" class="hidden">
                   <div class="input-group">
-                    <label class="input-label">Bild-URL</label>
-                    <input class="input" id="img-url-${s.id}" type="url"
-                           placeholder="https://…">
+                    <label class="input-label">Bild hochladen</label>
+                    <input class="input" id="img-file-${s.id}" type="file"
+                           accept="image/*" style="padding:8px;">
+                    <div id="img-preview-${s.id}" style="margin-top:8px;display:none;">
+                      <img style="width:100%;border-radius:8px;border:1px solid var(--border);"
+                           id="img-preview-img-${s.id}" alt="Vorschau">
+                    </div>
                   </div>
                   <label class="input-label">Antwortoptionen (✓ = richtig)</label>
                   <div class="options-grid">
@@ -473,6 +477,29 @@
                                type="text" placeholder="Option ${i+1}">
                         <button class="option-correct-btn" id="img-correct-btn-${s.id}-${i}"
                                 onclick="selectImgCorrect('${s.id}', ${i})">✓</button>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+
+                <!-- Audioquiz -->
+                <div id="audio-options-${s.id}" class="hidden">
+                  <div class="input-group">
+                    <label class="input-label">Audiodatei hochladen</label>
+                    <input class="input" id="audio-file-${s.id}" type="file"
+                           accept="audio/*" style="padding:8px;">
+                    <div id="audio-preview-${s.id}" style="margin-top:8px;display:none;">
+                      <audio controls style="width:100%;" id="audio-preview-player-${s.id}"></audio>
+                    </div>
+                  </div>
+                  <label class="input-label">Antwortoptionen (✓ = richtig)</label>
+                  <div class="options-grid">
+                    ${[0,1,2,3].map(i => `
+                      <div class="option-input-wrap">
+                        <input class="input option-input" id="audio-opt-${s.id}-${i}"
+                               type="text" placeholder="Option ${i+1}">
+                        <button class="option-correct-btn" id="audio-correct-btn-${s.id}-${i}"
+                                onclick="selectAudioCorrect('${s.id}', ${i})">✓</button>
                       </div>
                     `).join('')}
                   </div>
@@ -544,7 +571,7 @@
   /* ---- Typ-Wechsel ---- */
   window.onTypeChange = function(sessionId) {
     const type = document.getElementById(`q-type-${sessionId}`)?.value;
-    const areas = ['mc', 'tf', 'est', 'img'];
+    const areas = ['mc', 'tf', 'est', 'img', 'audio'];
     areas.forEach(a => {
       const el = document.getElementById(`${a}-options-${sessionId}`);
       if (el) el.classList.add('hidden');
@@ -554,9 +581,41 @@
       true_false:      'tf',
       estimate:        'est',
       image_quiz:      'img',
+      audio_quiz:      'audio',
     };
     const el = document.getElementById(`${map[type]}-options-${sessionId}`);
     if (el) el.classList.remove('hidden');
+
+    // File-Preview Listener einrichten
+    if (type === 'image_quiz') {
+      const fileInput = document.getElementById(`img-file-${sessionId}`);
+      if (fileInput && !fileInput.dataset.listener) {
+        fileInput.dataset.listener = '1';
+        fileInput.addEventListener('change', () => {
+          const file = fileInput.files[0];
+          if (!file) return;
+          const url = URL.createObjectURL(file);
+          const preview = document.getElementById(`img-preview-${sessionId}`);
+          const img = document.getElementById(`img-preview-img-${sessionId}`);
+          if (preview && img) { img.src = url; preview.style.display = 'block'; }
+        });
+      }
+    }
+
+    if (type === 'audio_quiz') {
+      const fileInput = document.getElementById(`audio-file-${sessionId}`);
+      if (fileInput && !fileInput.dataset.listener) {
+        fileInput.dataset.listener = '1';
+        fileInput.addEventListener('change', () => {
+          const file = fileInput.files[0];
+          if (!file) return;
+          const url = URL.createObjectURL(file);
+          const preview = document.getElementById(`audio-preview-${sessionId}`);
+          const player  = document.getElementById(`audio-preview-player-${sessionId}`);
+          if (preview && player) { player.src = url; preview.style.display = 'block'; }
+        });
+      }
+    }
   };
 
   /* ---- Richtige Option markieren ---- */
@@ -576,7 +635,13 @@
     });
   };
 
-  let tfAnswer = {};
+  window.selectAudioCorrect = function(sessionId, idx) {
+    correctOption[`audio-${sessionId}`] = idx;
+    [0,1,2,3].forEach(i => {
+      const btn = document.getElementById(`audio-correct-btn-${sessionId}-${i}`);
+      if (btn) btn.classList.toggle('selected', i === idx);
+    });
+  };
   window.selectTF = function(sessionId, val) {
     tfAnswer[sessionId] = val;
     document.getElementById(`tf-true-${sessionId}`)
@@ -695,14 +760,48 @@
       correctAnswer = { value: val, tolerance: tol || 0 };
 
     } else if (type === 'image_quiz') {
-      imageUrl = document.getElementById(`img-url-${sessionId}`)?.value?.trim();
-      if (!imageUrl) { showToast('Bitte Bild-URL eingeben.', 'warning'); return; }
+      const fileInput = document.getElementById(`img-file-${sessionId}`);
+      const file = fileInput?.files?.[0];
+      if (!file) { showToast('Bitte ein Bild hochladen.', 'warning'); return; }
       const opts = [0,1,2,3].map(i =>
         document.getElementById(`img-opt-${sessionId}-${i}`)?.value?.trim() ?? ''
       );
       if (opts.some(o => !o)) { showToast('Bitte alle 4 Optionen ausfüllen.', 'warning'); return; }
       const ci = correctOption[`img-${sessionId}`];
       if (ci === undefined) { showToast('Bitte richtige Antwort markieren.', 'warning'); return; }
+
+      // Bild zu Supabase Storage hochladen
+      const ext      = file.name.split('.').pop();
+      const filePath = `quiz/${Date.now()}.${ext}`;
+      const { error: uploadErr } = await supabase.storage
+        .from('quiz-media')
+        .upload(filePath, file, { contentType: file.type, upsert: false });
+      if (uploadErr) { showToast(`Upload-Fehler: ${uploadErr.message}`, 'danger'); return; }
+      const { data: urlData } = supabase.storage.from('quiz-media').getPublicUrl(filePath);
+      imageUrl      = urlData.publicUrl;
+      options       = opts;
+      correctAnswer = { index: ci };
+
+    } else if (type === 'audio_quiz') {
+      const fileInput = document.getElementById(`audio-file-${sessionId}`);
+      const file = fileInput?.files?.[0];
+      if (!file) { showToast('Bitte eine Audiodatei hochladen.', 'warning'); return; }
+      const opts = [0,1,2,3].map(i =>
+        document.getElementById(`audio-opt-${sessionId}-${i}`)?.value?.trim() ?? ''
+      );
+      if (opts.some(o => !o)) { showToast('Bitte alle 4 Optionen ausfüllen.', 'warning'); return; }
+      const ci = correctOption[`audio-${sessionId}`];
+      if (ci === undefined) { showToast('Bitte richtige Antwort markieren.', 'warning'); return; }
+
+      // Audio zu Supabase Storage hochladen
+      const ext      = file.name.split('.').pop();
+      const filePath = `quiz-audio/${Date.now()}.${ext}`;
+      const { error: uploadErr } = await supabase.storage
+        .from('quiz-media')
+        .upload(filePath, file, { contentType: file.type, upsert: false });
+      if (uploadErr) { showToast(`Upload-Fehler: ${uploadErr.message}`, 'danger'); return; }
+      const { data: urlData } = supabase.storage.from('quiz-media').getPublicUrl(filePath);
+      imageUrl      = urlData.publicUrl;  // audio_url wird in image_url gespeichert
       options       = opts;
       correctAnswer = { index: ci };
     }
@@ -767,6 +866,7 @@
       true_false:      'Wahr/Falsch',
       estimate:        'Schätzfrage',
       image_quiz:      'Bildquiz',
+      audio_quiz:      'Audioquiz',
     }[t] ?? t;
   }
 
