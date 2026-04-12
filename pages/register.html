@@ -394,7 +394,8 @@
         }, 1500);
 
       } catch (err) {
-        let msg = 'Registrierung fehlgeschlagen.';
+        console.error('Registrierung Fehler:', err);
+        let msg = `Registrierung fehlgeschlagen: ${err.message ?? 'Unbekannter Fehler'}`;
         if (err.message?.includes('already registered')) {
           msg = 'Diese E-Mail-Adresse ist bereits registriert.';
         } else if (err.message?.includes('duplicate')) {
