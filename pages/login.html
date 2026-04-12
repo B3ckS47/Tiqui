@@ -128,37 +128,23 @@
     <div class="login-card">
       <h2>Willkommen zurück</h2>
 
-      <form id="login-form" novalidate>
-        <div class="input-group">
-          <label class="input-label" for="email">E-Mail</label>
-          <input
-            class="input"
-            type="email"
-            id="email"
-            name="email"
-            autocomplete="email"
-            placeholder="deine@email.de"
-            required
-          >
-        </div>
+      <div class="input-group">
+        <label class="input-label" for="email">E-Mail</label>
+        <input class="input" type="email" id="email"
+               autocomplete="email" placeholder="deine@email.de">
+      </div>
 
-        <div class="input-group">
-          <label class="input-label" for="password">Passwort</label>
-          <input
-            class="input"
-            type="password"
-            id="password"
-            name="password"
-            autocomplete="current-password"
-            placeholder="••••••••"
-            required
-          >
-        </div>
+      <div class="input-group">
+        <label class="input-label" for="password">Passwort</label>
+        <input class="input" type="password" id="password"
+               autocomplete="current-password" placeholder="••••••••">
+      </div>
 
-        <button type="submit" class="btn btn-primary btn-block btn-lg mt-md" id="login-btn">
-          Anmelden
-        </button>
-      </form>
+      <div id="error-msg" style="display:none;color:var(--danger);font-size:0.85rem;margin-top:var(--space-sm);text-align:center;"></div>
+
+      <button class="btn btn-primary btn-block btn-lg mt-md" id="login-btn" onclick="handleLogin()">
+        Anmelden
+      </button>
 
       <div class="divider-text">oder</div>
 
@@ -170,53 +156,66 @@
 
   </div>
 
-  <script type="module">
-    import { login, redirectIfLoggedIn } from '../js/auth.js';
-    import { showToast, setLoading }     from '../js/ui.js';
-
-    // Service Worker registrieren
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('../sw.js').catch(() => {});
+  <!-- Supabase direkt laden — kein ES-Modul nötig -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script>
+    // Prüfen ob Supabase geladen ist
+    if (typeof supabase === 'undefined') {
+      document.getElementById('error-msg').textContent = 'Verbindungsfehler. Bitte Seite neu laden.';
+      document.getElementById('error-msg').style.display = 'block';
     }
+    // Supabase initialisieren
+    const SUPABASE_URL  = 'https://ovomstveukjivfhepyyj.supabase.co';
+    const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92b21zdHZldWtqaXZmaGVweXlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3NTA5MDAsImV4cCI6MjA5MTMyNjkwMH0.kFvZg2dBoOPUfO6380Y4v15fiPdFgEDNZchfIgCBVeA';
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-    // Bereits eingeloggt → weiterleiten
-    await redirectIfLoggedIn();
-
-    const form     = document.getElementById('login-form');
-    const loginBtn = document.getElementById('login-btn');
-    const emailEl  = document.getElementById('email');
-    const passEl   = document.getElementById('password');
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const email    = emailEl.value.trim();
-      const password = passEl.value;
-
-      if (!email || !password) {
-        showToast('Bitte E-Mail und Passwort eingeben.', 'warning');
-        return;
-      }
-
-      setLoading(loginBtn, true);
-
-      try {
-        await login(email, password);
-        window.location.href = '../pages/dashboard.html';
-      } catch (err) {
-        const msg = err.message?.includes('Invalid login')
-          ? 'E-Mail oder Passwort falsch.'
-          : 'Login fehlgeschlagen. Bitte versuche es erneut.';
-        showToast(msg, 'danger');
-        setLoading(loginBtn, false, 'Anmelden');
+    // Bereits eingeloggt?
+    sb.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        const base = window.location.href.replace(/pages\/login\.html.*$/, '');
+        window.location.href = base + 'pages/dashboard.html';
       }
     });
 
-    // Enter-Taste in beiden Feldern
-    [emailEl, passEl].forEach(el => {
-      el.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') form.requestSubmit();
-      });
+    function showError(msg) {
+      const el = document.getElementById('error-msg');
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+
+    async function handleLogin() {
+      const email    = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const btn      = document.getElementById('login-btn');
+
+      document.getElementById('error-msg').style.display = 'none';
+
+      if (!email || !password) {
+        showError('Bitte E-Mail und Passwort eingeben.');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = '…';
+
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        showError(error.message?.includes('Invalid') ? 'E-Mail oder Passwort falsch.' : error.message);
+        btn.disabled = false;
+        btn.textContent = 'Anmelden';
+        return;
+      }
+
+      if (data.session) {
+        const base = window.location.href.replace(/pages\/login\.html.*$/, '');
+        window.location.href = base + 'pages/dashboard.html';
+      }
+    }
+
+    // Enter-Taste
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter') handleLogin();
     });
   </script>
 </body>
