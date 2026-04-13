@@ -7,19 +7,17 @@ import { supabase } from './supabase.js';
 
 /* ---- Dynamischer Basis-Pfad (lokal + GitHub Pages) ---- */
 function getBase() {
-  // Lokal
+  // Lokal: Live Server unter 127.0.0.1 hat kein Unterverzeichnis
   if (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') {
     return '/';
   }
-  // GitHub Pages: tiqui26.github.io/Tiqui/ → parts[1] = 'Tiqui'
-  // Cloudflare / eigene Domain: tiqui26.de/ → parts[1] = 'pages' (falsch!)
-  // Lösung: nur wenn parts[1] kein bekannter Seitenordner ist, als Repo-Prefix behandeln
-  const parts = window.location.pathname.split('/');
-  const knownDirs = ['pages', 'css', 'js', 'icons'];
-  if (parts[1] && !knownDirs.includes(parts[1])) {
-    return `/${parts[1]}/`;  // GitHub Pages mit Repo-Unterordner
+  // GitHub Pages: host ist *.github.io → Repo-Name ist parts[1]
+  if (window.location.hostname.includes('github.io')) {
+    const parts = window.location.pathname.split('/');
+    return `/${parts[1]}/`;
   }
-  return '/';  // Root-Domain (Cloudflare, eigene Domain)
+  // Eigene Domain (Cloudflare): tiqui26.de → Root
+  return '/';
 }
 
 /* ---- Session abrufen ---- */

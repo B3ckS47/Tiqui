@@ -174,8 +174,7 @@
     // Bereits eingeloggt?
     sb.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        const base = window.location.href.replace(/pages\/login\.html.*$/, '');
-        window.location.href = base + 'pages/dashboard.html';
+        window.location.href = window.location.origin + '/pages/dashboard.html';
       }
     });
 
@@ -210,8 +209,7 @@
       }
 
       if (data.session) {
-        const base = window.location.href.replace(/pages\/login\.html.*$/, '');
-        window.location.href = base + 'pages/dashboard.html';
+        window.location.href = window.location.origin + '/pages/dashboard.html';
       }
     }
 
