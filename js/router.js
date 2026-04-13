@@ -73,7 +73,7 @@ function buildNav() {
     <span class="nav-label">Rangliste</span>
   </a>
 
-  <a href="${b}pages/profile.html" class="nav-item" data-page="profile">
+  <a href="${b}pages/myprofil.html" class="nav-item" data-page="profile">
     <div class="nav-icon-wrap">
       <div class="nav-icon">
         <svg viewBox="0 0 24 24" aria-hidden="true">
