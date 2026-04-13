@@ -1,14 +1,1 @@
-/pages/dashboard    /pages/dashboard.html    301
-/pages/tips         /pages/tips.html         301
-/pages/quiz         /pages/quiz.html         301
-/pages/leaderboard  /pages/leaderboard.html  301
-/pages/profile      /pages/profile.html      301
-/pages/login        /pages/login.html        301
-/pages/register     /pages/register.html     301
-/pages/special      /pages/special.html      301
-/pages/admin/admin-dashboard  /pages/admin/admin-dashboard.html  301
-/pages/admin/admin-matches    /pages/admin/admin-matches.html    301
-/pages/admin/admin-quiz       /pages/admin/admin-quiz.html       301
-/pages/admin/admin-results    /pages/admin/admin-results.html    301
-/pages/admin/admin-special    /pages/admin/admin-special.html    301
-/pages/admin/admin-users      /pages/admin/admin-users.html      301
+# Keine Redirects
