@@ -1,1 +1,8 @@
-# Keine Redirects
+/pages/profile /pages/profile.html 200
+/pages/dashboard /pages/dashboard.html 200
+/pages/tips /pages/tips.html 200
+/pages/quiz /pages/quiz.html 200
+/pages/leaderboard /pages/leaderboard.html 200
+/pages/login /pages/login.html 200
+/pages/register /pages/register.html 200
+/pages/special /pages/special.html 200
