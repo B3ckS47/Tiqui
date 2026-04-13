@@ -3,7 +3,7 @@
    SW deaktiviert — alle Requests direkt ans Netzwerk
    ============================================================ */
 
-const CACHE_NAME = 'tiqui-v43';
+const CACHE_NAME = 'tiqui-v44';
 
 self.addEventListener('install', event => {
   self.skipWaiting();
