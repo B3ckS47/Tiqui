@@ -8,6 +8,8 @@
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../css/layout.css">
   <meta name="theme-color" content="#f0f2f5">
+  <link rel="icon" type="image/svg+xml" href="../icons/tiqui-logo.svg">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
   <style>
     body {
       display: flex;
@@ -119,7 +121,7 @@
 
     <!-- Logo -->
     <div class="logo-area">
-      <div class="logo-icon">⚽</div>
+      <div class="logo-icon" style="background:transparent;box-shadow:none;padding:0;"><img src="../icons/tiqui-logo.svg" style="width:80px;height:80px;object-fit:contain;"></div>
       <div class="logo-title">Ti<span>qui</span></div>
       <p class="logo-subtitle">WM 2026 · Tippen & Quizzen</p>
     </div>
@@ -165,8 +167,8 @@
       document.getElementById('error-msg').style.display = 'block';
     }
     // Supabase initialisieren
-    const SUPABASE_URL  = 'https://ovomstveukjivfhepyyj.supabase.co';
-    const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92b21zdHZldWtqaXZmaGVweXlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3NTA5MDAsImV4cCI6MjA5MTMyNjkwMH0.kFvZg2dBoOPUfO6380Y4v15fiPdFgEDNZchfIgCBVeA';
+    const SUPABASE_URL  = 'https://ovomstveukjivfhepyyj.supabase.co';   // ← aus Supabase Dashboard → Settings → API
+    const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92b21zdHZldWtqaXZmaGVweXlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3NTA5MDAsImV4cCI6MjA5MTMyNjkwMH0.kFvZg2dBoOPUfO6380Y4v15fiPdFgEDNZchfIgCBVeA';        // ← aus Supabase Dashboard → Settings → API
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
     // Bereits eingeloggt?
