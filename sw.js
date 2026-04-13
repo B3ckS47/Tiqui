@@ -1,38 +1,27 @@
 /* ============================================================
-   TIQUI — Service Worker v39
-   Strategie: Cache-first für Assets, Network-first für API
+   TIQUI — Service Worker v40
+   Strategie: Network-first für HTML, Cache-first für Assets
    ============================================================ */
 
-const CACHE_NAME = 'tiqui-v39';
+const CACHE_NAME = 'tiqui-v40';
 
-const STATIC_ASSETS = [
-  './index.html',
-  './manifest.json',
-  './css/base.css',
-  './css/layout.css',
-  './js/supabase.js',
-  './js/auth.js',
-  './js/router.js',
-  './js/ui.js',
-  './pages/login.html',
-  './pages/register.html',
-  './pages/dashboard.html',
-  './pages/tips.html',
-  './pages/quiz.html',
-  './pages/leaderboard.html',
-  './pages/profile.html',
-  './icons/tile-stadium.png',
-  './icons/tile-tipps.png',
-  './icons/tile-prognose.png',
-  './icons/tile-quiz.png',
-  './icons/tile-rangliste.png',
-  './icons/bg-hexagon.png',
-];
-
-/* ---- Install ---- */
+/* ---- Install: Nur kritische Assets cachen ---- */
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_ASSETS))
+    caches.open(CACHE_NAME).then(cache => {
+      // Einzeln cachen damit ein Fehler nicht alles blockiert
+      const assets = [
+        './css/base.css',
+        './css/layout.css',
+        './js/supabase.js',
+        './js/auth.js',
+        './js/router.js',
+        './js/ui.js',
+      ];
+      return Promise.allSettled(
+        assets.map(url => cache.add(url).catch(() => {}))
+      );
+    })
   );
   self.skipWaiting();
 });
@@ -47,7 +36,7 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-/* ---- Fetch: Cache-first für Assets, Network-first für Supabase ---- */
+/* ---- Fetch ---- */
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
@@ -57,7 +46,15 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Alles andere → Cache-first
+  // HTML Seiten → Network-first (immer aktuelle Version)
+  if (event.request.destination === 'document' || url.pathname.endsWith('.html')) {
+    event.respondWith(
+      fetch(event.request).catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // CSS/JS/Icons → Cache-first
   event.respondWith(
     caches.match(event.request).then(cached => {
       if (cached) return cached;
@@ -67,7 +64,7 @@ self.addEventListener('fetch', event => {
           caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
         }
         return response;
-      });
-    }).catch(() => caches.match('./index.html'))
+      }).catch(() => cached);
+    })
   );
 });
