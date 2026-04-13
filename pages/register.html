@@ -391,8 +391,7 @@
 
         showToast('Konto erstellt! Du wirst weitergeleitet…', 'success');
         setTimeout(() => {
-          const base = window.location.href.replace(/pages\/register\.html.*$/, '');
-          window.location.href = base + 'pages/dashboard.html';
+          window.location.href = window.location.origin + '/pages/dashboard.html';
         }, 1500);
 
       } catch (err) {
