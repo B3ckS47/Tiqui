@@ -594,22 +594,30 @@
   if (urlParams.get('tab') === 'prognose') currentTab = 'prognose';
 
   /* ---- Teams & Flags ---- */
-  const WM_TEAMS = ['Argentinien','Australien','Belgien','Brasilien','Chile',
-    'Dänemark','Deutschland','Ecuador','England','Frankreich','Iran','Italien',
-    'Japan','Kanada','Kolumbien','Kroatien','Marokko','Mexiko','Niederlande',
-    'Nigeria','Österreich','Polen','Portugal','Saudi-Arabien','Schottland',
-    'Schweiz','Senegal','Serbien','Südkorea','Spanien','Tschechien','Türkei',
-    'Ungarn','Uruguay','USA','Wales'].sort();
+  const WM_TEAMS = [
+    'Ägypten','Algerien','Argentinien','Australien','Belgien','Bosnien und Herzegowina',
+    'Brasilien','Deutschland','DR Kongo','Ecuador','Elfenbeinküste','England',
+    'Frankreich','Ghana','Haiti','IR Iran','Irak','Japan','Jordanien','Kanada',
+    'Kap Verde','Katar','Kolumbien','Kroatien','Marokko','Mexiko','Neuseeland',
+    'Niederlande','Norwegen','Österreich','Panama','Paraguay','Portugal',
+    'Republik Korea','Saudi-Arabien','Schottland','Schweden','Schweiz','Senegal',
+    'Spanien','Südafrika','Türkei','Tunesien','Uruguay','USA','Usbekistan',
+  ].sort();
 
   const FLAGS = {
     'Deutschland':'🇩🇪','Frankreich':'🇫🇷','Spanien':'🇪🇸','England':'🏴󠁧󠁢󠁥󠁮󠁧󠁿',
-    'Italien':'🇮🇹','Portugal':'🇵🇹','Brasilien':'🇧🇷','Argentinien':'🇦🇷',
-    'Niederlande':'🇳🇱','Belgien':'🇧🇪','Kroatien':'🇭🇷','Dänemark':'🇩🇰',
-    'Schweiz':'🇨🇭','Österreich':'🇦🇹','Polen':'🇵🇱','USA':'🇺🇸',
-    'Mexiko':'🇲🇽','Kanada':'🇨🇦','Japan':'🇯🇵','Südkorea':'🇰🇷',
-    'Australien':'🇦🇺','Marokko':'🇲🇦','Senegal':'🇸🇳','Nigeria':'🇳🇬',
-    'Saudi-Arabien':'🇸🇦','Iran':'🇮🇷','Uruguay':'🇺🇾','Kolumbien':'🇨🇴',
-    'Ecuador':'🇪🇨','Türkei':'🇹🇷','Serbien':'🇷🇸',
+    'Portugal':'🇵🇹','Brasilien':'🇧🇷','Argentinien':'🇦🇷','Niederlande':'🇳🇱',
+    'Belgien':'🇧🇪','Kroatien':'🇭🇷','Schweiz':'🇨🇭','Österreich':'🇦🇹',
+    'USA':'🇺🇸','Mexiko':'🇲🇽','Kanada':'🇨🇦','Japan':'🇯🇵',
+    'Republik Korea':'🇰🇷','Australien':'🇦🇺','Marokko':'🇲🇦','Senegal':'🇸🇳',
+    'Saudi-Arabien':'🇸🇦','IR Iran':'🇮🇷','Uruguay':'🇺🇾','Kolumbien':'🇨🇴',
+    'Ecuador':'🇪🇨','Türkei':'🇹🇷','Schottland':'🏴󠁧󠁢󠁳󠁣󠁴󠁿','Schweden':'🇸🇪',
+    'Norwegen':'🇳🇴','Dänemark':'🇩🇰','Polen':'🇵🇱','Tschechien':'🇨🇿',
+    'Südafrika':'🇿🇦','Ghana':'🇬🇭','Ägypten':'🇪🇬','DR Kongo':'🇨🇩',
+    'Kap Verde':'🇨🇻','Tunesien':'🇹🇳','Elfenbeinküste':'🇨🇮','Nigeria':'🇳🇬',
+    'Katar':'🇶🇦','Irak':'🇮🇶','Jordanien':'🇯🇴','Usbekistan':'🇺🇿',
+    'Paraguay':'🇵🇾','Panama':'🇵🇦','Haiti':'🇭🇹','Bosnien und Herzegowina':'🇧🇦',
+    'Neuseeland':'🇳🇿','Algerien':'🇩🇿','Curaçao':'🇨🇼',
   };
   const flag = t => FLAGS[t] ?? '🏳';
 
