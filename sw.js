@@ -3,7 +3,7 @@
    Strategie: Network-first für HTML, Cache-first für Assets
    ============================================================ */
 
-const CACHE_NAME = 'tiqui-v40';
+const CACHE_NAME = 'tiqui-v42';
 
 /* ---- Install: Nur kritische Assets cachen ---- */
 self.addEventListener('install', event => {

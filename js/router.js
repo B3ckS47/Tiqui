@@ -5,9 +5,13 @@
 
 /* ---- Basis-URL ermitteln ---- */
 function getBase() {
-  const path = window.location.pathname;
-  const match = path.match(/^(.*?\/(?:Tiqui\/))/i);
-  return match ? match[1] : '/';
+  // GitHub Pages: *.github.io/Tiqui/ → /Tiqui/
+  if (window.location.hostname.includes('github.io')) {
+    const match = window.location.pathname.match(/^(\/[^/]+\/)/);
+    return match ? match[1] : '/';
+  }
+  // Alle anderen (Cloudflare, lokal): Root
+  return '/';
 }
 
 /* ---- Bottom-Nav HTML ---- */
