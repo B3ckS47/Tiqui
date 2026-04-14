@@ -8,19 +8,21 @@
   /* ---- Grundlayout ---- */
   body {
     background: var(--bg);
-  }
-
-  .app-shell {
-    max-width: 100%;
     display: grid;
     grid-template-columns: 240px 1fr;
     grid-template-rows: auto 1fr;
     min-height: 100vh;
   }
 
+  .app-shell {
+    max-width: 100%;
+    display: contents;
+  }
+
   /* ---- Admin Header wird zur Topbar ---- */
   .admin-header {
     grid-column: 1 / -1;
+    grid-row: 1;
     padding: 0;
   }
 
@@ -41,12 +43,14 @@
   .admin-sidebar {
     display: flex !important;
     flex-direction: column;
+    grid-column: 1;
+    grid-row: 2;
     background: var(--bg-card);
     border-right: 1px solid var(--border);
     padding: var(--space-lg) 0;
     position: sticky;
     top: 0;
-    height: 100vh;
+    height: calc(100vh - 56px);
     overflow-y: auto;
   }
 
@@ -87,10 +91,11 @@
 
   /* ---- Page Content ---- */
   .page-content {
+    grid-column: 2;
+    grid-row: 2;
     padding: var(--space-xl);
     padding-bottom: var(--space-xl);
     max-width: 1000px;
-    margin: 0 auto;
     width: 100%;
   }
 
